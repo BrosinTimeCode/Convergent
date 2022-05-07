@@ -8,4 +8,8 @@ public abstract class BaseUnit {
     int rangeAttack = 1;
     int attack = 1;
     int armor = 5;
+
+    public char getName() {
+        return name;
+    }
 }
