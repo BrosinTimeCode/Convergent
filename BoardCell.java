@@ -1,8 +1,8 @@
 // Part of the Model
+import Units.*;
 public class BoardCell {
-    // TODO: Change to Louis class for unit
-    public DummyUnit unit;
-    public BoardCell(DummyUnit unit) {
+    public BaseUnit unit;
+    public BoardCell(BaseUnit unit) {
         this.unit = unit;
     }
 }
