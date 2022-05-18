@@ -1,4 +1,4 @@
-// Part of the Model
+package Model;
 import Units.*;
 public class BoardCell {
     public BaseUnit unit;

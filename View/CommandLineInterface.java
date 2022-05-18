@@ -1,3 +1,8 @@
+package View;
+
+import Model.BaseBoard;
+import Model.Board;
+
 public class CommandLineInterface implements GameViewInterface {
     public CommandLineInterface(){
 

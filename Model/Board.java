@@ -1,5 +1,4 @@
-import java.util.Random;
-import Units.*;
+package Model;
 
 public class Board extends BaseBoard {
     public BoardCell[][] board;
