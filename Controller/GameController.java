@@ -4,6 +4,7 @@ import View.CommandLineInterface;
 import Model.BaseBoard;
 import Model.TestBoard;
 import Model.Board;
+import java.util.Scanner;
 import java.util.Timer;
 
 public class GameController {
@@ -28,5 +29,24 @@ public class GameController {
         long oneSecond = 1000;
         RefreshMapTask task = new RefreshMapTask(viewInterface, board);
         timer.schedule(task, 0, oneSecond);
+    }
+    public void handleUserInput() {
+        viewInterface.displayHelp();
+        Scanner userInput = new Scanner(System.in);
+        while(userInput.hasNext()) {
+            String[] command = Console.parse(userInput.next());
+            switch(command[0]) {
+                case "m":
+                    //move a unit
+                case "s":
+                    //select a unit
+                case "a":
+                    //attack a unit
+                case "h":
+                    //display list of commands
+                default:
+                    //invalid command
+            }
+        }
     }
 }
