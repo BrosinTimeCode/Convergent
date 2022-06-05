@@ -34,18 +34,10 @@ public class GameController {
         viewInterface.displayHelp();
         Scanner userInput = new Scanner(System.in);
         while(userInput.hasNext()) {
-            String[] command = Console.parse(userInput.next());
-            switch(command[0]) {
-                case "m":
-                    //move a unit
-                case "s":
-                    //select a unit
-                case "a":
-                    //attack a unit
-                case "h":
-                    //display list of commands
-                default:
-                    //invalid command
+            Command command = new Command();
+            String[] splitCommands = Console.parse(userInput.next());
+            if (command.getAction(splitCommands) == '#') {
+                viewInterface.displayInvalidCommand();
             }
         }
     }
