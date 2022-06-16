@@ -2,6 +2,8 @@ package Model;
 
 public class Board extends BaseBoard {
     public BoardCell[][] board;
+    public int length;
+    public int height;
 
     @Override
     // toString method used for printing the board
@@ -22,4 +24,10 @@ public class Board extends BaseBoard {
         }
         return builder.toString();
     }
+    // Pathfinding. First iteration units cannot go through occupied squares
+    //TODO: Add ability to go through ally squares while restricting going through enemy
+    public void pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
+
+    }
+
 }
