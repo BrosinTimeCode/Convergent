@@ -30,4 +30,8 @@ public class Board extends BaseBoard {
 
     }
 
+    public Node nextNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
+
+    }
+
 }
