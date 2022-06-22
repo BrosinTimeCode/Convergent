@@ -26,18 +26,27 @@ public class GameController {
     }
     public void initialize() {
         Timer timer = new Timer();
-        long oneSecond = 1000;
+        long oneSecond = 10000;
         RefreshMapTask task = new RefreshMapTask(viewInterface, board);
         timer.schedule(task, 0, oneSecond);
     }
     public void handleUserInput() {
         viewInterface.displayHelp();
+        boolean consoleIsOpen = true;
         Scanner userInput = new Scanner(System.in);
-        while(userInput.hasNext()) {
-            Command command = new Command();
-            String[] splitCommands = Console.parse(userInput.next());
-            if (command.getAction(splitCommands) == '#') {
+        Command command = new Command();
+        while (consoleIsOpen) {
+            String[] splitCommands = Console.parse(userInput.nextLine());
+            char action = command.getAction(splitCommands);
+            // If action is not found in command list
+            if (action == '#') {
                 viewInterface.displayInvalidCommand();
+                continue;
+            }
+            String argsCheck = command.checkArgs(splitCommands, action);
+            if (argsCheck != "good") {
+                viewInterface.displayCommandError(argsCheck);
+                continue;
             }
         }
     }
