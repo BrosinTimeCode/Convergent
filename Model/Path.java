@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Path {
     public ArrayList<Node> path;
     public Path(){
-        path = new ArrayList<Node>();
+        path = new ArrayList<>();
     }
     public void addNode(int row, int column) {
         path.add(new Node(row, column));
