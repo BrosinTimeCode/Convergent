@@ -12,9 +12,9 @@ public class BoardUnitTests {
     @Test
     void testNextNode() {
         // Direct diagonal up-left
-        assertEquals(new Node(4, 4), board.nextNode(5,5, 0, 0));
+        assertEquals(new Node(4, 4), board.nextNode(5, 5, 0, 0));
         // Direct diagonal up-right
-        assertEquals(new Node(4,6), board.nextNode(5, 5, 0, 10));
+        assertEquals(new Node(4, 6), board.nextNode(5, 5, 0, 10));
         // Direct diagonal bottom-left
         assertEquals(new Node(6, 4),board.nextNode(5, 5, 10, 0));
         // Direct diagonal bottom-right
@@ -22,11 +22,11 @@ public class BoardUnitTests {
         // Direct up
         assertEquals(new Node (4, 5),board.nextNode(5, 5, 0, 5));
         // Direct right
-        assertEquals(new Node (5,6),board.nextNode(5,5,5, 10));
+        assertEquals(new Node (5, 6),board.nextNode(5, 5, 5, 10));
         // Direct down
-        assertEquals(new Node(6,5),board.nextNode(5,5,10,5));
+        assertEquals(new Node(6, 5),board.nextNode(5, 5, 10, 5));
         // Direct left
-        assertEquals(new Node(5,4),board.nextNode(5,5,5,0));
+        assertEquals(new Node(5, 4),board.nextNode(5, 5, 5, 0));
         // TODO: add non straight lines between two point test cases
     }
 }
