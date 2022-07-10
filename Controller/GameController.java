@@ -16,7 +16,7 @@ public class GameController {
                 board = new TestBoard();
                 break;
             default:
-                board = new Board();
+                board = new Board(10,10);
         }
         switch(viewType) {
             default:

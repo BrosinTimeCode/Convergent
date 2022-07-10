@@ -4,11 +4,16 @@ import Model.Board;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import Model.Node;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class BoardUnitTests {
-    private final Board board = new Board();
-
+    private Board board;
+    @BeforeEach
+    void initAll() {
+        board = new Board(10,10);
+    }
     @Test
     void testNextNode() {
         // Direct diagonal up-left
