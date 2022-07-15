@@ -26,7 +26,7 @@ public class GameController {
     }
     public void initialize() {
         Timer timer = new Timer();
-        long oneSecond = 10000;
+        long oneSecond = 1000;
         RefreshMapTask task = new RefreshMapTask(viewInterface, board);
         timer.schedule(task, 0, oneSecond);
     }
@@ -36,7 +36,7 @@ public class GameController {
         Scanner userInput = new Scanner(System.in);
         Command command = new Command();
         while (consoleIsOpen) {
-            String[] splitCommands = Console.parse(userInput.nextLine());
+            String[] splitCommands = Parser.parse(userInput.nextLine());
             char action = command.getAction(splitCommands);
             // If action is not found in command list
             if (action == '#') {
