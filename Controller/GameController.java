@@ -1,4 +1,5 @@
 package Controller;
+import Commands.BaseCommand;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.BaseBoard;
@@ -34,19 +35,10 @@ public class GameController {
         viewInterface.displayHelp();
         boolean consoleIsOpen = true;
         Scanner userInput = new Scanner(System.in);
-        Command command = new Command();
         while (consoleIsOpen) {
-            String[] splitCommands = Parser.parse(userInput.nextLine());
-            char action = command.getAction(splitCommands);
-            // If action is not found in command list
-            if (action == '#') {
+            BaseCommand userCommand = Parser.getCommand(userInput.nextLine());
+            if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
-                continue;
-            }
-            String argsCheck = command.checkArgs(splitCommands, action);
-            if (argsCheck != "good") {
-                viewInterface.displayCommandError(argsCheck);
-                continue;
             }
         }
     }
