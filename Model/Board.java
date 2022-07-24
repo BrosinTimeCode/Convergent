@@ -49,34 +49,34 @@ public class Board extends BaseBoard {
                 return new Node(rowCurrent - 1, columnCurrent - 1);
             }
             // Top right
-            else if(rowCurrent > rowEnd && columnCurrent < columnEnd) {
+            else if(rowCurrent > rowEnd) {
                 return new Node(rowCurrent - 1, columnCurrent + 1);
             }
             // Bottom left
-            else if(rowCurrent < rowEnd && columnCurrent > columnEnd) {
+            else if(columnCurrent > columnEnd) {
                 return new Node(rowCurrent + 1, columnCurrent - 1);
             }
             // Bottom right
-            else if((rowCurrent < rowEnd && columnCurrent < columnEnd)) {
+            else {
                 return new Node(rowCurrent + 1, columnCurrent + 1);
             }
         }
         // Current is in the correct column
         // Up
-        else if(rowCurrent != rowEnd && rowEnd > rowCurrent) {
+        else if(rowEnd > rowCurrent) {
             return new Node(rowCurrent + 1, columnCurrent);
         }
         // Down
-        else if(rowCurrent != rowEnd && rowEnd < rowCurrent) {
+        else if(rowEnd < rowCurrent) {
             return new Node(rowCurrent - 1, columnCurrent);
         }
         // Current is in the correct row
         // Left
-        else if(columnCurrent != columnEnd && columnEnd < columnCurrent) {
+        else if(columnEnd < columnCurrent) {
             return new Node(rowCurrent, columnCurrent - 1);
         }
         // Right
-        else if(columnCurrent != columnEnd && columnEnd > columnCurrent) {
+        else if(columnEnd > columnCurrent) {
             return new Node(rowCurrent, columnCurrent + 1);
         }
         // Current equals End
