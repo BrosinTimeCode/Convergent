@@ -8,6 +8,11 @@ public abstract class BaseUnit {
     int rangeAttack = 1;
     int attack = 1;
     int armor = 5;
+    Team team;
+    public enum Team {
+        BLUE,
+        RED
+    }
 
     public char getName() {
         return name;

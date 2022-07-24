@@ -2,15 +2,13 @@ package Model;
 
 public class Board extends BaseBoard {
     public BoardCell[][] board;
-    public int length;
-    public int height;
 
     public Board(int row, int column) {
         board = new BoardCell[row][column];
     }
 
     public Board() {
-    }
+     }
     @Override
     // toString method used for printing the board
     public String toString(){

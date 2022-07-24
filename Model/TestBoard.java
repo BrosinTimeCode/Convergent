@@ -16,10 +16,10 @@ public class TestBoard extends Board {
                 BaseUnit unit;
                 switch(value) {
                     case 0:
-                        unit = new Civilian();
+                        unit = new Civilian(BaseUnit.Team.BLUE);
                         break;
                     case 1:
-                        unit = new Tradesman();
+                        unit = new Tradesman(BaseUnit.Team.RED);
                         break;
                     default:
                         // No unit

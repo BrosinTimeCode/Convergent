@@ -4,7 +4,6 @@ import Model.Board;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import Model.Node;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +31,13 @@ public class BoardUnitTests {
         assertEquals(new Node(6, 5),board.nextNode(5, 5, 10, 5));
         // Direct left
         assertEquals(new Node(5, 4),board.nextNode(5, 5, 5, 0));
+
         // TODO: add non straight lines between two point test cases
     }
+    @Test
+    void testNextNodeWithEnemy() {
+        // TODO: add test cases for not going into enemy units
+        board[1][1]
+    }
+
 }
