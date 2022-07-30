@@ -12,40 +12,17 @@ public abstract class BaseCommand {
     byte minArguments = 0;
     byte maxArguments = 1;
 
-    public char getIdentifier() {
-        return identifier;
-    }
+    public abstract char getIdentifier();
 
-    public String getSyntax() {
-        return "Usage: " + syntax;
-    }
+    public abstract String getSyntax();
 
-    public String getDescription() {
-        return description;
-    }
+    public abstract String getDescription();
 
-    public String getError_tooManyArguments() {
-        return tooManyArguments;
-    }
+    public abstract String getError_tooManyArguments();
 
-    public String getError_tooFewArguments() {
-        return tooFewArguments;
-    }
+    public abstract String getError_tooFewArguments();
 
-    public boolean hasEnoughArguments(String[] arguments) {
-        if (arguments.length >= minArguments) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    public boolean hasTooManyArguments(String[] arguments) {
-        if (arguments.length > maxArguments) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+    public abstract boolean hasEnoughArguments(String[] arguments);
+
+    public abstract boolean hasTooManyArguments(String[] arguments);
 }
