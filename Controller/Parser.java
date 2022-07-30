@@ -14,15 +14,16 @@ public class Parser {
         commands.add(new Move());
         commands.add(new Select());
 
-//        System.out.println("Number of arguments: " + arguments.length);
-//        System.out.println("Argument 0: " + arguments[0]);
-//        System.out.println("Char at 0: " + arguments[0].charAt(0));
-        char commandID = arguments[0].charAt(0);
-        for (BaseCommand command : commands) {
-//            System.out.println("Comparing " + commandID + " with " + command.getIdentifier());
-            if (commandID == command.getIdentifier()) {
-                return command;
+        try {
+            char commandID = arguments[0].charAt(0);
+            for (BaseCommand command : commands) {
+                if (commandID == command.getIdentifier()) {
+                    return command;
+                }
             }
+        }
+        catch (Exception e) {
+            return null;
         }
 
         return null;
