@@ -1,11 +1,13 @@
 package Test;
 
 import Model.Board;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import Model.BoardCell;
 import Model.Node;
+import Units.BaseUnit;
+import Units.Civilian;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BoardUnitTests {
     private Board board;
@@ -37,7 +39,22 @@ public class BoardUnitTests {
     @Test
     void testNextNodeWithEnemy() {
         // TODO: add test cases for not going into enemy units
-        board[1][1]
+        /* 0---0
+           -X-X-
+           --0--
+           -X-X-
+           0---0 */
+        board.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        board.board[0][4] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        board.board[4][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        board.board[4][4] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        board.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        board.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        board.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        board.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        board.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        // Direct diagonal up-right
+        assertEquals()
     }
 
 }

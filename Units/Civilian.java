@@ -1,6 +1,7 @@
 package Units;
 
 public class Civilian extends FootUnit {
+    // TODO: remove this or optimize where to put this information for determining unit faction
     public Civilian(Team team) {
         name = 'T';
         speed = 2;

@@ -19,7 +19,7 @@ public class TestBoard extends Board {
                         unit = new Civilian(BaseUnit.Team.BLUE);
                         break;
                     case 1:
-                        unit = new Tradesman(BaseUnit.Team.RED);
+                        unit = new Tradesman();
                         break;
                     default:
                         // No unit

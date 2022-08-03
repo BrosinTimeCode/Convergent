@@ -34,13 +34,23 @@ public class Board extends BaseBoard {
         Path path = new Path();
         Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
         while(pathNode != null) {
-            path.addNode(pathNode.getRow(), pathNode.getColumn());
+            // The next location has a unit that is not on the same team
+            if(!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], board[rowStart][columnStart])){
+                pathNode = nextNonEnemyNode();
+                continue;
+            }
+            path.addNode(pathNode.getRow(), path --+-
+                     Node.getColumn());
             pathNode = nextNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
         }
+
+        // TODO: If ending square is an enemy or ally do not go into, make it to the next habitable square
         return path;
     }
 
     // Gives the next closest node to the current that goes towards end node
+    // TODO: Keep similar algorithm, but add recursion. If next node is an enemy find alternate node.
+    // TODO: When climbing out of recursion begin to populate the container with the path
     public Node nextNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
         // Diagonal path towards destination
         if(rowCurrent != rowEnd && columnCurrent != columnEnd) {
@@ -81,6 +91,21 @@ public class Board extends BaseBoard {
         }
         // Current equals End
         return null;
+    }
+
+    public Node nextNonEnemyNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
+        return null;
+    }
+
+    public boolean checkTeam(BoardCell cell1, BoardCell cell2) {
+        // If there is no cell in the board than it is a square that can be traversed
+        if(cell1.unit == null || cell2.unit == null) {
+            return true;
+        }
+        else if(cell1.unit.getTeam() == cell2.unit.getTeam()) {
+            return true;
+        }
+        return false;
     }
 
 }
