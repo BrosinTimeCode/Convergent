@@ -1,5 +1,9 @@
 package Model;
 
+import Units.BaseUnit;
+
+import java.util.ArrayList;
+
 public class Board extends BaseBoard {
     public BoardCell[][] board;
 
@@ -30,17 +34,17 @@ public class Board extends BaseBoard {
     }
     // Pathfinding. First iteration units cannot go through occupied squares
     //TODO: Add ability to go through ally squares while restricting going through enemy
-    public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
+    public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd, BaseUnit.Team team) {
         Path path = new Path();
         Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
         while(pathNode != null) {
             // The next location has a unit that is not on the same team
-            if(!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], board[rowStart][columnStart])){
-                pathNode = nextNonEnemyNode();
-                continue;
+            if(!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)){
+                Path nonEnemyPath  = nonEnemyPath(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd, team);
+                path.appendPath(nonEnemyPath);
+                break;
             }
-            path.addNode(pathNode.getRow(), path --+-
-                     Node.getColumn());
+            path.addNode(pathNode.getRow(), pathNode.getColumn());
             pathNode = nextNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
         }
 
@@ -93,19 +97,16 @@ public class Board extends BaseBoard {
         return null;
     }
 
-    public Node nextNonEnemyNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
+    public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd, BaseUnit.Team team) {
         return null;
     }
 
-    public boolean checkTeam(BoardCell cell1, BoardCell cell2) {
+    public boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
         // If there is no cell in the board than it is a square that can be traversed
-        if(cell1.unit == null || cell2.unit == null) {
+        if(cell1.unit == null) {
             return true;
         }
-        else if(cell1.unit.getTeam() == cell2.unit.getTeam()) {
-            return true;
-        }
-        return false;
+        else return cell1.unit.getTeam() == team;
     }
 
 }
