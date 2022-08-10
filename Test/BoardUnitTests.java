@@ -7,6 +7,8 @@ import Units.BaseUnit;
 import Units.Civilian;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -55,13 +57,13 @@ public class BoardUnitTests {
         board.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
         board.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
         // Diagonal up-left
-        assertEquals(board.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED).getFirst(), (new Node (1, 2)));
+        assertEquals(board.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (1, 2)));
         // Diagonal up-right
-        assertEquals(board.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED).getFirst(), (new Node (1, 2)));
+        assertEquals(board.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (1, 2)));
         // Diagonal bottom-left
-        assertEquals(board.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED).getFirst(), (new Node (3, 2)));
+        assertEquals(board.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (3, 2)));
         // Diagonal bottom-right
-        assertEquals(board.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED).getFirst(), (new Node (3, 2)));
+        assertEquals(board.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (3, 2)));
         /* 0---0
            -XXX-
            --0--
@@ -70,13 +72,13 @@ public class BoardUnitTests {
         board.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
         board.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
         // Diagonal up-left
-        assertEquals(board.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED).getFirst(), (new Node (2, 1)));
+        assertEquals(board.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (2, 1)));
         // Diagonal up-right
-        assertEquals(board.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED).getFirst(), (new Node (2, 3)));
+        assertEquals(board.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (2, 3)));
         // Diagonal bottom-left
-        assertEquals(board.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED).getFirst(), (new Node (2, 1)));
+        assertEquals(board.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (2, 1)));
         // Diagonal bottom-right
-        assertEquals(board.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED).getFirst(), (new Node (2, 3)));
+        assertEquals(board.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(), (new Node (2, 3)));
     }
 
 }

@@ -23,4 +23,8 @@ public class Path {
     public void appendPath(Path path) {
         this.path.addAll(path.path);
     }
+
+    public int getLength() {
+        return path.size();
+    }
 }

@@ -3,6 +3,7 @@ package Model;
 import Units.BaseUnit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Board extends BaseBoard {
     public BoardCell[][] board;
@@ -34,27 +35,23 @@ public class Board extends BaseBoard {
     }
     // Pathfinding. First iteration units cannot go through occupied squares
     //TODO: Add ability to go through ally squares while restricting going through enemy
-    public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd, BaseUnit.Team team) {
+    public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd, BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         Path path = new Path();
         Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
         while(pathNode != null) {
             // The next location has a unit that is not on the same team
             if(!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)){
-                Path nonEnemyPath  = nonEnemyPath(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd, team);
+                Path nonEnemyPath  = nonEnemyPath(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd, team, exploredNodes);
                 path.appendPath(nonEnemyPath);
                 break;
             }
             path.addNode(pathNode.getRow(), pathNode.getColumn());
             pathNode = nextNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
         }
-
-        // TODO: If ending square is an enemy or ally do not go into, make it to the next habitable square
         return path;
     }
 
     // Gives the next closest node to the current that goes towards end node
-    // TODO: Keep similar algorithm, but add recursion. If next node is an enemy find alternate node.
-    // TODO: When climbing out of recursion begin to populate the container with the path
     public Node nextNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
         // Diagonal path towards destination
         if(rowCurrent != rowEnd && columnCurrent != columnEnd) {
@@ -96,9 +93,19 @@ public class Board extends BaseBoard {
         // Current equals End
         return null;
     }
-
-    public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd, BaseUnit.Team team) {
-        return null;
+    public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd, BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        ArrayList<Node> adjacentNodes = getValidAdjacentNodes(rowCurrent, columnCurrent, team, exploredNodes);
+        ArrayList<Path> adjacentPaths = new ArrayList<>();
+        for(Node node: adjacentNodes) {
+            adjacentPaths.add(pathFinder(node.getRow(), node.getColumn(), rowEnd, columnEnd, team, exploredNodes));
+        }
+        Path shortestPath = adjacentPaths.get(0);
+        for(int i = 1; i < adjacentPaths.size(); i++) {
+            if(shortestPath.getLength() > adjacentPaths.get(i).getLength()) {
+                shortestPath = adjacentPaths.get(i);
+            }
+        }
+        return shortestPath;
     }
 
     public boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
@@ -107,6 +114,36 @@ public class Board extends BaseBoard {
             return true;
         }
         else return cell1.unit.getTeam() == team;
+    }
+
+    public ArrayList<Node> getValidAdjacentNodes(int rowCurrent, int columnCurrent, BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        ArrayList<Node> validNodes = new ArrayList<>();
+        // Diagonal Up-Left
+        nodes.add(new Node(rowCurrent - 1, columnCurrent - 1));
+        // Up
+        nodes.add(new Node(rowCurrent - 1, columnCurrent));
+        // Diagonal Up-Right
+        nodes.add(new Node(rowCurrent - 1, columnCurrent + 1));
+        // Left
+        nodes.add(new Node(rowCurrent, columnCurrent - 1));
+        // Right
+        nodes.add(new Node(rowCurrent, columnCurrent + 1));
+        // Diagonal Down-Left
+        nodes.add(new Node(rowCurrent + 1, columnCurrent - 1));
+        // Down
+        nodes.add(new Node(rowCurrent + 1, columnCurrent));
+        // Diagonal Down-Right
+        nodes.add(new Node(rowCurrent + 1, columnCurrent + 1));
+        for(Node node: nodes) {
+            if(node.getRow() >= 0 && node.getRow() < board.length && node.getColumn() >= 0 &&
+                    node.getColumn() < board[0].length && checkTeam(board[node.getRow()][node.getColumn()], team)
+                    && !exploredNodes.containsKey(node)) {
+                validNodes.add(node);
+                exploredNodes.put(node, true);
+            }
+        }
+        return validNodes;
     }
 
 }
