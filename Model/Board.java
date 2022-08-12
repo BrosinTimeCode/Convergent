@@ -10,6 +10,11 @@ public class Board extends BaseBoard {
 
     public Board(int row, int column) {
         board = new BoardCell[row][column];
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < column; j++) {
+                board[i][j] = new BoardCell(null);
+            }
+        }
     }
 
     public Board() {
@@ -35,6 +40,7 @@ public class Board extends BaseBoard {
     }
     // Pathfinding. First iteration units cannot go through occupied squares
     //TODO: Add ability to go through ally squares while restricting going through enemy
+    //TODO: Test Method
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd, BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         Path path = new Path();
         Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
@@ -93,6 +99,7 @@ public class Board extends BaseBoard {
         // Current equals End
         return null;
     }
+    // TODO: Test Method
     public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd, BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         ArrayList<Node> adjacentNodes = getValidAdjacentNodes(rowCurrent, columnCurrent, team, exploredNodes);
         ArrayList<Path> adjacentPaths = new ArrayList<>();
@@ -115,7 +122,7 @@ public class Board extends BaseBoard {
         }
         else return cell1.unit.getTeam() == team;
     }
-
+    // TODO: Test Method
     public ArrayList<Node> getValidAdjacentNodes(int rowCurrent, int columnCurrent, BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         ArrayList<Node> nodes = new ArrayList<>();
         ArrayList<Node> validNodes = new ArrayList<>();

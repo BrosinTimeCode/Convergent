@@ -11,6 +11,6 @@ public class Civilian extends FootUnit {
         attack = 5;
         armor = 5;
         rangeAct = 1;
-        team = team;
+        super.team = team;
     }
 }
