@@ -40,8 +40,7 @@ public class Board extends BaseBoard {
     return builder.toString();
   }
 
-  // Pathfinding. First iteration units cannot go through occupied squares
-  //TODO: Add ability to go through ally squares while restricting going through enemy
+  // Pathfinding.
   //TODO: Test Method
   public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd,
       BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
@@ -50,9 +49,19 @@ public class Board extends BaseBoard {
     while (pathNode != null) {
       // The next location has a unit that is not on the same team
       if (!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)) {
-        Path nonEnemyPath = nonEnemyPath(path.getLast().getRow(), path.getLast().getColumn(),
-            rowEnd, columnEnd, team, exploredNodes);
-        path.appendPath(nonEnemyPath);
+        Path nonEnemyPath;
+        if (path.getLength() == 0) {
+          nonEnemyPath = nonEnemyPath(rowStart, columnStart,
+              rowEnd, columnEnd, team, exploredNodes);
+        } else {
+          nonEnemyPath = nonEnemyPath(path.getLast().getRow(), path.getLast().getColumn(),
+              rowEnd, columnEnd, team, exploredNodes);
+        }
+        if (nonEnemyPath != null) {
+          path.appendPath(nonEnemyPath);
+        } else {
+          path = null;
+        }
         break;
       }
       path.addNode(pathNode.getRow(), pathNode.getColumn());
@@ -111,13 +120,26 @@ public class Board extends BaseBoard {
         exploredNodes);
     ArrayList<Path> adjacentPaths = new ArrayList<>();
     for (Node node : adjacentNodes) {
-      adjacentPaths.add(
-          pathFinder(node.getRow(), node.getColumn(), rowEnd, columnEnd, team, exploredNodes));
+      Path path = new Path();
+      path.addNode(node.getRow(), node.getColumn());
+      Path nextPath = pathFinder(node.getRow(), node.getColumn(), rowEnd, columnEnd, team,
+          exploredNodes);
+      if (nextPath != null) {
+        path.appendPath(nextPath);
+      } else {
+        continue;
+      }
+      adjacentPaths.add(path);
     }
-    Path shortestPath = adjacentPaths.get(0);
-    for (int i = 1; i < adjacentPaths.size(); i++) {
-      if (shortestPath.getLength() > adjacentPaths.get(i).getLength()) {
-        shortestPath = adjacentPaths.get(i);
+    Path shortestPath = null;
+    for (Path path : adjacentPaths) {
+      if (shortestPath == null && path.getLast().getRow() == rowEnd
+          && path.getLast().getColumn() == columnEnd) {
+        shortestPath = path;
+      } else if (shortestPath != null && path.getLength() < shortestPath.getLength()
+          && path.getLast().getRow() == rowEnd
+          && path.getLast().getColumn() == columnEnd) {
+        shortestPath = path;
       }
     }
     return shortestPath;
@@ -125,11 +147,11 @@ public class Board extends BaseBoard {
 
   public boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
     // If there is no cell in the board than it is a square that can be traversed
-      if (cell1.unit == null) {
-          return true;
-      } else {
-          return cell1.unit.getTeam() == team;
-      }
+    if (cell1.unit == null) {
+      return true;
+    } else {
+      return cell1.unit.getTeam() == team;
+    }
   }
 
   public ArrayList<Node> getValidAdjacentNodes(int rowCurrent, int columnCurrent,

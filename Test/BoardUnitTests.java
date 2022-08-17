@@ -3,7 +3,9 @@ package Test;
 import Model.Board;
 import Model.BoardCell;
 import Model.Node;
+import Model.Path;
 import Units.BaseUnit;
+import Units.BaseUnit.Team;
 import Units.Civilian;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BoardUnitTests {
 
@@ -113,7 +116,7 @@ public class BoardUnitTests {
            -----
            ----- */
     board.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-    board.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
     assertEquals(board.getValidAdjacentNodes(2, 2, BaseUnit.Team.RED, new HashMap<>()),
         everyAdjacent);
 
@@ -188,5 +191,112 @@ public class BoardUnitTests {
 
   }
 
+  @Test
+  void testNonEnemyPath() {
+        /* 0----
+           -----
+           --0--
+           -----
+           ----- */
+    board.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    Path path = new Path();
+    path.addNode(1, 1);
+    path.addNode(0, 0);
+    assertEquals(board.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()),
+        path);
 
+        /* 0----
+           -XXX-
+           -X0X-
+           -XXX-
+           ----- */
+    board.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    board.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+    assertNull(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()));
+
+        /* 0----
+           -XXX-
+           -X0--
+           -XXX-
+           ----- */
+    board.board[2][3] = new BoardCell(null);
+    path = new Path();
+    path.addNode(2, 3);
+    path.addNode(1, 4);
+    path.addNode(0, 3);
+    path.addNode(0, 2);
+    path.addNode(0, 1);
+    path.addNode(0, 0);
+    assertEquals(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()),
+        path);
+
+        /* 0----
+           --XX-
+           -X0--
+           -XXX-
+           ----- */
+    board.board[1][1] = new BoardCell(null);
+    path = new Path();
+    path.addNode(1, 1);
+    path.addNode(0, 0);
+    assertEquals(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()),
+        path);
+
+        /* 0----
+           -000-
+           -000-
+           -000-
+           ----- */
+    board.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    board.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+    assertEquals(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()),
+        path);
+
+        /* 0----
+           -000-
+           -00--
+           -000-
+           ----- */
+    board.board[2][3] = new BoardCell(null);
+    assertEquals(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()),
+        path);
+
+        /* 0----
+           --00-
+           -00--
+           -000-
+           ----- */
+    board.board[1][1] = new BoardCell(null);
+    assertEquals(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()),
+        path);
+        /* 0---------
+           XXXXXXXXXX
+           -00-------
+           -000------
+           ---------- */
+    board.board[1][0] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][1] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][2] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][3] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][4] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][5] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][6] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][7] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][8] = new BoardCell(new Civilian(Team.BLUE));
+    board.board[1][9] = new BoardCell(new Civilian(Team.BLUE));
+    assertNull(board.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()));
+  }
 }

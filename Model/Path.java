@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 // A path contains nodes and goes from one location to another
 public class Path {
@@ -29,5 +30,24 @@ public class Path {
 
   public int getLength() {
     return path.size();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (o == null) {
+      return false;
+    }
+    if (!(o instanceof Path p)) {
+      return false;
+    }
+    return this.path.equals(p.path);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.path);
   }
 }
