@@ -41,14 +41,19 @@ public class Board extends BaseBoard {
   }
 
   // Pathfinding.
-  //TODO: Test Method
   public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd,
       BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
     Path path = new Path();
+    if (rowStart < 0 || rowStart > board.length || columnStart < 0 || columnStart > board[0].length
+        || rowEnd < 0 || rowEnd > board.length || columnEnd > board[0].length) {
+      return null;
+    }
     Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
     while (pathNode != null) {
       // The next location has a unit that is not on the same team
-      if (!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)) {
+      if (!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)
+          || exploredNodes.containsKey(new Node(
+          pathNode.getRow(), pathNode.getColumn()))) {
         Path nonEnemyPath;
         if (path.getLength() == 0) {
           nonEnemyPath = nonEnemyPath(rowStart, columnStart,
@@ -113,9 +118,9 @@ public class Board extends BaseBoard {
     return null;
   }
 
-  // TODO: Test Method
   public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd,
       BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+    exploredNodes.put(new Node(rowCurrent, columnCurrent), true);
     ArrayList<Node> adjacentNodes = getValidAdjacentNodes(rowCurrent, columnCurrent, team,
         exploredNodes);
     ArrayList<Path> adjacentPaths = new ArrayList<>();
