@@ -1,6 +1,7 @@
 package Commands;
 
 public abstract class BaseCommand {
+
     final String ANSI_RESET = "\u001B[0m";
     final String ANSI_BLUE = "\u001B[34m";
     final String ANSI_RED = "\u001B[31m";

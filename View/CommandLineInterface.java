@@ -7,6 +7,7 @@ public class CommandLineInterface implements GameViewInterface {
     public CommandLineInterface(){
 
     }
+
     public void displayBoard(BaseBoard board) {
         System.out.println(board);
     }
@@ -14,5 +15,6 @@ public class CommandLineInterface implements GameViewInterface {
     public void displayInvalidCommand() { System.out.println("Invalid command! Type \"h\" for a list of commands."); }
     public void displayCommandError(String error) { System.out.println(error);}
     public void refreshBoard(Board board) {
-    displayBoard(board);}
+        displayBoard(board);
+    }
 }

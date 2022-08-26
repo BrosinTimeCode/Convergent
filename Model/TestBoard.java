@@ -14,7 +14,7 @@ public class TestBoard extends Board {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(3);
                 BaseUnit unit;
-                switch(value) {
+                switch (value) {
                     case 0:
                         unit = new Civilian();
                         break;

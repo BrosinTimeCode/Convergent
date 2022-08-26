@@ -1,6 +1,7 @@
 package Commands;
 
 public class Help extends BaseCommand {
+
     char identifier = 'h';
     String syntax = identifier + " [command]";
     String description = "Help: List of commands.";

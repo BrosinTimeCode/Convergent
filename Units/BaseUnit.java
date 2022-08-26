@@ -1,6 +1,7 @@
 package Units;
 
 public abstract class BaseUnit {
+
     char name = 'X';
     int speed = 1;
     int health = 100;

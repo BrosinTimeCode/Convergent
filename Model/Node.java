@@ -3,9 +3,11 @@ package Model;
 import java.util.Objects;
 
 public class Node {
+
     private int row;
     private int column;
-    public Node(int row, int column){
+
+    public Node(int row, int column) {
         this.row = row;
         this.column = column;
     }
@@ -20,13 +22,13 @@ public class Node {
 
     @Override
     public boolean equals(Object o) {
-        if(o == this) {
+        if (o == this) {
             return true;
         }
-        if(o == null) {
+        if (o == null) {
             return false;
         }
-        if(!(o instanceof Node)) {
+        if (!(o instanceof Node)) {
             return false;
         }
         Node n = (Node) o;

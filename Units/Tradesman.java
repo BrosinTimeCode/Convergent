@@ -1,6 +1,7 @@
 package Units;
 
 public class Tradesman extends FootUnit {
+
     public Tradesman() {
         name = 'T';
         speed = 1;

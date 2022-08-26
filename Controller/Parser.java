@@ -5,6 +5,7 @@ import Commands.*;
 import java.util.ArrayList;
 
 public class Parser {
+
     public static BaseCommand getCommand(String input) {
         String[] arguments = input.split("\\s+");
 
@@ -21,8 +22,7 @@ public class Parser {
                     return command;
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
