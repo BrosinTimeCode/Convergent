@@ -7,6 +7,11 @@ public class Select extends BaseCommand {
     String description = "Select: Selects and highlights a unit based on ID or square coordinates.";
     byte minArguments = 0;
     byte maxArguments = 2;
+    String[] arguments;
+
+    public Select(String[] args) {
+        arguments = args;
+    }
 
     @Override
     public char getIdentifier() {

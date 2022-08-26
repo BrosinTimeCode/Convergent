@@ -9,6 +9,11 @@ public class Move extends BaseCommand {
             + syntax;
     byte minArguments = 0;
     byte maxArguments = 3;
+    String[] arguments;
+
+    public Move(String[] args) {
+        arguments = args;
+    }
 
     @Override
     public char getIdentifier() {

@@ -7,6 +7,11 @@ public class Help extends BaseCommand {
     String description = "Help: List of commands.";
     byte minArguments = 0;
     byte maxArguments = 1;
+    String[] arguments;
+
+    public Help(String[] args) {
+        arguments = args;
+    }
 
     @Override
     public char getIdentifier() {
