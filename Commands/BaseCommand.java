@@ -1,6 +1,7 @@
 package Commands;
 
 public abstract class BaseCommand {
+
     final String ANSI_RESET = "\u001B[0m";
     final String ANSI_BLUE = "\u001B[34m";
     final String ANSI_RED = "\u001B[31m";
@@ -11,6 +12,7 @@ public abstract class BaseCommand {
     String tooFewArguments = ANSI_RED + "Too few arguments! Usage: " + syntax + ANSI_RESET;
     byte minArguments = 0;
     byte maxArguments = 1;
+    String[] arguments;
 
     public abstract char getIdentifier();
 
