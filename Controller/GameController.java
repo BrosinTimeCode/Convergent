@@ -2,6 +2,7 @@ package Controller;
 
 import Commands.BaseCommand;
 import Commands.Move;
+import Commands.Select;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.BaseBoard;
@@ -56,6 +57,10 @@ public class GameController {
     }
 
     public boolean executeMove(Move moveCommand) {
+        return true;
+    }
+
+    public boolean executeSelect(Select selectCommand) {
         return true;
     }
 }

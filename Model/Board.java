@@ -9,6 +9,8 @@ public class Board extends BaseBoard {
 
     public BoardCell[][] board;
     private PathFinder pathFinder;
+    private UnitFactory unitFactory;
+    private HashMap<Integer, BaseUnit> globalUnits;
 
     public Board(int row, int column) {
         board = new BoardCell[row][column];
@@ -18,6 +20,8 @@ public class Board extends BaseBoard {
             }
         }
         pathFinder = new PathFinder(this.board);
+        unitFactory = new UnitFactory();
+        globalUnits = new HashMap<>();
     }
 
     public Board() {
@@ -44,6 +48,16 @@ public class Board extends BaseBoard {
 
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
         return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd, board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
+    }
+
+    public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team, String unitType) {
+        if(board[locationRow][locationColumn].unit == null) {
+            BaseUnit unit = unitFactory.createUnit(unitType, team);
+            globalUnits.put(unit.getId(), unit);
+            board[locationRow][locationColumn] = new BoardCell(unit);
+            return true;
+        }
+        return false;
     }
 
 }
