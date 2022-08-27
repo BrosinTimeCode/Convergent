@@ -56,15 +56,15 @@ public class PathFinderUnitTests {
            --0--
            -X-X-
            0---0 */
-        pathFinder.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[0][4] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[4][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[4][4] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[0][4] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[4][0] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[4][4] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         // Diagonal up-left
         assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(1, 2)));
@@ -82,8 +82,8 @@ public class PathFinderUnitTests {
            --0--
            -XXX-
            0---0 */
-        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         // Diagonal up-left
         assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 1)));
@@ -117,8 +117,8 @@ public class PathFinderUnitTests {
            --0--
            -----
            ----- */
-        pathFinder.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
         assertEquals(pathFinder.getValidAdjacentNodes(2, 2, BaseUnit.Team.RED, new HashMap<>()),
           everyAdjacent);
 
@@ -127,14 +127,14 @@ public class PathFinderUnitTests {
            -X0X-
            -XXX-
            ----- */
-        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         assertEquals(pathFinder.getValidAdjacentNodes(2, 2, BaseUnit.Team.RED, new HashMap<>()),
           emptyList);
 
@@ -163,14 +163,14 @@ public class PathFinderUnitTests {
            -000-
            -000-
            ----- */
-        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
         assertEquals(pathFinder.getValidAdjacentNodes(2, 2, BaseUnit.Team.RED, new HashMap<>()),
           everyAdjacent);
 
@@ -201,8 +201,8 @@ public class PathFinderUnitTests {
            --0--
            -----
            ----- */
-        pathFinder.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
         Path path = new Path();
         path.addNode(1, 1);
         path.addNode(0, 0);
@@ -214,14 +214,14 @@ public class PathFinderUnitTests {
            -X0X-
            -XXX-
            ----- */
-        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         assertNull(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()));
 
         /* 0----
@@ -257,14 +257,14 @@ public class PathFinderUnitTests {
            -000-
            -000-
            ----- */
-        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.RED));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.RED));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][1] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[2][3] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.RED, 1));
         assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()),
           path);
 
@@ -291,16 +291,16 @@ public class PathFinderUnitTests {
            -00-------
            -000------
            ---------- */
-        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE));
+        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE, 1));
         assertNull(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()));
     }
 
@@ -311,18 +311,18 @@ public class PathFinderUnitTests {
            ----------
            ----------
            ---------0 */
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[4][9] = new BoardCell(new Civilian(Team.RED));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[4][9] = new BoardCell(new Civilian(Team.RED, 1));
         assertNull(pathFinder.pathFinder(4, 9, 0, 0, Team.RED, new HashMap<>()));
 
         /* 0---------
@@ -357,8 +357,8 @@ public class PathFinderUnitTests {
            ----------
            ----------
            0--------- */
-        pathFinder.board[4][0] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[4][9] = new BoardCell(new Civilian(null));
+        pathFinder.board[4][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[4][9] = new BoardCell(new Civilian(null, 1));
         path = new Path();
         path.addNode(3, 0);
         path.addNode(2, 0);
@@ -372,7 +372,7 @@ public class PathFinderUnitTests {
            ----------
            ---------- */
         pathFinder.board[4][0] = new BoardCell(null);
-        pathFinder.board[0][9] = new BoardCell(new Civilian(Team.RED));
+        pathFinder.board[0][9] = new BoardCell(new Civilian(Team.RED, 1));
         path = new Path();
         path.addNode(0, 8);
         path.addNode(0, 7);
@@ -390,9 +390,9 @@ public class PathFinderUnitTests {
            XXXX0-XXXX
            XXXXXXXXXX
            XXXXXXXXXX */
-        populateBoard(new Civilian(Team.BLUE));
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[2][4] = new BoardCell(new Civilian(Team.RED));
+        populateBoard(new Civilian(Team.BLUE, 1));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[2][4] = new BoardCell(new Civilian(Team.RED, 2));
         pathFinder.board[2][5] = new BoardCell(null);
         assertNull(pathFinder.pathFinder(2, 5, 0, 0, Team.RED, new HashMap<>()));
 
@@ -402,26 +402,26 @@ public class PathFinderUnitTests {
            -XXXXXXXX-
            ---------- */
         populateBoard(null);
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[2][7] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[2][8] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][4] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][5] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][6] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][7] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[3][8] = new BoardCell(new Civilian(Team.BLUE));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[2][7] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[2][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][4] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][5] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][6] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][8] = new BoardCell(new Civilian(Team.BLUE, 1));
         path = new Path();
         path.addNode(2, 6);
         path.addNode(2, 5);
@@ -457,7 +457,7 @@ public class PathFinderUnitTests {
            0000000000
            0000000000
            0000000000 */
-        populateBoard(new Civilian(Team.RED));
+        populateBoard(new Civilian(Team.RED, 1));
         path = new Path();
         path.addNode(3, 8);
         path.addNode(2, 7);
@@ -475,18 +475,18 @@ public class PathFinderUnitTests {
            ----------
            ----------
            ---------X */
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][9] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[4][9] = new BoardCell(new Civilian(Team.BLUE));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][9] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[4][9] = new BoardCell(new Civilian(Team.BLUE, 1));
         assertNull(pathFinder.pathFinder(4, 9, 0, 0, Team.BLUE, new HashMap<>()));
 
         /* X---------
@@ -495,8 +495,8 @@ public class PathFinderUnitTests {
            ----------
            ---------X */
         populateBoard(null);
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[4][9] = new BoardCell(new Civilian(Team.BLUE));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[4][9] = new BoardCell(new Civilian(Team.BLUE, 1));
         path = new Path();
         path.addNode(3, 8);
         path.addNode(2, 7);
@@ -515,7 +515,7 @@ public class PathFinderUnitTests {
            ----------
            X--------- */
         pathFinder.board[4][9] = new BoardCell(null);
-        pathFinder.board[4][0] = new BoardCell(new Civilian(Team.BLUE));
+        pathFinder.board[4][0] = new BoardCell(new Civilian(Team.BLUE, 1));
         path = new Path();
         path.addNode(3, 0);
         path.addNode(2, 0);
@@ -529,7 +529,7 @@ public class PathFinderUnitTests {
            ----------
            ---------- */
         pathFinder.board[4][0] = new BoardCell(null);
-        pathFinder.board[0][9] = new BoardCell(new Civilian(Team.BLUE));
+        pathFinder.board[0][9] = new BoardCell(new Civilian(Team.BLUE, 1));
         path = new Path();
         path.addNode(0, 8);
         path.addNode(0, 7);
@@ -547,9 +547,9 @@ public class PathFinderUnitTests {
            0000X-0000
            0000000000
            0000000000 */
-        populateBoard(new Civilian(Team.RED));
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[2][4] = new BoardCell(new Civilian(Team.BLUE));
+        populateBoard(new Civilian(Team.RED, 1));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[2][4] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[2][5] = new BoardCell(null);
         assertNull(pathFinder.pathFinder(2, 5, 0, 0, Team.BLUE, new HashMap<>()));
 
@@ -559,26 +559,26 @@ public class PathFinderUnitTests {
            -00000000-
            ---------- */
         populateBoard(null);
-        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[2][7] = new BoardCell(new Civilian(Team.BLUE));
-        pathFinder.board[2][8] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][1] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][2] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][3] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][4] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][5] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][6] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][7] = new BoardCell(new Civilian(Team.RED));
-        pathFinder.board[3][8] = new BoardCell(new Civilian(Team.RED));
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[2][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[2][8] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][4] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][5] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][6] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][7] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[3][8] = new BoardCell(new Civilian(Team.RED, 1));
         path = new Path();
         path.addNode(2, 6);
         path.addNode(2, 5);
@@ -614,7 +614,7 @@ public class PathFinderUnitTests {
            XXXXXXXXXX
            XXXXXXXXXX
            XXXXXXXXXX */
-        populateBoard(new Civilian(Team.BLUE));
+        populateBoard(new Civilian(Team.BLUE, 1));
         path = new Path();
         path.addNode(3, 8);
         path.addNode(2, 7);

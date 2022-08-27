@@ -2,7 +2,7 @@ package Units;
 
 public class Tradesman extends FootUnit {
 
-    public Tradesman() {
+    public Tradesman(Team team, int id) {
         name = 'T';
         speed = 1;
         health = 100;
@@ -11,5 +11,7 @@ public class Tradesman extends FootUnit {
         attack = 3;
         armor = 3;
         rangeAct = 1;
+        super.team = team;
+        super.id = id;
     }
 }
