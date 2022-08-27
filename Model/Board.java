@@ -3,7 +3,7 @@ package Model;
 public class Board extends BaseBoard {
 
     public BoardCell[][] board;
-    public int length;
+    public int width;
     public int height;
 
     @Override

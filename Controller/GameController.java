@@ -25,6 +25,7 @@ public class GameController {
         switch (viewType) {
             default:
                 viewInterface = new CommandLineInterface();
+                viewInterface.initialize();
         }
     }
 
@@ -37,9 +38,8 @@ public class GameController {
 
     public void handleUserInput() {
         viewInterface.displayHelp();
-        boolean consoleIsOpen = true;
         Scanner userInput = new Scanner(System.in);
-        while (consoleIsOpen) {
+        while (true) {
             BaseCommand userCommand = Parser.getCommand(userInput.nextLine());
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();

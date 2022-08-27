@@ -18,4 +18,5 @@ public interface GameViewInterface {
 
     void displayCommandError(String error);
 
+    void initialize();
 }
