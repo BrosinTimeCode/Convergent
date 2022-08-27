@@ -24,4 +24,8 @@ public abstract class BaseUnit {
     public Team getTeam() {
         return team;
     }
+
+    public int getId() {
+        return id;
+    }
 }
