@@ -12,5 +12,4 @@ public interface GameViewInterface {
     void displayHelp();
     void displayInvalidCommand();
     void displayCommandError(String error);
-
 }
