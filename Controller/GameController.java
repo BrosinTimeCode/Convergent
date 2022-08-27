@@ -1,6 +1,7 @@
 package Controller;
 
 import Commands.BaseCommand;
+import Commands.Move;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.BaseBoard;
@@ -45,5 +46,16 @@ public class GameController {
                 viewInterface.displayInvalidCommand();
             }
         }
+    }
+
+    public boolean executeCommand(BaseCommand command) {
+        if(command instanceof Move) {
+            return executeMove((Move) command);
+        }
+        return false;
+    }
+
+    public boolean executeMove(Move moveCommand) {
+        return true;
     }
 }
