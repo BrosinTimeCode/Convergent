@@ -3,7 +3,7 @@ package Units;
 public class Civilian extends FootUnit {
 
     public Civilian() {
-        name = 'T';
+        name = 'C';
         speed = 2;
         health = 100;
         rangeSight = 4;
