@@ -27,4 +27,6 @@ public abstract class BaseCommand {
     public abstract boolean hasEnoughArguments(String[] arguments);
 
     public abstract boolean hasTooManyArguments(String[] arguments);
+
+    public abstract String[] getArguments();
 }

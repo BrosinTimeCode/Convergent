@@ -11,6 +11,8 @@ public class Board extends BaseBoard {
     private PathFinder pathFinder;
     private UnitFactory unitFactory;
     private HashMap<Integer, BaseUnit> globalUnits;
+    private BaseUnit player1SelectedUnit;
+
 
     public Board(int row, int column) {
         board = new BoardCell[row][column];
@@ -58,6 +60,18 @@ public class Board extends BaseBoard {
             return true;
         }
         return false;
+    }
+
+    public boolean selectUnit(int row, int column) {
+        if(checkBounds(row, column)) {
+            player1SelectedUnit = board[row][column].unit;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkBounds(int row, int column) {
+        return !(row > board.length || row < 0 || column > board[0].length || column < 0);
     }
 
 }

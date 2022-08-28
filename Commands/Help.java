@@ -47,4 +47,9 @@ public class Help extends BaseCommand {
     public boolean hasTooManyArguments(String[] arguments) {
         return arguments.length > maxArguments;
     }
+
+    @Override
+    public String[] getArguments() {
+        return arguments;
+    }
 }

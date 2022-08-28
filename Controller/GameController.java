@@ -53,6 +53,9 @@ public class GameController {
         if(command instanceof Move) {
             return executeMove((Move) command);
         }
+        else if(command instanceof Select) {
+            return executeSelect((Select) command);
+        }
         return false;
     }
 
@@ -61,6 +64,7 @@ public class GameController {
     }
 
     public boolean executeSelect(Select selectCommand) {
-        return true;
+        String[] arguments = selectCommand.getArguments();
+        return board.selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
     }
 }
