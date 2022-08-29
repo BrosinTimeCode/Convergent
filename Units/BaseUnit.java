@@ -9,8 +9,8 @@ public abstract class BaseUnit {
     int rangeAttack = 1;
     int attack = 1;
     int armor = 5;
-    // TODO: remove this or optimize where to put this information for determining unit faction
     Team team;
+    int id;
 
     public enum Team {
         BLUE,
@@ -23,5 +23,9 @@ public abstract class BaseUnit {
 
     public Team getTeam() {
         return team;
+    }
+
+    public int getId() {
+        return id;
     }
 }
