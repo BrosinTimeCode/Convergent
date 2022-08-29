@@ -6,7 +6,6 @@ import View.CommandLineInterface;
 import Model.BaseBoard;
 import Model.TestBoard;
 import Model.Board;
-import java.util.Scanner;
 import java.util.Timer;
 
 public class GameController {
@@ -24,7 +23,7 @@ public class GameController {
         }
         switch (viewType) {
             default:
-                viewInterface = new CommandLineInterface();
+                viewInterface = new CommandLineInterface(board);
                 viewInterface.initialize();
         }
     }
@@ -38,9 +37,9 @@ public class GameController {
 
     public void handleUserInput() {
         viewInterface.displayHelp();
-        Scanner userInput = new Scanner(System.in);
         while (true) {
-            BaseCommand userCommand = Parser.getCommand(userInput.nextLine());
+            String userInput = viewInterface.getUserInput();
+            BaseCommand userCommand = Parser.getCommand(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             }
