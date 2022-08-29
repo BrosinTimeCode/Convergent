@@ -70,6 +70,7 @@ public class CommandLineInterface implements GameViewInterface {
     public void initialize() {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
+            defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();
             terminal.enterPrivateMode();
