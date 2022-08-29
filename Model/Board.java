@@ -1,10 +1,35 @@
 package Model;
 
+import Units.BaseUnit;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Board extends BaseBoard {
 
     public BoardCell[][] board;
     public int width;
     public int height;
+    private PathFinder pathFinder;
+    private UnitFactory unitFactory;
+    private HashMap<Integer, BaseUnit> globalUnits;
+    private BaseUnit player1SelectedUnit;
+
+
+    public Board(int row, int column) {
+        board = new BoardCell[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                board[i][j] = new BoardCell(null);
+            }
+        }
+        pathFinder = new PathFinder(this.board);
+        unitFactory = new UnitFactory();
+        globalUnits = new HashMap<>();
+    }
+
+    public Board() {
+    }
 
     @Override
     // toString method used for printing the board
@@ -14,7 +39,7 @@ public class Board extends BaseBoard {
             for (BoardCell column : row) {
                 // If there is no unit in cell
                 if (column.unit == null) {
-                    builder.append(".");
+                    builder.append("0");
                 } else {
                     builder.append(column.unit.getName());
                 }
@@ -24,59 +49,31 @@ public class Board extends BaseBoard {
         }
         return builder.toString();
     }
-    // Pathfinding. First iteration units cannot go through occupied squares
-    //TODO: Add ability to go through ally squares while restricting going through enemy
+
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
-        Path path = new Path();
-        Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
-        while (pathNode != null) {
-            path.addNode(pathNode.getRow(), pathNode.getColumn());
-            pathNode = nextNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
-        }
-        return path;
+        return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd, board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
     }
 
-    // Gives the next closest node to the current that goes towards end node
-    public Node nextNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
-        // Diagonal path towards destination
-        if (rowCurrent != rowEnd && columnCurrent != columnEnd) {
-            // Top left
-            if (rowCurrent > rowEnd && columnCurrent > columnEnd) {
-                return new Node(rowCurrent - 1, columnCurrent - 1);
-            }
-            // Top right
-            else if (rowCurrent > rowEnd && columnCurrent < columnEnd) {
-                return new Node(rowCurrent - 1, columnCurrent + 1);
-            }
-            // Bottom left
-            else if (rowCurrent < rowEnd && columnCurrent > columnEnd) {
-                return new Node(rowCurrent + 1, columnCurrent - 1);
-            }
-            // Bottom right
-            else if ((rowCurrent < rowEnd && columnCurrent < columnEnd)) {
-                return new Node(rowCurrent + 1, columnCurrent + 1);
-            }
+    public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team, String unitType) {
+        if(board[locationRow][locationColumn].unit == null) {
+            BaseUnit unit = unitFactory.createUnit(unitType, team);
+            globalUnits.put(unit.getId(), unit);
+            board[locationRow][locationColumn] = new BoardCell(unit);
+            return true;
         }
-        // Current is in the correct column
-        // Up
-        else if (rowCurrent != rowEnd && rowEnd > rowCurrent) {
-            return new Node(rowCurrent + 1, columnCurrent);
+        return false;
+    }
+
+    public boolean selectUnit(int row, int column) {
+        if(checkBounds(row, column)) {
+            player1SelectedUnit = board[row][column].unit;
+            return true;
         }
-        // Down
-        else if (rowCurrent != rowEnd && rowEnd < rowCurrent) {
-            return new Node(rowCurrent - 1, columnCurrent);
-        }
-        // Current is in the correct row
-        // Left
-        else if (columnCurrent != columnEnd && columnEnd < columnCurrent) {
-            return new Node(rowCurrent, columnCurrent - 1);
-        }
-        // Right
-        else if (columnCurrent != columnEnd && columnEnd > columnCurrent) {
-            return new Node(rowCurrent, columnCurrent + 1);
-        }
-        // Current equals End
-        return null;
+        return false;
+    }
+
+    private boolean checkBounds(int row, int column) {
+        return !(row > board.length || row < 0 || column > board[0].length || column < 0);
     }
 
 }

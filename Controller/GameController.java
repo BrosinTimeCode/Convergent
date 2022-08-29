@@ -1,6 +1,8 @@
 package Controller;
 
 import Commands.BaseCommand;
+import Commands.Move;
+import Commands.Select;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.BaseBoard;
@@ -44,5 +46,24 @@ public class GameController {
                 viewInterface.displayInvalidCommand();
             }
         }
+    }
+
+    public boolean executeCommand(BaseCommand command) {
+        if(command instanceof Move) {
+            return executeMove((Move) command);
+        }
+        else if(command instanceof Select) {
+            return executeSelect((Select) command);
+        }
+        return false;
+    }
+
+    public boolean executeMove(Move moveCommand) {
+        return true;
+    }
+
+    public boolean executeSelect(Select selectCommand) {
+        String[] arguments = selectCommand.getArguments();
+        return board.selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
     }
 }

@@ -9,8 +9,23 @@ public abstract class BaseUnit {
     int rangeAttack = 1;
     int attack = 1;
     int armor = 5;
+    Team team;
+    int id;
+
+    public enum Team {
+        BLUE,
+        RED
+    }
 
     public char getName() {
         return name;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public int getId() {
+        return id;
     }
 }

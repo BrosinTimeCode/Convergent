@@ -2,7 +2,7 @@ package Units;
 
 public class Civilian extends FootUnit {
 
-    public Civilian() {
+    public Civilian(Team team, int id) {
         name = 'C';
         speed = 2;
         health = 100;
@@ -11,5 +11,7 @@ public class Civilian extends FootUnit {
         attack = 5;
         armor = 5;
         rangeAct = 1;
+        super.team = team;
+        super.id = id;
     }
 }
