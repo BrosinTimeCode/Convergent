@@ -13,7 +13,7 @@ public class TestBoard extends Board {
         Random randomGenerator = new Random();
         width = randomGenerator.nextInt(20) + 1;
         height = randomGenerator.nextInt(20) + 1;
-        board = new BoardCell[width][height];
+        board = new BoardCell[height][width];
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(3);
@@ -32,6 +32,7 @@ public class TestBoard extends Board {
                 board[row][column] = new BoardCell(unit);
             }
         }
-
     }
+    public int getHeight() { return height; }
+    public int getWidth() { return width; }
 }
