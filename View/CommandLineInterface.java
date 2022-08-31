@@ -16,17 +16,23 @@ public class CommandLineInterface implements GameViewInterface {
 
     Terminal terminal;
     TextGraphics textGraphics;
-    int[] boardPosition;
-    int[] inputPosition;
-    int[] infoPosition;
+    private final int boardPositionX;
+    private final int boardPositionY;
+    private final int inputPositionX;
+    private final int inputPositionY;
+    private final int infoPositionX;
+    private final int infoPositionY;
     List<ConsoleLogItem> consoleLog;
 
     public CommandLineInterface(BaseBoard board) {
 
         terminal = null;
-        boardPosition = new int[]{2, 1};
-        inputPosition = new int[]{2, board.getHeight() + 2};
-        infoPosition = new int[]{2, board.getHeight() + 4};
+        boardPositionX = 2;
+        boardPositionY = 1;
+        inputPositionX = 2;
+        inputPositionY = board.getHeight() + 2;
+        infoPositionX = 2;
+        infoPositionY = board.getHeight() + 4;
         consoleLog = new ArrayList<>();
 
     }
@@ -37,7 +43,7 @@ public class CommandLineInterface implements GameViewInterface {
             textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
             String[] rows = board.toString().split("\\r?\\n");
             for (int row = 0; row < rows.length; row++) {
-                textGraphics.putString(boardPosition[0], row + boardPosition[1], rows[row]);
+                textGraphics.putString(boardPositionX, row + boardPositionY, rows[row]);
             }
             terminal.flush();
             resetTextGraphicsColors();
@@ -84,8 +90,8 @@ public class CommandLineInterface implements GameViewInterface {
 
     @Override
     public String getUserInput() {
-        int x = inputPosition[0];
-        int y = inputPosition[1];
+        int x = inputPositionX;
+        int y = inputPositionY;
         try {
             resetTextGraphicsColors();
             textGraphics.putString(x, y, "/");
@@ -139,8 +145,8 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     public void displayConsoleLog() {
-        int x = infoPosition[0];
-        int y = infoPosition[1];
+        int x = infoPositionX;
+        int y = infoPositionY;
         try {
             // display the last five logs
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
@@ -149,8 +155,8 @@ public class CommandLineInterface implements GameViewInterface {
                 textGraphics.drawLine(x, y + i,
                   terminal.getTerminalSize().getColumns() - 1, y + i,
                   ' ');
-                textGraphics.setForegroundColor(consoleLog.get(i).color);
-                textGraphics.putString(x, y + i, consoleLog.get(i).memo);
+                textGraphics.setForegroundColor(consoleLog.get(i).getColor());
+                textGraphics.putString(x, y + i, consoleLog.get(i).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();
