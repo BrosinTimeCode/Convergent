@@ -20,9 +20,15 @@ public class ConsoleLogItem {
         return timestamp.toString() + " " + memo;
     }
 
-    public TextColor getColor() { return color; }
+    public TextColor getColor() {
+        return color;
+    }
 
-    public Timestamp getTimestamp() { return timestamp; }
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
 
-    public String getMemo() { return memo; }
+    public String getMemo() {
+        return memo;
+    }
 }

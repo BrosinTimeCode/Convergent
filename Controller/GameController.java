@@ -17,10 +17,9 @@ public class GameController {
     private BaseUnit player1SelectedUnit;
 
     public GameController(int viewType, int[] boardSize) {
-        if(boardSize.length != 2) {
+        if (boardSize.length != 2) {
             board = new TestBoard();
-        }
-        else {
+        } else {
             board = new Board(boardSize[0], boardSize[1]);
         }
         switch (viewType) {
@@ -49,10 +48,9 @@ public class GameController {
     }
 
     public boolean executeCommand(BaseCommand command) {
-        if(command instanceof Move) {
+        if (command instanceof Move) {
             return executeMove((Move) command);
-        }
-        else if(command instanceof Select) {
+        } else if (command instanceof Select) {
             return executeSelect((Select) command);
         }
         return false;
@@ -68,7 +66,7 @@ public class GameController {
     }
 
     public boolean selectUnit(int row, int column) {
-        if(checkBounds(row, column)) {
+        if (checkBounds(row, column)) {
             player1SelectedUnit = board.getUnit(row, column);
             return true;
         }
@@ -76,6 +74,7 @@ public class GameController {
     }
 
     private boolean checkBounds(int row, int column) {
-        return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth() || column < 0);
+        return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth()
+          || column < 0);
     }
 }

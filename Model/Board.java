@@ -2,7 +2,6 @@ package Model;
 
 import Units.BaseUnit;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Board {
@@ -48,11 +47,13 @@ public class Board {
     }
 
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
-        return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd, board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
+        return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd,
+          board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
     }
 
-    public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team, String unitType) {
-        if(board[locationRow][locationColumn].unit == null) {
+    public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team,
+      String unitType) {
+        if (board[locationRow][locationColumn].unit == null) {
             BaseUnit unit = unitFactory.createUnit(unitType, team);
             globalUnits.put(unit.getId(), unit);
             board[locationRow][locationColumn] = new BoardCell(unit);
@@ -60,6 +61,7 @@ public class Board {
         }
         return false;
     }
+
     public BaseUnit getUnit(int x, int y) {
         return board[x][y].unit;
     }

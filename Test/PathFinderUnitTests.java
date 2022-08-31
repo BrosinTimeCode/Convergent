@@ -66,16 +66,20 @@ public class PathFinderUnitTests {
         pathFinder.board[3][1] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         pathFinder.board[3][3] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         // Diagonal up-left
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(1, 2)));
         // Diagonal up-right
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(1, 2)));
         // Diagonal bottom-left
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 1)));
         // Diagonal bottom-right
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 3)));
         /* 0---0
            -XXX-
@@ -85,16 +89,20 @@ public class PathFinderUnitTests {
         pathFinder.board[1][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         pathFinder.board[3][2] = new BoardCell(new Civilian(BaseUnit.Team.BLUE, 1));
         // Diagonal up-left
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 0, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 1)));
         // Diagonal up-right
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 0, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 3)));
         // Diagonal bottom-left
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 4, 0, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 1)));
         // Diagonal bottom-right
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
+        assertEquals(
+          pathFinder.nonEnemyPath(2, 2, 4, 4, BaseUnit.Team.RED, new HashMap<>()).getFirst(),
           (new Node(2, 3)));
     }
 
