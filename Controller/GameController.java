@@ -3,6 +3,7 @@ package Controller;
 import Commands.BaseCommand;
 import Commands.Move;
 import Commands.Select;
+import Units.BaseUnit;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.TestBoard;
@@ -14,6 +15,7 @@ public class GameController {
 
     GameViewInterface viewInterface;
     Board board;
+    private BaseUnit player1SelectedUnit;
 
     public GameController(int viewType, int[] boardSize) {
         if(boardSize.length != 2) {
@@ -63,6 +65,18 @@ public class GameController {
 
     public boolean executeSelect(Select selectCommand) {
         String[] arguments = selectCommand.getArguments();
-        return board.selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+        return selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+    }
+
+    public boolean selectUnit(int row, int column) {
+        if(checkBounds(row, column)) {
+            player1SelectedUnit = board.getUnit(row, column);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkBounds(int row, int column) {
+        return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth() || column < 0);
     }
 }
