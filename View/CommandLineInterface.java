@@ -29,9 +29,9 @@ public class CommandLineInterface implements GameViewInterface {
         boardPositionX = 2;
         boardPositionY = 1;
         inputPositionX = 2;
-        inputPositionY = board.getHeight() + 2;
+        inputPositionY = board.getBoardHeight() + 2;
         infoPositionX = 2;
-        infoPositionY = board.getHeight() + 4;
+        infoPositionY = board.getBoardHeight() + 4;
         consoleLog = new ArrayList<>();
 
     }

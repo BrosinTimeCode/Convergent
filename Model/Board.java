@@ -8,15 +8,11 @@ import java.util.HashMap;
 public class Board {
 
     public BoardCell[][] board;
-    private final int width;
-    private final int height;
     private PathFinder pathFinder;
     private UnitFactory unitFactory;
     private HashMap<Integer, BaseUnit> globalUnits;
 
     public Board(int rows, int columns) {
-        width = columns;
-        height = rows;
         board = new BoardCell[rows][columns];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -29,12 +25,8 @@ public class Board {
     }
 
     public Board() {
-        width = 0;
-        height = 0;
-    }
 
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
+    }
 
     @Override
     // toString method used for printing the board

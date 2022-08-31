@@ -5,14 +5,12 @@ import Units.*;
 
 public class TestBoard extends Board {
 
-    private final int width;
-    private final int height;
     // Random board generator for testing purposes
     public TestBoard() {
         Random randomGenerator = new Random();
-        width = randomGenerator.nextInt(20) + 1;
-        height = randomGenerator.nextInt(20) + 1;
-        board = new BoardCell[height][width];
+        int x = randomGenerator.nextInt(20) + 1;
+        int y = randomGenerator.nextInt(20) + 1;
+        board = new BoardCell[x][y];
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(3);
@@ -32,6 +30,4 @@ public class TestBoard extends Board {
             }
         }
     }
-    public int getHeight() { return height; }
-    public int getWidth() { return width; }
 }
