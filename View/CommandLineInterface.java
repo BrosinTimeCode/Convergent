@@ -1,6 +1,7 @@
 package View;
 
 import Model.Board;
+import View.ConsoleLogItem.Type;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -53,7 +54,7 @@ public class CommandLineInterface implements GameViewInterface {
 
     public void displayHelp() {
         ConsoleLogItem log = new ConsoleLogItem(TextColor.ANSI.YELLOW,
-          "Type \"m\" to move a unit or \"h\" for a list of commands.");
+          "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
         consoleLog.add(0, log);
         displayConsoleLog();
         System.out.println(log);
@@ -61,7 +62,7 @@ public class CommandLineInterface implements GameViewInterface {
 
     public void displayInvalidCommand() {
         ConsoleLogItem log = new ConsoleLogItem(TextColor.ANSI.RED,
-          "Invalid command! Type \"h\" for a list of commands.");
+          "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
         consoleLog.add(0, log);
         displayConsoleLog();
         System.out.println(log);
