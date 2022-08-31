@@ -6,9 +6,9 @@ import java.time.Instant;
 
 public class ConsoleLogItem {
 
-    TextColor color;
-    Timestamp timestamp;
-    String memo;
+    private final TextColor color;
+    private final Timestamp timestamp;
+    private final String memo;
 
     public ConsoleLogItem(TextColor color, String memo) {
         timestamp = Timestamp.from(Instant.now());
@@ -19,4 +19,10 @@ public class ConsoleLogItem {
     public String toString() {
         return timestamp.toString() + " " + memo;
     }
+
+    public TextColor getColor() { return color; }
+
+    public Timestamp getTimestamp() { return timestamp; }
+
+    public String getMemo() { return memo; }
 }
