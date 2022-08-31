@@ -5,7 +5,6 @@ import Commands.Move;
 import Commands.Select;
 import View.GameViewInterface;
 import View.CommandLineInterface;
-import Model.BaseBoard;
 import Model.TestBoard;
 import Model.Board;
 import java.util.Scanner;
@@ -14,15 +13,14 @@ import java.util.Timer;
 public class GameController {
 
     GameViewInterface viewInterface;
-    BaseBoard board;
+    Board board;
 
-    public GameController(int viewType, int boardType) {
-        switch (boardType) {
-            case 1:
-                board = new TestBoard();
-                break;
-            default:
-                board = new Board();
+    public GameController(int viewType, int[] boardSize) {
+        if(boardSize.length != 2) {
+            board = new TestBoard();
+        }
+        else {
+            board = new Board(boardSize[0], boardSize[1]);
         }
         switch (viewType) {
             default:

@@ -5,7 +5,7 @@ import Units.BaseUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Board extends BaseBoard {
+public class Board {
 
     public BoardCell[][] board;
     private PathFinder pathFinder;

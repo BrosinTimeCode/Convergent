@@ -1,6 +1,5 @@
 package View;
 
-import Model.BaseBoard;
 import Model.Board;
 
 public class CommandLineInterface implements GameViewInterface {
@@ -9,7 +8,7 @@ public class CommandLineInterface implements GameViewInterface {
 
     }
 
-    public void displayBoard(BaseBoard board) {
+    public void displayBoard(Board board) {
         System.out.println(board);
     }
 
