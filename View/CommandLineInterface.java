@@ -23,7 +23,7 @@ public class CommandLineInterface implements GameViewInterface {
     private final int infoPositionY;
     List<ConsoleLogItem> consoleLog;
 
-    public CommandLineInterface(BaseBoard board) {
+    public CommandLineInterface(Board board) {
 
         terminal = null;
         boardPositionX = 2;
@@ -48,6 +48,7 @@ public class CommandLineInterface implements GameViewInterface {
             resetTextGraphicsColors();
         } catch (IOException e) {
             e.printStackTrace();
+        }
     }
 
     public void displayHelp() {
