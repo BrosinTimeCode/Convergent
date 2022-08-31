@@ -2,8 +2,13 @@ package Model;
 
 public abstract class BaseBoard {
 
-    public int width;
-    public int height;
+    private final int width;
+    private final int height;
+
+    protected BaseBoard() {
+        width = 0;
+        height = 0;
+    }
 
     public int getWidth() { return width; }
     public int getHeight() { return height; }
