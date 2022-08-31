@@ -1,6 +1,5 @@
 package View;
 
-import Model.BaseBoard;
 import Model.Board;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -37,7 +36,7 @@ public class CommandLineInterface implements GameViewInterface {
 
     }
 
-    public void displayBoard(BaseBoard board) {
+    public void displayBoard(Board board) {
         try {
             textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
             textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
@@ -49,7 +48,6 @@ public class CommandLineInterface implements GameViewInterface {
             resetTextGraphicsColors();
         } catch (IOException e) {
             e.printStackTrace();
-        }
     }
 
     public void displayHelp() {
