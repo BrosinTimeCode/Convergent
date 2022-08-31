@@ -1,15 +1,15 @@
 package Controller;
 
+import Model.Board;
 import View.GameViewInterface;
-import Model.BaseBoard;
 import java.util.TimerTask;
 
 public class RefreshMapTask extends TimerTask {
 
     GameViewInterface viewInterface;
-    BaseBoard board;
+    Board board;
 
-    public RefreshMapTask(GameViewInterface viewInterface, BaseBoard board) {
+    public RefreshMapTask(GameViewInterface viewInterface, Board board) {
         this.viewInterface = viewInterface;
         this.board = board;
     }

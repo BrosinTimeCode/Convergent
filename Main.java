@@ -3,7 +3,8 @@ import Controller.GameController;
 public class Main {
 
     public static void main(String[] args) {
-        GameController controller = new GameController(-1, 1);
+        int[] boardSize = {10,10};
+        GameController controller = new GameController(-1, boardSize);
         controller.initialize();
         controller.handleUserInput();
     }

@@ -3,9 +3,9 @@ package Controller;
 import Commands.BaseCommand;
 import Commands.Move;
 import Commands.Select;
+import Units.BaseUnit;
 import View.GameViewInterface;
 import View.CommandLineInterface;
-import Model.BaseBoard;
 import Model.TestBoard;
 import Model.Board;
 import java.util.Scanner;
@@ -14,15 +14,15 @@ import java.util.Timer;
 public class GameController {
 
     GameViewInterface viewInterface;
-    BaseBoard board;
+    Board board;
+    private BaseUnit player1SelectedUnit;
 
-    public GameController(int viewType, int boardType) {
-        switch (boardType) {
-            case 1:
-                board = new TestBoard();
-                break;
-            default:
-                board = new Board();
+    public GameController(int viewType, int[] boardSize) {
+        if(boardSize.length != 2) {
+            board = new TestBoard();
+        }
+        else {
+            board = new Board(boardSize[0], boardSize[1]);
         }
         switch (viewType) {
             default:
@@ -65,6 +65,18 @@ public class GameController {
 
     public boolean executeSelect(Select selectCommand) {
         String[] arguments = selectCommand.getArguments();
-        return board.selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+        return selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+    }
+
+    public boolean selectUnit(int row, int column) {
+        if(checkBounds(row, column)) {
+            player1SelectedUnit = board.getUnit(row, column);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkBounds(int row, int column) {
+        return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth() || column < 0);
     }
 }
