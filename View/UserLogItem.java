@@ -4,7 +4,7 @@ import com.googlecode.lanterna.TextColor;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-public class ConsoleLogItem {
+public class UserLogItem {
 
     private final TextColor color;
     private final Timestamp timestamp;
@@ -17,7 +17,7 @@ public class ConsoleLogItem {
         INFO
     }
 
-    public ConsoleLogItem(TextColor color, String memo, Type type) {
+    public UserLogItem(TextColor color, String memo, Type type) {
         timestamp = Timestamp.from(Instant.now());
         this.color = color;
         this.memo = memo;

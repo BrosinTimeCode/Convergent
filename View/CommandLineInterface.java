@@ -1,7 +1,8 @@
 package View;
 
 import Model.Board;
-import View.ConsoleLogItem.Type;
+import View.UserLogItem.Type;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -20,9 +21,9 @@ public class CommandLineInterface implements GameViewInterface {
     private final int boardPositionY;
     private final int inputPositionX;
     private final int inputPositionY;
-    private final int infoPositionX;
-    private final int infoPositionY;
-    List<ConsoleLogItem> consoleLog;
+    private final int logPositionX;
+    private final int logPositionY;
+    List<UserLogItem> userLog;
 
     public CommandLineInterface(Board board) {
 
@@ -30,10 +31,10 @@ public class CommandLineInterface implements GameViewInterface {
         boardPositionX = 2;
         boardPositionY = 1;
         inputPositionX = 2;
-        inputPositionY = board.getBoardHeight() + 2;
-        infoPositionX = 2;
-        infoPositionY = board.getBoardHeight() + 4;
-        consoleLog = new ArrayList<>();
+        inputPositionY = board.getBoardHeight() + 13;
+        logPositionX = 2;
+        logPositionY = board.getBoardHeight() + 2;
+        userLog = new ArrayList<>();
 
     }
 
@@ -53,17 +54,17 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     public void displayHelp() {
-        ConsoleLogItem log = new ConsoleLogItem(TextColor.ANSI.YELLOW,
+        UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
           "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
-        consoleLog.add(0, log);
+        userLog.add(0, log);
         displayConsoleLog();
         System.out.println(log);
     }
 
     public void displayInvalidCommand() {
-        ConsoleLogItem log = new ConsoleLogItem(TextColor.ANSI.RED,
+        UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
           "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
-        consoleLog.add(0, log);
+        userLog.add(log);
         displayConsoleLog();
         System.out.println(log);
     }
@@ -77,6 +78,8 @@ public class CommandLineInterface implements GameViewInterface {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
+            TerminalSize terminalSize = new TerminalSize(inputPositionX+62, inputPositionY+2);
+            defaultTerminalFactory.setInitialTerminalSize(terminalSize);
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();
             terminal.enterPrivateMode();
@@ -145,18 +148,20 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     public void displayConsoleLog() {
-        int x = infoPositionX;
-        int y = infoPositionY;
+        int x = logPositionX;
+        int y = logPositionY;
         try {
             // display the last five logs
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-            for (int i = 0; i < 5 && i < consoleLog.size(); i++) {
+            for (int i = 0; i < 10; i++) {
                 textGraphics.drawLine(x, y + i,
                   terminal.getTerminalSize().getColumns() - 1, y + i,
                   ' ');
-                textGraphics.setForegroundColor(consoleLog.get(i).getColor());
-                textGraphics.putString(x, y + i, consoleLog.get(i).getMemo());
+            }
+            for (int i = 0; i < 10 && i < userLog.size(); i++) {
+                textGraphics.setForegroundColor(userLog.get(userLog.size()-i-1).getColor());
+                textGraphics.putString(x, y + 9 - i, userLog.get(userLog.size()-i-1).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();
