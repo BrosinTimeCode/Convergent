@@ -1,5 +1,6 @@
 package View;
 
+import Log.UserLogItem;
 import Model.Board;
 
 public interface GameViewInterface {
@@ -20,4 +21,6 @@ public interface GameViewInterface {
     void initialize();
 
     String getUserInput();
+
+    void log(UserLogItem userLogItem);
 }

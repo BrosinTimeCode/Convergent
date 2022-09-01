@@ -1,4 +1,4 @@
-package View;
+package Log;
 
 import com.googlecode.lanterna.TextColor;
 import java.sql.Timestamp;

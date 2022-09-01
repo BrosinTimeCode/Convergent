@@ -1,13 +1,17 @@
 package Controller;
 
 import Commands.BaseCommand;
+import Commands.Help;
 import Commands.Move;
 import Commands.Select;
+import Log.UserLogItem;
+import Log.UserLogItem.Type;
 import Units.BaseUnit;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
+import com.googlecode.lanterna.TextColor;
 import java.util.Timer;
 
 public class GameController {
@@ -43,6 +47,10 @@ public class GameController {
             BaseCommand userCommand = Parser.getCommand(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
+            } else if (!executeCommand(userCommand)) {
+                UserLogItem userLogItem = new UserLogItem(TextColor.ANSI.RED, "Command failed!",
+                  Type.INFO);
+                viewInterface.log(userLogItem);
             }
         }
     }
@@ -52,6 +60,8 @@ public class GameController {
             return executeMove((Move) command);
         } else if (command instanceof Select) {
             return executeSelect((Select) command);
+        } else if (command instanceof Help) {
+            return executeHelp((Help) command);
         }
         return false;
     }
@@ -63,6 +73,11 @@ public class GameController {
     public boolean executeSelect(Select selectCommand) {
         String[] arguments = selectCommand.getArguments();
         return selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+    }
+
+    public boolean executeHelp(Help selectCommand) {
+        String[] arguments = selectCommand.getArguments();
+        return true;
     }
 
     public boolean selectUnit(int row, int column) {

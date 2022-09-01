@@ -1,7 +1,8 @@
 package View;
 
+import Log.UserLogItem;
 import Model.Board;
-import View.UserLogItem.Type;
+import Log.UserLogItem.Type;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -53,20 +54,22 @@ public class CommandLineInterface implements GameViewInterface {
         }
     }
 
+    public void log(UserLogItem log) {
+        userLog.add(0, log);
+        displayConsoleLog();
+        System.out.println();
+    }
+
     public void displayHelp() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
           "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
-        userLog.add(0, log);
-        displayConsoleLog();
-        System.out.println(log);
+        log(log);
     }
 
     public void displayInvalidCommand() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
           "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
-        userLog.add(log);
-        displayConsoleLog();
-        System.out.println(log);
+        log(log);
     }
 
     public void displayCommandError(String error) {
@@ -78,7 +81,7 @@ public class CommandLineInterface implements GameViewInterface {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
-            TerminalSize terminalSize = new TerminalSize(inputPositionX+62, inputPositionY+2);
+            TerminalSize terminalSize = new TerminalSize(inputPositionX + 62, inputPositionY + 2);
             defaultTerminalFactory.setInitialTerminalSize(terminalSize);
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();
@@ -148,6 +151,7 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     public void displayConsoleLog() {
+        // TODO: add check for UserLogItem scope (DEV, CHAT, INFO)
         int x = logPositionX;
         int y = logPositionY;
         try {
@@ -160,8 +164,8 @@ public class CommandLineInterface implements GameViewInterface {
                   ' ');
             }
             for (int i = 0; i < 10 && i < userLog.size(); i++) {
-                textGraphics.setForegroundColor(userLog.get(userLog.size()-i-1).getColor());
-                textGraphics.putString(x, y + 9 - i, userLog.get(userLog.size()-i-1).getMemo());
+                textGraphics.setForegroundColor(userLog.get(userLog.size() - i - 1).getColor());
+                textGraphics.putString(x, y + 9 - i, userLog.get(userLog.size() - i - 1).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();
