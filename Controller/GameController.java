@@ -1,6 +1,7 @@
 package Controller;
 
-import Commands.BaseCommand;
+import Commands.Command;
+import Commands.CommandList;
 import Commands.Help;
 import Commands.Move;
 import Commands.Select;
@@ -31,6 +32,7 @@ public class GameController {
                 viewInterface = new CommandLineInterface(board);
                 viewInterface.initialize();
         }
+        CommandList.addCommands();
     }
 
     public void initialize() {
@@ -44,7 +46,7 @@ public class GameController {
         viewInterface.displayHelp();
         while (true) {
             String userInput = viewInterface.getUserInput();
-            BaseCommand userCommand = Parser.getCommand(userInput);
+            Command userCommand = CommandList.getCommand(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             } else if (!executeCommand(userCommand)) {
@@ -55,7 +57,7 @@ public class GameController {
         }
     }
 
-    public boolean executeCommand(BaseCommand command) {
+    public boolean executeCommand(Command command) {
         if (command instanceof Move) {
             return executeMove((Move) command);
         } else if (command instanceof Select) {

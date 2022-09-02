@@ -1,27 +1,32 @@
-package Controller;
+package Commands;
 
-import Commands.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.TreeSet;
 
-import java.util.ArrayList;
+public class CommandList {
 
     private static final TreeSet<Alias> aliases = new TreeSet<>();
     private static final HashSet<Command> commands = new HashSet<>();
 
-    public static BaseCommand getCommand(String input) {
+    public static void addCommands() {
+        commands.add(new Attack());
+        commands.add(new Help());
+        commands.add(new Move());
+        commands.add(new Select());
+    }
+
+    public static Command getCommand(String input) {
         String[] inArguments = input.split("\\s+");
         String[] outArguments = new String[inArguments.length - 1];
         System.arraycopy(inArguments, 1, outArguments, 0, inArguments.length - 1);
 
-        ArrayList<BaseCommand> commands = new ArrayList<>();
-        commands.add(new Attack(outArguments));
-        commands.add(new Help(outArguments));
-        commands.add(new Move(outArguments));
-        commands.add(new Select(outArguments));
-
         try {
-            char commandID = inArguments[0].charAt(0);
-            for (BaseCommand command : commands) {
-                if (commandID == command.getIdentifier()) {
+            String commandAlias = inArguments[0];
+            for (Alias alias : aliases) {
+                if (commandAlias.equals(alias.toString())) {
+                    Command command = alias.getCommand();
+                    command.setArguments(Arrays.asList(outArguments));
                     return command;
                 }
             }
