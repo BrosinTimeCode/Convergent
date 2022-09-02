@@ -57,14 +57,14 @@ public class CommandLineInterface implements GameViewInterface {
     public void displayHelp() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
           "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
-        UserLog.add(0, log);
+        UserLog.add(log);
         displayConsoleLog();
     }
 
     public void displayInvalidCommand() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
           "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
-        UserLog.add(0, log);
+        UserLog.add(log);
         displayConsoleLog();
     }
 
