@@ -161,8 +161,10 @@ public class CommandLineInterface implements GameViewInterface {
                   ' ');
             }
             for (int i = 0; i < 10 && i < UserLog.LOGS.size(); i++) {
-                textGraphics.setForegroundColor(UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor());
-                textGraphics.putString(x, y + 9 - i, UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo());
+                textGraphics.setForegroundColor(
+                  UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor());
+                textGraphics.putString(x, y + 9 - i,
+                  UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();

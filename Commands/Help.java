@@ -63,7 +63,7 @@ public class Help extends Command {
     public byte validateArguments() {
         if (hasTooManyArguments()) {
             return 99;
-        } else if (arguments.size()<1) {
+        } else if (arguments.size() < 1) {
             return 0;
         } else if (CommandList.isAnAlias(arguments.get(0))) {
             return 1;
