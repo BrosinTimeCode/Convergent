@@ -32,7 +32,7 @@ public class GameController {
                 viewInterface = new CommandLineInterface(board);
                 viewInterface.initialize();
         }
-        CommandList.addCommands();
+        CommandList.initializeCommands();
     }
 
     public void initialize() {

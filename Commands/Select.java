@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Select extends Command {
 
-    private final static byte minArguments = 0;
     private final static byte maxArguments = 2;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
@@ -16,8 +15,9 @@ public class Select extends Command {
         usages.put(0, "");
         usages.put(1, "(unit)");
         usages.put(2, "(x) (y)");
-        CommandList.registerAlias(new Alias("help", this));
-        CommandList.registerAlias(new Alias("h", this));
+        CommandList.registerAlias(new Alias("select", this));
+        CommandList.registerAlias(new Alias("sel", this));
+        CommandList.registerAlias(new Alias("s", this));
     }
 
     @Override
@@ -42,13 +42,25 @@ public class Select extends Command {
     }
 
     @Override
-    public boolean hasEnoughArguments() {
-        return arguments.size() >= minArguments;
+    public boolean hasTooManyArguments() {
+        return arguments.size() > maxArguments;
     }
 
     @Override
-    public boolean hasTooManyArguments() {
-        return arguments.size() > maxArguments;
+    public byte validateArguments() {
+        if (hasTooManyArguments()) {
+            return 99;
+        }
+        byte argIndex = 0;
+        try {
+            for (String arg : arguments) {
+                int i = Integer.parseInt(arg);
+                argIndex++;
+            }
+            return 0;
+        } catch (NumberFormatException nfe) {
+            return argIndex;
+        }
     }
 
 }

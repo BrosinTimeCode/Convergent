@@ -6,10 +6,11 @@ import java.util.TreeSet;
 
 public class CommandList {
 
-    private static final TreeSet<Alias> aliases = new TreeSet<>();
+    private static final TreeSet<Alias> commandAliases = new TreeSet<>();
+    private static final TreeSet<String> aliases = new TreeSet<>();
     private static final HashSet<Command> commands = new HashSet<>();
 
-    public static void addCommands() {
+    public static void initializeCommands() {
         commands.add(new Attack());
         commands.add(new Help());
         commands.add(new Move());
@@ -23,7 +24,7 @@ public class CommandList {
 
         try {
             String commandAlias = inArguments[0];
-            for (Alias alias : aliases) {
+            for (Alias alias : commandAliases) {
                 if (commandAlias.equals(alias.toString())) {
                     Command command = alias.getCommand();
                     command.setArguments(Arrays.asList(outArguments));
@@ -38,6 +39,11 @@ public class CommandList {
     }
 
     public static void registerAlias(Alias alias) {
-        aliases.add(alias);
+        commandAliases.add(alias);
+        aliases.add(alias.toString());
+    }
+
+    public static boolean isAnAlias(String alias) {
+        return aliases.contains(alias);
     }
 }

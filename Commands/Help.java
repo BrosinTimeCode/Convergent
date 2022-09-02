@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Help extends Command {
 
-    private final static byte minArguments = 0;
     private final static byte maxArguments = 1;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
@@ -41,13 +40,19 @@ public class Help extends Command {
     }
 
     @Override
-    public boolean hasEnoughArguments() {
-        return arguments.size() >= minArguments;
+    public boolean hasTooManyArguments() {
+        return arguments.size() > maxArguments;
     }
 
     @Override
-    public boolean hasTooManyArguments() {
-        return arguments.size() > maxArguments;
+    public byte validateArguments() {
+        if (hasTooManyArguments()) {
+            return 99;
+        }
+        if (CommandList.isAnAlias(arguments.get(0))) {
+            return 0;
+        }
+        return 98;
     }
 
 }
