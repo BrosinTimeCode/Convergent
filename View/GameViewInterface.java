@@ -22,5 +22,4 @@ public interface GameViewInterface {
 
     String getUserInput();
 
-    void log(UserLogItem userLogItem);
 }

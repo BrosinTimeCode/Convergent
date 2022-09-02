@@ -1,10 +1,12 @@
 package View;
 
+import Log.UserLog;
 import Log.UserLogItem;
 import Model.Board;
 import Log.UserLogItem.Type;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.TextColor.ANSI;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -24,7 +26,6 @@ public class CommandLineInterface implements GameViewInterface {
     private final int inputPositionY;
     private final int logPositionX;
     private final int logPositionY;
-    List<UserLogItem> userLog;
 
     public CommandLineInterface(Board board) {
 
@@ -35,7 +36,6 @@ public class CommandLineInterface implements GameViewInterface {
         inputPositionY = board.getBoardHeight() + 13;
         logPositionX = 2;
         logPositionY = board.getBoardHeight() + 2;
-        userLog = new ArrayList<>();
 
     }
 
@@ -54,22 +54,18 @@ public class CommandLineInterface implements GameViewInterface {
         }
     }
 
-    public void log(UserLogItem log) {
-        userLog.add(0, log);
-        displayConsoleLog();
-        System.out.println();
-    }
-
     public void displayHelp() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
           "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
-        log(log);
+        UserLog.add(0, log);
+        displayConsoleLog();
     }
 
     public void displayInvalidCommand() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
           "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
-        log(log);
+        UserLog.add(0, log);
+        displayConsoleLog();
     }
 
     public void displayCommandError(String error) {
@@ -156,16 +152,16 @@ public class CommandLineInterface implements GameViewInterface {
         int y = logPositionY;
         try {
             // display the last five logs
-            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            textGraphics.setForegroundColor(ANSI.WHITE);
+            textGraphics.setBackgroundColor(ANSI.BLACK);
             for (int i = 0; i < 10; i++) {
                 textGraphics.drawLine(x, y + i,
                   terminal.getTerminalSize().getColumns() - 1, y + i,
                   ' ');
             }
-            for (int i = 0; i < 10 && i < userLog.size(); i++) {
-                textGraphics.setForegroundColor(userLog.get(userLog.size() - i - 1).getColor());
-                textGraphics.putString(x, y + 9 - i, userLog.get(userLog.size() - i - 1).getMemo());
+            for (int i = 0; i < 10 && i < UserLog.LOGS.size(); i++) {
+                textGraphics.setForegroundColor(UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor());
+                textGraphics.putString(x, y + 9 - i, UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();

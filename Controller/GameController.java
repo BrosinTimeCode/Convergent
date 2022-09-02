@@ -5,6 +5,7 @@ import Commands.CommandList;
 import Commands.Help;
 import Commands.Move;
 import Commands.Select;
+import Log.UserLog;
 import Log.UserLogItem;
 import Log.UserLogItem.Type;
 import Units.BaseUnit;
@@ -13,6 +14,8 @@ import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
 import com.googlecode.lanterna.TextColor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 public class GameController {
@@ -50,9 +53,9 @@ public class GameController {
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             } else if (!executeCommand(userCommand)) {
-                UserLogItem userLogItem = new UserLogItem(TextColor.ANSI.RED, "Command failed!",
+                UserLogItem log = new UserLogItem(TextColor.ANSI.RED, "Command failed!",
                   Type.INFO);
-                viewInterface.log(userLogItem);
+                UserLog.add(log);
             }
         }
     }
@@ -73,12 +76,18 @@ public class GameController {
     }
 
     public boolean executeSelect(Select selectCommand) {
-        String[] arguments = selectCommand.getArguments();
-        return selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+        List<String> arguments = new ArrayList<>(selectCommand.getArguments());
+        return selectUnit(Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1)));
     }
 
-    public boolean executeHelp(Help selectCommand) {
-        String[] arguments = selectCommand.getArguments();
+    public boolean executeHelp(Help helpCommand) {
+        switch (helpCommand.validateArguments()) {
+            case 0:
+                break;
+            case 99:
+
+        }
+        List<String> arguments = helpCommand.getArguments();
         return true;
     }
 
