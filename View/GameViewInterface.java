@@ -16,4 +16,8 @@ public interface GameViewInterface {
     void displayInvalidCommand();
 
     void displayCommandError(String error);
+
+    void initialize();
+
+    String getUserInput();
 }

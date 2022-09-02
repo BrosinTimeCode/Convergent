@@ -29,6 +29,5 @@ public class TestBoard extends Board {
                 board[row][column] = new BoardCell(unit);
             }
         }
-
     }
 }
