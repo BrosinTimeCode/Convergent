@@ -16,9 +16,9 @@ public class Attack extends Command {
         usages.put(1, "(target)");
         usages.put(2, "(unit) (target)");
         usages.put(3, "(unit) (x) (y)");
-        CommandList.registerAlias(new Alias("attack", this));
-        CommandList.registerAlias(new Alias("atk", this));
-        CommandList.registerAlias(new Alias("a", this));
+        CommandList.registerAlias("attack", this);
+        CommandList.registerAlias("atk", this);
+        CommandList.registerAlias("a", this);
     }
 
     @Override
@@ -38,8 +38,23 @@ public class Attack extends Command {
     }
 
     @Override
+    public String getName() {
+        return "Attack";
+    }
+
+    @Override
+    public String getDefaultAlias() {
+        return "attack";
+    }
+
+    @Override
+    public String getBasicUsage() {
+        return "attack (target)";
+    }
+
+    @Override
     public String getDescription() {
-        return "Attack - Asks a (selected) unit to attack another";
+        return "Asks a (selected) unit to attack another.";
     }
 
     @Override
@@ -62,6 +77,11 @@ public class Attack extends Command {
         } catch (NumberFormatException nfe) {
             return argIndex;
         }
+    }
+
+    @Override
+    public String getArgument(int index) throws IndexOutOfBoundsException {
+        return arguments.get(index);
     }
 
 }

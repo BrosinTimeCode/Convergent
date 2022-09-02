@@ -14,8 +14,8 @@ public class Help extends Command {
     public Help() {
         usages.put(0, "");
         usages.put(1, "(command)");
-        CommandList.registerAlias(new Alias("help", this));
-        CommandList.registerAlias(new Alias("h", this));
+        CommandList.registerAlias("help", this);
+        CommandList.registerAlias("h", this);
     }
 
     @Override
@@ -35,8 +35,23 @@ public class Help extends Command {
     }
 
     @Override
+    public String getName() {
+        return "Help";
+    }
+
+    @Override
+    public String getDefaultAlias() {
+        return "help";
+    }
+
+    @Override
+    public String getBasicUsage() {
+        return "help [command]";
+    }
+
+    @Override
     public String getDescription() {
-        return "Help - Get a list of commands or help on a specific one";
+        return "Get a list of commands or help on a specific one.";
     }
 
     @Override
@@ -48,11 +63,17 @@ public class Help extends Command {
     public byte validateArguments() {
         if (hasTooManyArguments()) {
             return 99;
-        }
-        if (CommandList.isAnAlias(arguments.get(0))) {
+        } else if (arguments.size()<1) {
             return 0;
+        } else if (CommandList.isAnAlias(arguments.get(0))) {
+            return 1;
         }
         return 98;
+    }
+
+    @Override
+    public String getArgument(int index) throws IndexOutOfBoundsException {
+        return arguments.get(index);
     }
 
 }

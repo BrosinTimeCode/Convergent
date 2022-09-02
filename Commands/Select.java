@@ -15,9 +15,9 @@ public class Select extends Command {
         usages.put(0, "");
         usages.put(1, "(unit)");
         usages.put(2, "(x) (y)");
-        CommandList.registerAlias(new Alias("select", this));
-        CommandList.registerAlias(new Alias("sel", this));
-        CommandList.registerAlias(new Alias("s", this));
+        CommandList.registerAlias("select", this);
+        CommandList.registerAlias("sel", this);
+        CommandList.registerAlias("s", this);
     }
 
     @Override
@@ -37,8 +37,23 @@ public class Select extends Command {
     }
 
     @Override
+    public String getName() {
+        return "Select";
+    }
+
+    @Override
+    public String getDefaultAlias() {
+        return "select";
+    }
+
+    @Override
+    public String getBasicUsage() {
+        return "select [unit]";
+    }
+
+    @Override
     public String getDescription() {
-        return "Attack - Asks a (selected) unit to attack another";
+        return "Asks a (selected) unit to attack another.";
     }
 
     @Override
@@ -61,6 +76,11 @@ public class Select extends Command {
         } catch (NumberFormatException nfe) {
             return argIndex;
         }
+    }
+
+    @Override
+    public String getArgument(int index) throws IndexOutOfBoundsException {
+        return arguments.get(index);
     }
 
 }

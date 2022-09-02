@@ -16,8 +16,8 @@ public class Move extends Command {
         usages.put(1, "(target)");
         usages.put(2, "(x) (y)");
         usages.put(3, "(unit) (x) (y)");
-        CommandList.registerAlias(new Alias("move", this));
-        CommandList.registerAlias(new Alias("m", this));
+        CommandList.registerAlias("move", this);
+        CommandList.registerAlias("m", this);
     }
 
     @Override
@@ -37,8 +37,23 @@ public class Move extends Command {
     }
 
     @Override
+    public String getName() {
+        return "Move";
+    }
+
+    @Override
+    public String getDefaultAlias() {
+        return "move";
+    }
+
+    @Override
+    public String getBasicUsage() {
+        return "move [x] [y]";
+    }
+
+    @Override
     public String getDescription() {
-        return "Move - Asks a (selected) unit to move to another or a square";
+        return "Asks a (selected) unit to move to another or a square.";
     }
 
     @Override
@@ -61,6 +76,11 @@ public class Move extends Command {
         } catch (NumberFormatException nfe) {
             return argIndex;
         }
+    }
+
+    @Override
+    public String getArgument(int index) throws IndexOutOfBoundsException {
+        return arguments.get(index);
     }
 
 }
