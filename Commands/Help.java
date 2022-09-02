@@ -1,55 +1,53 @@
 package Commands;
 
-public class Help extends BaseCommand {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    char identifier = 'h';
-    String syntax = identifier + " [command]";
-    String description = "Help: List of commands.";
-    byte minArguments = 0;
-    byte maxArguments = 1;
-    String[] arguments;
+public class Help extends Command {
 
-    public Help(String[] args) {
-        arguments = args;
+    private final static byte minArguments = 0;
+    private final static byte maxArguments = 1;
+    private final static List<String> arguments = new ArrayList<>();
+    private final static Map<Integer, String> usages = new HashMap<>();
+
+    public Help() {
+        usages.put(0, "");
+        usages.put(1, "(command)");
+        CommandList.registerAlias(new Alias("help", this));
+        CommandList.registerAlias(new Alias("h", this));
     }
 
     @Override
-    public char getIdentifier() {
-        return identifier;
+    public void setArguments(List<String> args) {
+        arguments.clear();
+        arguments.addAll(args);
     }
 
     @Override
-    public String getSyntax() {
-        return "Usage: " + syntax;
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    @Override
+    public Map<Integer, String> getUsages() {
+        return usages;
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return "Help - Get a list of commands or help on a specific one";
     }
 
     @Override
-    public String getError_tooManyArguments() {
-        return tooManyArguments;
+    public boolean hasEnoughArguments() {
+        return arguments.size() >= minArguments;
     }
 
     @Override
-    public String getError_tooFewArguments() {
-        return tooFewArguments;
+    public boolean hasTooManyArguments() {
+        return arguments.size() > maxArguments;
     }
 
-    @Override
-    public boolean hasEnoughArguments(String[] arguments) {
-        return arguments.length >= minArguments;
-    }
-
-    @Override
-    public boolean hasTooManyArguments(String[] arguments) {
-        return arguments.length > maxArguments;
-    }
-
-    @Override
-    public String[] getArguments() {
-        return arguments;
-    }
 }
