@@ -4,7 +4,8 @@ import Commands.*;
 
 import java.util.ArrayList;
 
-public class Parser {
+    private static final TreeSet<Alias> aliases = new TreeSet<>();
+    private static final HashSet<Command> commands = new HashSet<>();
 
     public static BaseCommand getCommand(String input) {
         String[] inArguments = input.split("\\s+");
@@ -29,5 +30,9 @@ public class Parser {
         }
 
         return null;
+    }
+
+    public static void registerAlias(Alias alias) {
+        aliases.add(alias);
     }
 }
