@@ -77,7 +77,7 @@ public class CommandLineInterface implements GameViewInterface {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
-            TerminalSize terminalSize = new TerminalSize(inputPositionX + 62, inputPositionY + 2);
+            TerminalSize terminalSize = new TerminalSize(inputPositionX + 82, inputPositionY + 2);
             defaultTerminalFactory.setInitialTerminalSize(terminalSize);
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();
@@ -146,6 +146,7 @@ public class CommandLineInterface implements GameViewInterface {
         textGraphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
     }
 
+    @Override
     public void displayConsoleLog() {
         // TODO: add check for UserLogItem scope (DEV, CHAT, INFO)
         int x = logPositionX;

@@ -22,4 +22,6 @@ public interface GameViewInterface {
 
     String getUserInput();
 
+    void displayConsoleLog();
+
 }
