@@ -84,6 +84,11 @@ public class GameController {
         return false;
     }
 
+    public void killUnit(BaseUnit attacker, BaseUnit deadUnit) {
+        board.killUnit(deadUnit.getId());
+        entitiesUnderAttack.remove(attacker);
+    }
+
     public boolean executeSelect(Select selectCommand) {
         String[] arguments = selectCommand.getArguments();
         return selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));

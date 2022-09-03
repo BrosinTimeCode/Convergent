@@ -9,7 +9,7 @@ public class Board {
     public BoardCell[][] board;
     private PathFinder pathFinder;
     private UnitFactory unitFactory;
-    private HashMap<Integer, BaseUnit> globalUnits;
+    private HashMap<Integer, UnitLocation> globalUnits;
 
     public Board(int rows, int columns) {
         board = new BoardCell[rows][columns];
@@ -55,11 +55,17 @@ public class Board {
       String unitType) {
         if (board[locationRow][locationColumn].unit == null) {
             BaseUnit unit = unitFactory.createUnit(unitType, team);
-            globalUnits.put(unit.getId(), unit);
             board[locationRow][locationColumn] = new BoardCell(unit);
+            globalUnits.put(unit.getId(), new UnitLocation(locationRow, locationColumn, unit));
             return true;
         }
         return false;
+    }
+
+    public void killUnit(int id) {
+        UnitLocation deadUnitLocation = globalUnits.get(id);
+        board[deadUnitLocation.row][deadUnitLocation.column] = new BoardCell(null);
+        globalUnits.remove(id);
     }
 
     public BaseUnit getUnit(int x, int y) {
