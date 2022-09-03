@@ -64,7 +64,7 @@ public class Board {
 
     public void killUnit(int id) {
         UnitLocation deadUnitLocation = globalUnits.get(id);
-        board[deadUnitLocation.row][deadUnitLocation.column] = new BoardCell(null);
+        board[deadUnitLocation.row][deadUnitLocation.column].emptyCell();
         globalUnits.remove(id);
     }
 

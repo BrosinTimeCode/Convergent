@@ -9,4 +9,8 @@ public class BoardCell {
     public BoardCell(BaseUnit unit) {
         this.unit = unit;
     }
+
+    public void emptyCell() {
+        this.unit = null;
+    }
 }
