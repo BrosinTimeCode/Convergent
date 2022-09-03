@@ -645,6 +645,38 @@ public class PathFinderUnitTests {
 
     }
 
+    @Test
+    void testDistanceBetweenNodes(){
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 2), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 3), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 4), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 2), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 4), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 2), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 3), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 4), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 2), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 3), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 4), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 2), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 3), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 4), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 100, 100), 97);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 100, 4), 97);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 100), 97);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 3), 0);
+    }
+
     void populateBoard(BaseUnit unit) {
         for (int i = 0; i < pathFinder.board.length; i++) {
             for (int j = 0; j < pathFinder.board[0].length; j++) {

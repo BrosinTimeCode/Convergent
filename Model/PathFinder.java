@@ -104,8 +104,6 @@ public class PathFinder {
               exploredNodes);
             if (nextPath != null) {
                 path.appendPath(nextPath);
-            } else {
-                continue;
             }
             adjacentPaths.add(path);
         }
@@ -120,8 +118,20 @@ public class PathFinder {
                 shortestPath = path;
             }
         }
+/*        if(shortestPath == null) {
+            shortestPath = adjacentPaths.get(0);
+            for(Path path: adjacentPaths) {
+
+            }
+        }*/
         return shortestPath;
     }
+
+     public int distanceBetweenNodes(int row1, int column1, int row2, int column2) {
+        int columnDistance = Math.abs(column1 - column2);
+        int rowDistance = Math.abs(row1 - row2);
+         return Math.max(columnDistance, rowDistance);
+     }
 
     public boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
         // If there is no cell in the board than it is a square that can be traversed
