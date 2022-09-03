@@ -8,6 +8,7 @@ import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
+import java.util.HashMap;
 import java.util.Timer;
 
 public class GameController {
@@ -15,6 +16,7 @@ public class GameController {
     GameViewInterface viewInterface;
     Board board;
     private BaseUnit player1SelectedUnit;
+    private HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
@@ -23,17 +25,19 @@ public class GameController {
             board = new Board(boardSize[0], boardSize[1]);
         }
         switch (viewType) {
-            default:
+            default -> {
                 viewInterface = new CommandLineInterface(board);
                 viewInterface.initialize();
+            }
         }
+        entitiesUnderAttack = new HashMap<>();
     }
 
     public void initialize() {
         Timer timer = new Timer();
         long oneSecond = 1000;
-        RefreshMapTask task = new RefreshMapTask(viewInterface, board);
-        timer.schedule(task, 0, oneSecond);
+        DamageEntityTask damageTask = new DamageEntityTask(this);
+        timer.schedule(damageTask, 0, oneSecond);
     }
 
     public void handleUserInput() {
@@ -55,7 +59,7 @@ public class GameController {
         }
         return false;
     }
-
+    // TODO: make move remove attacked entity in damaged entities hash map
     public boolean executeMove(Move moveCommand) {
         return true;
     }
@@ -76,5 +80,9 @@ public class GameController {
     private boolean checkBounds(int row, int column) {
         return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth()
           || column < 0);
+    }
+
+    public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {
+        return entitiesUnderAttack;
     }
 }
