@@ -1,5 +1,6 @@
 package Controller;
 
+import Commands.Attack;
 import Commands.BaseCommand;
 import Commands.Move;
 import Commands.Select;
@@ -8,6 +9,7 @@ import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Timer;
 
@@ -56,12 +58,31 @@ public class GameController {
             return executeMove((Move) command);
         } else if (command instanceof Select) {
             return executeSelect((Select) command);
+        } else if(command instanceof Attack) {
+            return executeAttack((Attack) command);
         }
         return false;
     }
     // TODO: make move remove attacked entity in damaged entities hash map
     public boolean executeMove(Move moveCommand) {
         return true;
+    }
+
+    public boolean executeAttack(Attack attackCommand) {
+        String[] arguments = attackCommand.getArguments();
+        return attackUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+    }
+
+    public boolean attackUnit(int row, int column) {
+        // TODO: Fix for more than one player
+        if(player1SelectedUnit == null) {
+            return false;
+        }
+        if(checkBounds(row, column)) {
+            entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(row, column));
+            return true;
+        }
+        return false;
     }
 
     public boolean executeSelect(Select selectCommand) {
