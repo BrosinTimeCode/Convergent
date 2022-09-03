@@ -51,6 +51,18 @@ public class Board {
           board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
     }
 
+    public void moveUnit(BaseUnit unit, int row, int column) {
+        UnitLocation location = globalUnits.get(unit.getId());
+        Path path = pathFinder(location.row, location.column, row, column);
+        for(Node node: path.path) {
+            if(!board[node.getRow()][node.getColumn()].setUnit(unit)) {
+                moveUnit(unit, row, column);
+                break;
+            }
+            globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
+        }
+    }
+
     public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team,
       String unitType) {
         if (board[locationRow][locationColumn].unit == null) {

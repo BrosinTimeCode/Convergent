@@ -64,7 +64,20 @@ public class GameController {
     }
     // TODO: make move remove attacked entity in damaged entities hash map
     public boolean executeMove(Move moveCommand) {
-        return true;
+        String[] arguments = moveCommand.getArguments();
+        return moveUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+    }
+
+    public boolean moveUnit(int row, int column) {
+        if(player1SelectedUnit == null) {
+            return false;
+        }
+        if(checkBounds(row, column)) {
+            entitiesUnderAttack.remove(player1SelectedUnit);
+            board.moveUnit(player1SelectedUnit, row, column);
+            return true;
+        }
+        return false;
     }
 
     public boolean executeAttack(Attack attackCommand) {
