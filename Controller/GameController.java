@@ -9,7 +9,6 @@ import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
-import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Timer;
 
