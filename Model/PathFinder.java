@@ -16,12 +16,10 @@ public class PathFinder {
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd,
       BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         Path path = new Path();
-        if (rowStart < 0 || rowStart > board.length || columnStart < 0
-          || columnStart > board[0].length
-          || rowEnd < 0 || rowEnd > board.length || columnEnd > board[0].length) {
+        if (!checkBounds(rowStart, columnStart, rowEnd, columnEnd)) {
             return null;
         }
-        Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
+        Node pathNode = nextClosestNode(rowStart, columnStart, rowEnd, columnEnd);
         while (pathNode != null) {
             // The next location has a unit that is not on the same team
             if (!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)
@@ -43,13 +41,19 @@ public class PathFinder {
                 break;
             }
             path.addNode(pathNode.getRow(), pathNode.getColumn());
-            pathNode = nextNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
+            pathNode = nextClosestNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
         }
         return path;
     }
 
+    public boolean checkBounds(int rowStart, int columnStart, int rowEnd, int columnEnd) {
+        return rowStart > 0 && rowStart < board.length && columnStart > 0
+                && columnStart < board[0].length
+                && rowEnd > 0 && rowEnd < board.length && columnEnd > 0 && columnEnd < board[0].length;
+    }
+
     // Gives the next closest node to the current that goes towards end node
-    public Node nextNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
+    public Node nextClosestNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
         // Diagonal path towards destination
         if (rowCurrent != rowEnd && columnCurrent != columnEnd) {
             // Top left
