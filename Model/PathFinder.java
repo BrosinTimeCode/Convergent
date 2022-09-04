@@ -118,12 +118,14 @@ public class PathFinder {
                 shortestPath = path;
             }
         }
-/*        if(shortestPath == null) {
+        if(shortestPath == null && !adjacentPaths.isEmpty()) {
             shortestPath = adjacentPaths.get(0);
             for(Path path: adjacentPaths) {
-
+                if(distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd) < distanceBetweenNodes(shortestPath.getLast().getRow(), shortestPath.getLast().getColumn(), rowEnd, columnEnd)) {
+                    shortestPath = path;
+                }
             }
-        }*/
+        }
         return shortestPath;
     }
 
