@@ -48,7 +48,7 @@ public class Move extends Command {
 
     @Override
     public String getBasicUsage() {
-        return "move [x] [y]";
+        return "move (x) (y)";
     }
 
     @Override

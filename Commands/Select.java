@@ -48,7 +48,7 @@ public class Select extends Command {
 
     @Override
     public String getBasicUsage() {
-        return "select [unit]";
+        return "select (unit)";
     }
 
     @Override
