@@ -47,9 +47,9 @@ public class PathFinder {
     }
 
     public boolean checkBounds(int rowStart, int columnStart, int rowEnd, int columnEnd) {
-        return rowStart > 0 && rowStart < board.length && columnStart > 0
+        return rowStart >= 0 && rowStart < board.length && columnStart >= 0
                 && columnStart < board[0].length
-                && rowEnd > 0 && rowEnd < board.length && columnEnd > 0 && columnEnd < board[0].length;
+                && rowEnd >= 0 && rowEnd < board.length && columnEnd >= 0 && columnEnd < board[0].length;
     }
 
     // Gives the next closest node to the current that goes towards end node
