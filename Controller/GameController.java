@@ -108,13 +108,39 @@ public class GameController {
     }
 
     public boolean executeSelect(Select selectCommand) {
-        List<String> arguments = new ArrayList<>(selectCommand.getArguments());
-        return selectUnit(Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1)));
+        switch (selectCommand.validateArguments()) {
+            case NOARGS -> { // if the user deselects the selected unit
+                player1SelectedUnit = null;
+                return true;
+            }
+            case GOOD -> { // if all arguments are good
+                List<String> arguments = new ArrayList<>(selectCommand.getArguments());
+                if (arguments.size() == 1) {
+                    return true;
+                } else {
+                    return selectUnit(Integer.parseInt(arguments.get(0)),
+                      Integer.parseInt(arguments.get(1)));
+                }
+            }
+            case TOOMANY -> { // if the user gave too many arguments
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + selectCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> { // if any given arguments aren't integers
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean executeHelp(Help helpCommand) {
         switch (helpCommand.validateArguments()) {
-            case 0: // if the user asked for a list of commands
+            case NOARGS -> { // if the user asked for a list of commands
                 for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
                     UserLog.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
