@@ -1,7 +1,12 @@
 package View;
 
+import Log.UserLog;
+import Log.UserLogItem;
 import Model.Board;
+import Log.UserLogItem.Type;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.TextColor.ANSI;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -19,9 +24,8 @@ public class CommandLineInterface implements GameViewInterface {
     private final int boardPositionY;
     private final int inputPositionX;
     private final int inputPositionY;
-    private final int infoPositionX;
-    private final int infoPositionY;
-    List<ConsoleLogItem> consoleLog;
+    private final int logPositionX;
+    private final int logPositionY;
 
     public CommandLineInterface(Board board) {
 
@@ -29,10 +33,9 @@ public class CommandLineInterface implements GameViewInterface {
         boardPositionX = 2;
         boardPositionY = 1;
         inputPositionX = 2;
-        inputPositionY = board.getBoardHeight() + 2;
-        infoPositionX = 2;
-        infoPositionY = board.getBoardHeight() + 4;
-        consoleLog = new ArrayList<>();
+        inputPositionY = board.getBoardHeight() + 13;
+        logPositionX = 2;
+        logPositionY = board.getBoardHeight() + 2;
 
     }
 
@@ -52,19 +55,17 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     public void displayHelp() {
-        ConsoleLogItem log = new ConsoleLogItem(TextColor.ANSI.YELLOW,
-          "Type \"m\" to move a unit or \"h\" for a list of commands.");
-        consoleLog.add(0, log);
+        UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
+          "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
+        UserLog.add(log);
         displayConsoleLog();
-        System.out.println(log);
     }
 
     public void displayInvalidCommand() {
-        ConsoleLogItem log = new ConsoleLogItem(TextColor.ANSI.RED,
-          "Invalid command! Type \"h\" for a list of commands.");
-        consoleLog.add(0, log);
+        UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
+          "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
+        UserLog.add(log);
         displayConsoleLog();
-        System.out.println(log);
     }
 
     public void displayCommandError(String error) {
@@ -76,6 +77,8 @@ public class CommandLineInterface implements GameViewInterface {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
+            TerminalSize terminalSize = new TerminalSize(inputPositionX + 82, inputPositionY + 2);
+            defaultTerminalFactory.setInitialTerminalSize(terminalSize);
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();
             terminal.enterPrivateMode();
@@ -143,19 +146,25 @@ public class CommandLineInterface implements GameViewInterface {
         textGraphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
     }
 
+    @Override
     public void displayConsoleLog() {
-        int x = infoPositionX;
-        int y = infoPositionY;
+        // TODO: add check for UserLogItem scope (DEV, CHAT, INFO)
+        int x = logPositionX;
+        int y = logPositionY;
         try {
             // display the last five logs
-            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-            for (int i = 0; i < 5 && i < consoleLog.size(); i++) {
+            textGraphics.setForegroundColor(ANSI.WHITE);
+            textGraphics.setBackgroundColor(ANSI.BLACK);
+            for (int i = 0; i < 10; i++) {
                 textGraphics.drawLine(x, y + i,
                   terminal.getTerminalSize().getColumns() - 1, y + i,
                   ' ');
-                textGraphics.setForegroundColor(consoleLog.get(i).getColor());
-                textGraphics.putString(x, y + i, consoleLog.get(i).getMemo());
+            }
+            for (int i = 0; i < 10 && i < UserLog.LOGS.size(); i++) {
+                textGraphics.setForegroundColor(
+                  UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor());
+                textGraphics.putString(x, y + 9 - i,
+                  UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();

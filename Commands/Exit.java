@@ -5,19 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Move extends Command {
+public class Exit extends Command {
 
-    private final static byte maxArguments = 3;
+    private final static byte maxArguments = 0;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
 
-    public Move() {
+    public Exit() {
         usages.put(0, "");
-        usages.put(1, "(target)");
-        usages.put(2, "(x) (y)");
-        usages.put(3, "(unit) (x) (y)");
-        CommandList.registerAlias("move", this);
-        CommandList.registerAlias("m", this);
+        CommandList.registerAlias("exit", this);
+        CommandList.registerAlias("quit", this);
+        CommandList.registerAlias("stop", this);
     }
 
     @Override
@@ -38,22 +36,22 @@ public class Move extends Command {
 
     @Override
     public String getName() {
-        return "Move";
+        return "Exit";
     }
 
     @Override
     public String getDefaultAlias() {
-        return "move";
+        return "exit";
     }
 
     @Override
     public String getBasicUsage() {
-        return "move (x) (y)";
+        return "exit";
     }
 
     @Override
     public String getDescription() {
-        return "Asks a (selected) unit to move to another or a square.";
+        return "Exits the game.";
     }
 
     @Override
@@ -66,25 +64,11 @@ public class Move extends Command {
         if (hasTooManyArguments()) {
             return ArgStatus.TOOMANY;
         }
-        if (arguments.size() < 1) {
-            return ArgStatus.NOARGS;
-        }
-        try {
-            for (String arg : arguments) {
-                int i = Integer.parseInt(arg);
-                if (i < 0) {
-                    return ArgStatus.BAD;
-                }
-            }
-            return ArgStatus.GOOD;
-        } catch (NumberFormatException nfe) {
-            return ArgStatus.BAD;
-        }
+        return ArgStatus.NOARGS;
     }
 
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
         return arguments.get(index);
     }
-
 }

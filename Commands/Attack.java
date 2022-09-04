@@ -1,55 +1,91 @@
 package Commands;
 
-public class Attack extends BaseCommand {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    char identifier = 'a';
-    String syntax = identifier + " (unit) [[unit]|[x]] [y]";
-    String description = "Attack: Asks a (selected) unit to attack another.";
-    byte minArguments = 0;
-    byte maxArguments = 3;
-    String[] arguments;
+public class Attack extends Command {
 
-    public Attack(String[] args) {
-        arguments = args;
+    private final static byte maxArguments = 3;
+    private final static List<String> arguments = new ArrayList<>();
+    private final static Map<Integer, String> usages = new HashMap<>();
+
+    public Attack() {
+        usages.put(0, "");
+        usages.put(1, "(target)");
+        usages.put(2, "(unit) (target)");
+        usages.put(3, "(unit) (x) (y)");
+        CommandList.registerAlias("attack", this);
+        CommandList.registerAlias("atk", this);
+        CommandList.registerAlias("a", this);
     }
 
     @Override
-    public char getIdentifier() {
-        return identifier;
+    public void setArguments(List<String> args) {
+        arguments.clear();
+        arguments.addAll(args);
     }
 
     @Override
-    public String getSyntax() {
-        return "Usage: " + syntax;
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    @Override
+    public Map<Integer, String> getUsages() {
+        return usages;
+    }
+
+    @Override
+    public String getName() {
+        return "Attack";
+    }
+
+    @Override
+    public String getDefaultAlias() {
+        return "attack";
+    }
+
+    @Override
+    public String getBasicUsage() {
+        return "attack (target)";
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return "Asks a (selected) unit to attack another.";
     }
 
     @Override
-    public String getError_tooManyArguments() {
-        return tooManyArguments;
+    public boolean hasTooManyArguments() {
+        return arguments.size() > maxArguments;
     }
 
     @Override
-    public String getError_tooFewArguments() {
-        return tooFewArguments;
+    public ArgStatus validateArguments() {
+        if (hasTooManyArguments()) {
+            return ArgStatus.TOOMANY;
+        }
+        if (arguments.size() < 1) {
+            return ArgStatus.NOARGS;
+        }
+        try {
+            for (String arg : arguments) {
+                int i = Integer.parseInt(arg);
+                if (i < 0) {
+                    return ArgStatus.BAD;
+                }
+            }
+            return ArgStatus.GOOD;
+        } catch (NumberFormatException nfe) {
+            return ArgStatus.BAD;
+        }
     }
 
     @Override
-    public boolean hasEnoughArguments(String[] arguments) {
-        return arguments.length >= minArguments;
+    public String getArgument(int index) throws IndexOutOfBoundsException {
+        return arguments.get(index);
     }
 
-    @Override
-    public boolean hasTooManyArguments(String[] arguments) {
-        return arguments.length > maxArguments;
-    }
-
-    @Override
-    public String[] getArguments() {
-        return arguments;
-    }
 }
