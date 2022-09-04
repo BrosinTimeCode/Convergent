@@ -89,44 +89,34 @@ public class GameController {
                 }
                 viewInterface.displayConsoleLog();
                 return true;
-            case 1: // if it found the command the user requested help for
-                try {
-                    Command command = CommandList.getCommand(helpCommand.getArgument(0));
-                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                      command.getName() + " - " + command.getDescription() + " Usages:",
-                      Type.INFO));
-                    HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
-                    usages.forEach((key, value) -> UserLog.add(
-                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.getDefaultAlias() + " " + value, Type.INFO)));
-                    viewInterface.displayConsoleLog();
-                    return true;
-                } catch (IndexOutOfBoundsException iob) {
-                    UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                      "IndexOutOfBounds exception retrieving Help arguments!",
-                      Type.INFO));
-                    viewInterface.displayConsoleLog();
-                    return false;
-                }
-            case 99: // if the user gave too many arguments
+            }
+            case GOOD -> { // if it found the command the user requested help for
+                Command command = CommandList.getCommand(helpCommand.getArgument(0));
+                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                  command.getName() + " - " + command.getDescription() + " Usages:",
+                  Type.INFO));
+                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                usages.forEach((key, value) -> UserLog.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case TOOMANY -> { // if the user gave too many arguments
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Too many arguments! Usage: " + helpCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
-            case 98: // if the command alias was not found
+            }
+            case BAD -> { // if the command alias was not found
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Command not found! Check spelling or type \"help\" for a list of commands",
                   Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
-            default:
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "An error occurred executing the help command!",
-                  Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-
+            }
         }
+        return false;
     }
 
     public boolean selectUnit(int row, int column) {

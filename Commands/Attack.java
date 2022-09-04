@@ -63,19 +63,20 @@ public class Attack extends Command {
     }
 
     @Override
-    public byte validateArguments() {
+    public ArgStatus validateArguments() {
         if (hasTooManyArguments()) {
-            return 99;
+            return ArgStatus.TOOMANY;
         }
-        byte argIndex = 0;
+        if (arguments.size() < 1) {
+            return ArgStatus.NOARGS;
+        }
         try {
             for (String arg : arguments) {
                 int i = Integer.parseInt(arg);
-                argIndex++;
             }
-            return 0;
+            return ArgStatus.GOOD;
         } catch (NumberFormatException nfe) {
-            return argIndex;
+            return ArgStatus.BAD;
         }
     }
 

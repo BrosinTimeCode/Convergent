@@ -5,6 +5,13 @@ import java.util.Map;
 
 public abstract class Command {
 
+    public enum ArgStatus {
+        GOOD,
+        TOOMANY,
+        NOARGS,
+        BAD
+    }
+
     public abstract void setArguments(List<String> args);
 
     public abstract List<String> getArguments();
@@ -21,7 +28,7 @@ public abstract class Command {
 
     public abstract boolean hasTooManyArguments();
 
-    public abstract byte validateArguments();
+    public abstract ArgStatus validateArguments();
 
     public abstract String getArgument(int index) throws IndexOutOfBoundsException;
 

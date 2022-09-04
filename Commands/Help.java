@@ -60,15 +60,15 @@ public class Help extends Command {
     }
 
     @Override
-    public byte validateArguments() {
+    public ArgStatus validateArguments() {
         if (hasTooManyArguments()) {
-            return 99;
+            return ArgStatus.TOOMANY;
         } else if (arguments.size() < 1) {
-            return 0;
+            return ArgStatus.NOARGS;
         } else if (CommandList.isAnAlias(arguments.get(0))) {
-            return 1;
+            return ArgStatus.GOOD;
         }
-        return 98;
+        return ArgStatus.BAD;
     }
 
     @Override
