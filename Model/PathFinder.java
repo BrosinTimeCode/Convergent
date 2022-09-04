@@ -107,26 +107,27 @@ public class PathFinder {
             }
             adjacentPaths.add(path);
         }
-        Path shortestPath = null;
+        Path shortestValidPath = null;
         for (Path path : adjacentPaths) {
-            if (shortestPath == null && path.getLast().getRow() == rowEnd
+            if (shortestValidPath == null && path.getLast().getRow() == rowEnd
               && path.getLast().getColumn() == columnEnd) {
-                shortestPath = path;
-            } else if (shortestPath != null && path.getLength() < shortestPath.getLength()
+                shortestValidPath = path;
+            } else if (shortestValidPath != null && path.getLength() < shortestValidPath.getLength()
               && path.getLast().getRow() == rowEnd
               && path.getLast().getColumn() == columnEnd) {
-                shortestPath = path;
+                shortestValidPath = path;
             }
         }
-        if(shortestPath == null && !adjacentPaths.isEmpty()) {
-            shortestPath = adjacentPaths.get(0);
+        // No valid path between two nodes, choose the path that gets the closest to ending node
+        if(shortestValidPath == null && !adjacentPaths.isEmpty()) {
+            shortestValidPath = adjacentPaths.get(0);
             for(Path path: adjacentPaths) {
-                if(distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd) < distanceBetweenNodes(shortestPath.getLast().getRow(), shortestPath.getLast().getColumn(), rowEnd, columnEnd)) {
-                    shortestPath = path;
+                if(distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().getRow(), shortestValidPath.getLast().getColumn(), rowEnd, columnEnd)) {
+                    shortestValidPath = path;
                 }
             }
         }
-        return shortestPath;
+        return shortestValidPath;
     }
 
      public int distanceBetweenNodes(int row1, int column1, int row2, int column2) {
