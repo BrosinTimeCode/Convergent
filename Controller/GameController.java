@@ -72,7 +72,39 @@ public class GameController {
     }
 
     public boolean executeMove(Move moveCommand) {
-        return true;
+        switch (moveCommand.validateArguments()) {
+            case NOARGS -> {
+                Command command = CommandList.getCommand(moveCommand.getDefaultAlias());
+                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                  command.getName() + " - " + command.getDescription() + " Usages:",
+                  Type.INFO));
+                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                usages.forEach((key, value) -> UserLog.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case GOOD -> {
+                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                  "Executing move command...", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case TOOMANY -> {
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + moveCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> {
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean executeSelect(Select selectCommand) {
