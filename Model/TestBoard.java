@@ -6,27 +6,22 @@ import Units.*;
 public class TestBoard extends Board {
 
     // Random board generator for testing purposes
-    public TestBoard() {
+    public TestBoard(int rows, int columns) {
+        super(rows, columns);
         Random randomGenerator = new Random();
-        int x = randomGenerator.nextInt(20) + 1;
-        int y = randomGenerator.nextInt(20) + 1;
-        board = new BoardCell[x][y];
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(3);
-                BaseUnit unit;
                 switch (value) {
                     case 0:
-                        unit = new Civilian(BaseUnit.Team.BLUE, 1);
+                        newUnit(row, column, BaseUnit.Team.RED, "Civilian");
                         break;
                     case 1:
-                        unit = new Tradesman(BaseUnit.Team.BLUE, 1);
+                        newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
                         break;
                     default:
-                        // No unit
-                        unit = null;
+
                 }
-                board[row][column] = new BoardCell(unit);
             }
         }
     }

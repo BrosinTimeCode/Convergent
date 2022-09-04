@@ -16,11 +16,7 @@ import Model.TestBoard;
 import Model.Board;
 import com.googlecode.lanterna.TextColor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
+import java.util.*;
 
 public class GameController {
 
@@ -31,7 +27,10 @@ public class GameController {
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
-            board = new TestBoard();
+            Random randomGenerator = new Random();
+            int rows = randomGenerator.nextInt(20) + 1;
+            int columns = randomGenerator.nextInt(20) + 1;
+            board = new TestBoard(rows, columns);
         } else {
             board = new Board(boardSize[0], boardSize[1]);
         }
