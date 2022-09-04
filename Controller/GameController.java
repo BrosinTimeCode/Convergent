@@ -1,5 +1,6 @@
 package Controller;
 
+import Commands.Attack;
 import Commands.Command;
 import Commands.CommandList;
 import Commands.Help;
@@ -14,6 +15,7 @@ import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
 import com.googlecode.lanterna.TextColor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,11 +72,12 @@ public class GameController {
             return executeSelect((Select) command);
         } else if (command instanceof Help) {
             return executeHelp((Help) command);
-        } else if(command instanceof Attack) {
+        } else if (command instanceof Attack) {
             return executeAttack((Attack) command);
         }
         return false;
     }
+
     // TODO: make move remove attacked entity in damaged entities hash map
     public boolean executeMove(Move moveCommand) {
         switch (moveCommand.validateArguments()) {
@@ -91,10 +94,16 @@ public class GameController {
                 return true;
             }
             case GOOD -> { // arguments are parsable as positive integers
-                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                  "Executing move command...", Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
+                List<String> arguments = new ArrayList<>(moveCommand.getArguments());
+                if (arguments.size() == 1) {
+                    return true;
+                } else {
+                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                            "Executing move command...", Type.INFO));
+                    viewInterface.displayConsoleLog();
+                    return moveUnit(Integer.parseInt(arguments.get(0)),
+                            Integer.parseInt(arguments.get(1)));
+                }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
@@ -110,15 +119,13 @@ public class GameController {
             }
         }
         return false;
-        String[] arguments = moveCommand.getArguments();
-        return moveUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
     }
 
     public boolean moveUnit(int row, int column) {
-        if(player1SelectedUnit == null) {
+        if (player1SelectedUnit == null) {
             return false;
         }
-        if(checkBounds(row, column)) {
+        if (checkBounds(row, column)) {
             entitiesUnderAttack.remove(player1SelectedUnit);
             board.moveUnit(player1SelectedUnit, row, column);
             return true;
@@ -127,16 +134,17 @@ public class GameController {
     }
 
     public boolean executeAttack(Attack attackCommand) {
-        String[] arguments = attackCommand.getArguments();
-        return attackUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+        List<String> arguments = new ArrayList<>(attackCommand.getArguments());
+        return attackUnit(Integer.parseInt(arguments.get(0)),
+                Integer.parseInt(arguments.get(1)));
     }
 
     public boolean attackUnit(int row, int column) {
         // TODO: Fix for more than one player
-        if(player1SelectedUnit == null) {
+        if (player1SelectedUnit == null) {
             return false;
         }
-        if(checkBounds(row, column)) {
+        if (checkBounds(row, column)) {
             entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(row, column));
             return true;
         }
