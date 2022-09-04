@@ -1,15 +1,23 @@
 package Controller;
 
-import Commands.Attack;
-import Commands.BaseCommand;
+import Commands.Command;
+import Commands.CommandList;
+import Commands.Help;
 import Commands.Move;
 import Commands.Select;
+import Log.UserLog;
+import Log.UserLogItem;
+import Log.UserLogItem.Type;
 import Units.BaseUnit;
 import View.GameViewInterface;
 import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
+import com.googlecode.lanterna.TextColor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 
 public class GameController {
@@ -31,6 +39,7 @@ public class GameController {
                 viewInterface.initialize();
             }
         }
+        CommandList.initializeCommands();
         entitiesUnderAttack = new HashMap<>();
     }
 
@@ -45,18 +54,22 @@ public class GameController {
         viewInterface.displayHelp();
         while (true) {
             String userInput = viewInterface.getUserInput();
-            BaseCommand userCommand = Parser.getCommand(userInput);
+            Command userCommand = CommandList.getCommandFromInput(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
+            } else if (!executeCommand(userCommand)) {
+                continue;
             }
         }
     }
 
-    public boolean executeCommand(BaseCommand command) {
+    public boolean executeCommand(Command command) {
         if (command instanceof Move) {
             return executeMove((Move) command);
         } else if (command instanceof Select) {
             return executeSelect((Select) command);
+        } else if (command instanceof Help) {
+            return executeHelp((Help) command);
         } else if(command instanceof Attack) {
             return executeAttack((Attack) command);
         }
@@ -64,6 +77,39 @@ public class GameController {
     }
     // TODO: make move remove attacked entity in damaged entities hash map
     public boolean executeMove(Move moveCommand) {
+        switch (moveCommand.validateArguments()) {
+            case NOARGS -> { // with no arguments, general info is printed
+                Command command = CommandList.getCommand(moveCommand.getDefaultAlias());
+                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                  command.getName() + " - " + command.getDescription() + " Usages:",
+                  Type.INFO));
+                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                usages.forEach((key, value) -> UserLog.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case GOOD -> { // arguments are parsable as positive integers
+                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                  "Executing move command...", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case TOOMANY -> { // too many arguments given
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + moveCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> { // arguments are not parsable as positive integers
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+        }
+        return false;
         String[] arguments = moveCommand.getArguments();
         return moveUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
     }
@@ -103,8 +149,73 @@ public class GameController {
     }
 
     public boolean executeSelect(Select selectCommand) {
-        String[] arguments = selectCommand.getArguments();
-        return selectUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+        switch (selectCommand.validateArguments()) {
+            case NOARGS -> { // with no arguments, the currently selected unit is deselected
+                player1SelectedUnit = null;
+                return true;
+            }
+            case GOOD -> { // arguments are parsable as positive integers
+                List<String> arguments = new ArrayList<>(selectCommand.getArguments());
+                if (arguments.size() == 1) {
+                    return true;
+                } else {
+                    return selectUnit(Integer.parseInt(arguments.get(0)),
+                      Integer.parseInt(arguments.get(1)));
+                }
+            }
+            case TOOMANY -> { // too many arguments given
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + selectCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> { // arguments aren't parsable as positive integers
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean executeHelp(Help helpCommand) {
+        switch (helpCommand.validateArguments()) {
+            case NOARGS -> { // with no arguments, a list of commands is printed
+                for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
+                    UserLog.add(
+                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
+                }
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case GOOD -> { // if it found the command the user requested help for
+                Command command = CommandList.getCommand(helpCommand.getArgument(0));
+                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                  command.getName() + " - " + command.getDescription() + " Usages:",
+                  Type.INFO));
+                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                usages.forEach((key, value) -> UserLog.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case TOOMANY -> { // too many arguments given
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + helpCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> { // if the command alias was not found
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Command not found! Check spelling or type \"help\" for a list of commands",
+                  Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean selectUnit(int row, int column) {
