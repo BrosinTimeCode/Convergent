@@ -55,7 +55,8 @@ public class Board {
         UnitLocation location = globalUnits.get(unit.getId());
         Path path = pathFinder(location.row, location.column, row, column);
         for(Node node: path.path) {
-            if(!board[node.getRow()][node.getColumn()].setUnit(unit)) {
+            // If an enemy node is blocking re-path
+            if(!board[node.getRow()][node.getColumn()].setUnit(unit) || !board[node.getRow()][node.getColumn()].unit.isAlly(unit)) {
                 moveUnit(unit, row, column);
                 break;
             }
