@@ -73,6 +73,9 @@ public class Attack extends Command {
         try {
             for (String arg : arguments) {
                 int i = Integer.parseInt(arg);
+                if (i < 0) {
+                    return ArgStatus.BAD;
+                }
             }
             return ArgStatus.GOOD;
         } catch (NumberFormatException nfe) {
