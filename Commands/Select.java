@@ -53,7 +53,7 @@ public class Select extends Command {
 
     @Override
     public String getDescription() {
-        return "Asks a (selected) unit to attack another.";
+        return "Selects or deselects a unit.";
     }
 
     @Override
