@@ -73,7 +73,7 @@ public class GameController {
 
     public boolean executeMove(Move moveCommand) {
         switch (moveCommand.validateArguments()) {
-            case NOARGS -> {
+            case NOARGS -> { // with no arguments, general info is printed
                 Command command = CommandList.getCommand(moveCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
@@ -85,19 +85,19 @@ public class GameController {
                 viewInterface.displayConsoleLog();
                 return true;
             }
-            case GOOD -> {
+            case GOOD -> { // arguments are parsable as positive integers
                 UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                   "Executing move command...", Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
-            case TOOMANY -> {
+            case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Too many arguments! Usage: " + moveCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
-            case BAD -> {
+            case BAD -> { // arguments are not parsable as positive integers
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Bad syntax! Make sure arguments are numbers", Type.INFO));
                 viewInterface.displayConsoleLog();
@@ -109,11 +109,11 @@ public class GameController {
 
     public boolean executeSelect(Select selectCommand) {
         switch (selectCommand.validateArguments()) {
-            case NOARGS -> { // if the user deselects the selected unit
+            case NOARGS -> { // with no arguments, the currently selected unit is deselected
                 player1SelectedUnit = null;
                 return true;
             }
-            case GOOD -> { // if all arguments are good
+            case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(selectCommand.getArguments());
                 if (arguments.size() == 1) {
                     return true;
@@ -122,13 +122,13 @@ public class GameController {
                       Integer.parseInt(arguments.get(1)));
                 }
             }
-            case TOOMANY -> { // if the user gave too many arguments
+            case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Too many arguments! Usage: " + selectCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
-            case BAD -> { // if any given arguments aren't integers
+            case BAD -> { // arguments aren't parsable as positive integers
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Bad syntax! Make sure arguments are numbers", Type.INFO));
                 viewInterface.displayConsoleLog();
@@ -140,7 +140,7 @@ public class GameController {
 
     public boolean executeHelp(Help helpCommand) {
         switch (helpCommand.validateArguments()) {
-            case NOARGS -> { // if the user asked for a list of commands
+            case NOARGS -> { // with no arguments, a list of commands is printed
                 for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
                     UserLog.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
@@ -160,7 +160,7 @@ public class GameController {
                 viewInterface.displayConsoleLog();
                 return true;
             }
-            case TOOMANY -> { // if the user gave too many arguments
+            case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                   "Too many arguments! Usage: " + helpCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
