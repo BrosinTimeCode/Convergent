@@ -48,7 +48,9 @@ public class GameController {
         Timer timer = new Timer();
         long oneSecond = 1000;
         DamageEntityTask damageTask = new DamageEntityTask(this);
+        RefreshMapTask refreshMapTask = new RefreshMapTask(viewInterface, board);
         timer.schedule(damageTask, 0, oneSecond);
+        timer.schedule(refreshMapTask, 0, oneSecond);
     }
 
     public void handleUserInput() {
@@ -59,7 +61,6 @@ public class GameController {
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             } else if (!executeCommand(userCommand)) {
-                continue;
             }
         }
     }
