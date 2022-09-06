@@ -37,6 +37,8 @@ public class GameController {
     public void initialize() {
         Timer timer = new Timer();
         long oneSecond = 1000;
+        RefreshMapTask task = new RefreshMapTask(viewInterface, board);
+        timer.schedule(task, 0, oneSecond);
         DamageEntityTask damageTask = new DamageEntityTask(this);
         timer.schedule(damageTask, 0, oneSecond);
     }
