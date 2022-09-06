@@ -48,8 +48,8 @@ public class PathFinder {
 
     public boolean checkBounds(int rowStart, int columnStart, int rowEnd, int columnEnd) {
         return rowStart >= 0 && rowStart < board.length && columnStart >= 0
-                && columnStart < board[0].length
-                && rowEnd >= 0 && rowEnd < board.length && columnEnd >= 0 && columnEnd < board[0].length;
+          && columnStart < board[0].length
+          && rowEnd >= 0 && rowEnd < board.length && columnEnd >= 0 && columnEnd < board[0].length;
     }
 
     // Gives the next closest node to the current that goes towards end node
@@ -123,10 +123,13 @@ public class PathFinder {
             }
         }
         // No valid path between two nodes, choose the path that gets the closest to ending node
-        if(shortestValidPath == null && !adjacentPaths.isEmpty()) {
+        if (shortestValidPath == null && !adjacentPaths.isEmpty()) {
             shortestValidPath = adjacentPaths.get(0);
-            for(Path path: adjacentPaths) {
-                if(distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().getRow(), shortestValidPath.getLast().getColumn(), rowEnd, columnEnd)) {
+            for (Path path : adjacentPaths) {
+                if (
+                  distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(), rowEnd,
+                    columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().getRow(),
+                    shortestValidPath.getLast().getColumn(), rowEnd, columnEnd)) {
                     shortestValidPath = path;
                 }
             }
@@ -134,11 +137,11 @@ public class PathFinder {
         return shortestValidPath;
     }
 
-     public int distanceBetweenNodes(int row1, int column1, int row2, int column2) {
+    public int distanceBetweenNodes(int row1, int column1, int row2, int column2) {
         int columnDistance = Math.abs(column1 - column2);
         int rowDistance = Math.abs(row1 - row2);
-         return Math.max(columnDistance, rowDistance);
-     }
+        return Math.max(columnDistance, rowDistance);
+    }
 
     public boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
         // If there is no cell in the board than it is a square that can be traversed

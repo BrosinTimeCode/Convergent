@@ -71,13 +71,14 @@ public class GameController {
             return executeMove((Move) command);
         } else if (command instanceof Select) {
             return executeSelect((Select) command);
-        } else if(command instanceof Attack) {
+        } else if (command instanceof Attack) {
             return executeAttack((Attack) command);
         } else if (command instanceof Help) {
             return executeHelp((Help) command);
         }
         return false;
     }
+
     // TODO: make move remove attacked entity in damaged entities hash map
     public boolean executeMove(Move moveCommand) {
         switch (moveCommand.validateArguments()) {
@@ -158,10 +159,10 @@ public class GameController {
 
     public boolean attackUnit(int row, int column) {
         // TODO: Fix for more than one player
-        if(player1SelectedUnit == null) {
+        if (player1SelectedUnit == null) {
             return false;
         }
-        if(checkBounds(row, column)) {
+        if (checkBounds(row, column)) {
             entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(row, column));
             return true;
         }
