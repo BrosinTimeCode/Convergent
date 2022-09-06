@@ -14,7 +14,7 @@ public class Attack extends Command {
     public Attack() {
         usages.put(0, "");
         usages.put(1, "(target)");
-        usages.put(2, "(unit) (target)");
+        usages.put(2, "(x) (y)");
         usages.put(3, "(unit) (x) (y)");
         CommandList.registerAlias("attack", this);
         CommandList.registerAlias("atk", this);
