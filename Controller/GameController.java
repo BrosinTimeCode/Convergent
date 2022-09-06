@@ -57,7 +57,7 @@ public class GameController {
         viewInterface.displayHelp();
         while (true) {
             String userInput = viewInterface.getUserInput();
-            Command userCommand = CommandList.getCommandFromInput(userInput);
+            Command userCommand = CommandList.getCommandFromAlias(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             }

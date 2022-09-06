@@ -17,7 +17,7 @@ public interface CommandList {
         COMMANDS.add(new Select());
     }
 
-    static Command getCommandFromInput(String input) {
+    static Command getCommandFromAlias(String input) {
         String[] inArguments = input.split("\\s+");
         String[] outArguments = new String[inArguments.length - 1];
         System.arraycopy(inArguments, 1, outArguments, 0, inArguments.length - 1);
