@@ -16,12 +16,10 @@ public class PathFinder {
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd,
       BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         Path path = new Path();
-        if (rowStart < 0 || rowStart > board.length || columnStart < 0
-          || columnStart > board[0].length
-          || rowEnd < 0 || rowEnd > board.length || columnEnd > board[0].length) {
+        if (!checkBounds(rowStart, columnStart, rowEnd, columnEnd)) {
             return null;
         }
-        Node pathNode = nextNode(rowStart, columnStart, rowEnd, columnEnd);
+        Node pathNode = nextClosestNode(rowStart, columnStart, rowEnd, columnEnd);
         while (pathNode != null) {
             // The next location has a unit that is not on the same team
             if (!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)
@@ -43,13 +41,19 @@ public class PathFinder {
                 break;
             }
             path.addNode(pathNode.getRow(), pathNode.getColumn());
-            pathNode = nextNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
+            pathNode = nextClosestNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
         }
         return path;
     }
 
+    public boolean checkBounds(int rowStart, int columnStart, int rowEnd, int columnEnd) {
+        return rowStart >= 0 && rowStart < board.length && columnStart >= 0
+                && columnStart < board[0].length
+                && rowEnd >= 0 && rowEnd < board.length && columnEnd >= 0 && columnEnd < board[0].length;
+    }
+
     // Gives the next closest node to the current that goes towards end node
-    public Node nextNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
+    public Node nextClosestNode(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd) {
         // Diagonal path towards destination
         if (rowCurrent != rowEnd && columnCurrent != columnEnd) {
             // Top left
@@ -104,24 +108,37 @@ public class PathFinder {
               exploredNodes);
             if (nextPath != null) {
                 path.appendPath(nextPath);
-            } else {
-                continue;
             }
             adjacentPaths.add(path);
         }
-        Path shortestPath = null;
+        Path shortestValidPath = null;
         for (Path path : adjacentPaths) {
-            if (shortestPath == null && path.getLast().getRow() == rowEnd
+            if (shortestValidPath == null && path.getLast().getRow() == rowEnd
               && path.getLast().getColumn() == columnEnd) {
-                shortestPath = path;
-            } else if (shortestPath != null && path.getLength() < shortestPath.getLength()
+                shortestValidPath = path;
+            } else if (shortestValidPath != null && path.getLength() < shortestValidPath.getLength()
               && path.getLast().getRow() == rowEnd
               && path.getLast().getColumn() == columnEnd) {
-                shortestPath = path;
+                shortestValidPath = path;
             }
         }
-        return shortestPath;
+        // No valid path between two nodes, choose the path that gets the closest to ending node
+        if(shortestValidPath == null && !adjacentPaths.isEmpty()) {
+            shortestValidPath = adjacentPaths.get(0);
+            for(Path path: adjacentPaths) {
+                if(distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(), rowEnd, columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().getRow(), shortestValidPath.getLast().getColumn(), rowEnd, columnEnd)) {
+                    shortestValidPath = path;
+                }
+            }
+        }
+        return shortestValidPath;
     }
+
+     public int distanceBetweenNodes(int row1, int column1, int row2, int column2) {
+        int columnDistance = Math.abs(column1 - column2);
+        int rowDistance = Math.abs(row1 - row2);
+         return Math.max(columnDistance, rowDistance);
+     }
 
     public boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
         // If there is no cell in the board than it is a square that can be traversed

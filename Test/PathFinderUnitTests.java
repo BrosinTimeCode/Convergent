@@ -29,21 +29,21 @@ public class PathFinderUnitTests {
     @Test
     void testNextNode() {
         // Direct diagonal up-left
-        assertEquals(new Node(4, 4), pathFinder.nextNode(5, 5, 0, 0));
+        assertEquals(new Node(4, 4), pathFinder.nextClosestNode(5, 5, 0, 0));
         // Direct diagonal up-right
-        assertEquals(new Node(4, 6), pathFinder.nextNode(5, 5, 0, 10));
+        assertEquals(new Node(4, 6), pathFinder.nextClosestNode(5, 5, 0, 10));
         // Direct diagonal bottom-left
-        assertEquals(new Node(6, 4), pathFinder.nextNode(5, 5, 10, 0));
+        assertEquals(new Node(6, 4), pathFinder.nextClosestNode(5, 5, 10, 0));
         // Direct diagonal bottom-right
-        assertEquals(new Node(6, 6), pathFinder.nextNode(5, 5, 10, 10));
+        assertEquals(new Node(6, 6), pathFinder.nextClosestNode(5, 5, 10, 10));
         // Direct up
-        assertEquals(new Node(4, 5), pathFinder.nextNode(5, 5, 0, 5));
+        assertEquals(new Node(4, 5), pathFinder.nextClosestNode(5, 5, 0, 5));
         // Direct right
-        assertEquals(new Node(5, 6), pathFinder.nextNode(5, 5, 5, 10));
+        assertEquals(new Node(5, 6), pathFinder.nextClosestNode(5, 5, 5, 10));
         // Direct down
-        assertEquals(new Node(6, 5), pathFinder.nextNode(5, 5, 10, 5));
+        assertEquals(new Node(6, 5), pathFinder.nextClosestNode(5, 5, 10, 5));
         // Direct left
-        assertEquals(new Node(5, 4), pathFinder.nextNode(5, 5, 5, 0));
+        assertEquals(new Node(5, 4), pathFinder.nextClosestNode(5, 5, 5, 0));
 
         // TODO: add non straight lines between two point test cases
     }
@@ -309,7 +309,7 @@ public class PathFinderUnitTests {
         pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE, 1));
-        assertNull(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()));
+        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node(2, 0));
     }
 
     @Test
@@ -331,7 +331,7 @@ public class PathFinderUnitTests {
         pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[4][9] = new BoardCell(new Civilian(Team.RED, 1));
-        assertNull(pathFinder.pathFinder(4, 9, 0, 0, Team.RED, new HashMap<>()));
+        assertEquals(pathFinder.pathFinder(4, 9, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node(2, 0));
 
         /* 0---------
            ----------
@@ -402,7 +402,7 @@ public class PathFinderUnitTests {
         pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED, 1));
         pathFinder.board[2][4] = new BoardCell(new Civilian(Team.RED, 2));
         pathFinder.board[2][5] = new BoardCell(null);
-        assertNull(pathFinder.pathFinder(2, 5, 0, 0, Team.RED, new HashMap<>()));
+        assertEquals(pathFinder.pathFinder(2, 4, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node(2, 5));
 
         /* 0---------
            XXXXXXXXX-
@@ -559,7 +559,7 @@ public class PathFinderUnitTests {
         pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[2][4] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[2][5] = new BoardCell(null);
-        assertNull(pathFinder.pathFinder(2, 5, 0, 0, Team.BLUE, new HashMap<>()));
+        assertEquals(pathFinder.pathFinder(2, 4, 0, 0, Team.BLUE, new HashMap<>()).getLast(), new Node(2, 5));
 
         /* X---------
            000000000-
@@ -635,6 +635,35 @@ public class PathFinderUnitTests {
         path.addNode(0, 0);
         assertEquals(pathFinder.pathFinder(4, 9, 0, 0, Team.BLUE, new HashMap<>()), path);
 
+        /* 0---------
+           XXXXXXXXXX
+           -------0X-
+           -XXXXXXXX-
+           ---------- */
+        populateBoard(null);
+        pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[1][0] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][1] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][2] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][3] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][4] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][5] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][6] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[2][7] = new BoardCell(new Civilian(Team.RED, 1));
+        pathFinder.board[2][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[2][9] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][1] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][2] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][3] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][4] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][5] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][6] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][7] = new BoardCell(new Civilian(Team.BLUE, 1));
+        pathFinder.board[3][8] = new BoardCell(new Civilian(Team.BLUE, 1));
+        assertEquals(pathFinder.pathFinder(2, 7, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node (2, 0));
+
         // Out of bounds start
         assertNull(pathFinder.pathFinder(-1, -1, 0, 0, Team.BLUE, new HashMap<>()));
         assertNull(pathFinder.pathFinder(11, 11, 0, 0, Team.BLUE, new HashMap<>()));
@@ -643,6 +672,38 @@ public class PathFinderUnitTests {
         assertNull(pathFinder.pathFinder(0, 0, 11, 11, Team.BLUE, new HashMap<>()));
 
 
+    }
+
+    @Test
+    void testDistanceBetweenNodes(){
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 2), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 3), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 4), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 2), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 4), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 2), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 3), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 4), 1);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 2), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 3), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 4), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 1, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 1), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 2), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 3), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 4), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 5, 5), 2);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 100, 100), 97);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 100, 4), 97);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 4, 100), 97);
+        assertEquals(pathFinder.distanceBetweenNodes(3, 3, 3, 3), 0);
     }
 
     void populateBoard(BaseUnit unit) {
