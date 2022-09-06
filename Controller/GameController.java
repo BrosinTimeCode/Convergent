@@ -117,8 +117,43 @@ public class GameController {
     }
 
     public boolean executeAttack(Attack attackCommand) {
-        String[] arguments = attackCommand.getArguments();
-        return attackUnit(Integer.parseInt(arguments[0]), Integer.parseInt(arguments[1]));
+        switch (attackCommand.validateArguments()) {
+            case NOARGS -> { // with no arguments, general info is printed
+                Command command = CommandList.getCommand(attackCommand.getDefaultAlias());
+                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                  command.getName() + " - " + command.getDescription() + " Usages:",
+                  Type.INFO));
+                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                usages.forEach((key, value) -> UserLog.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case GOOD -> { // arguments are parsable as positive integers
+                // TODO: Replace the following "Executing attack command" info with actual command
+                List<String> arguments = new ArrayList<>(attackCommand.getArguments());
+                if (arguments.size() == 1 | arguments.size() == 3) {
+                    return true;
+                } else {
+                    return attackUnit(Integer.parseInt(arguments.get(0)),
+                      Integer.parseInt(arguments.get(1)));
+                }
+            }
+            case TOOMANY -> { // too many arguments given
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + attackCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> { // arguments are not parsable as positive integers
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean attackUnit(int row, int column) {
