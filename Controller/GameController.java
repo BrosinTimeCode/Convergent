@@ -26,7 +26,7 @@ public class GameController {
     GameViewInterface viewInterface;
     Board board;
     private BaseUnit player1SelectedUnit;
-    private HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
+    private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
