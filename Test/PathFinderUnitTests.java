@@ -309,7 +309,8 @@ public class PathFinderUnitTests {
         pathFinder.board[1][7] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE, 1));
-        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node(2, 0));
+        assertEquals(pathFinder.nonEnemyPath(2, 2, 0, 0, Team.RED, new HashMap<>()).getLast(),
+          new Node(2, 0));
     }
 
     @Test
@@ -331,7 +332,8 @@ public class PathFinderUnitTests {
         pathFinder.board[1][8] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[1][9] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[4][9] = new BoardCell(new Civilian(Team.RED, 1));
-        assertEquals(pathFinder.pathFinder(4, 9, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node(2, 0));
+        assertEquals(pathFinder.pathFinder(4, 9, 0, 0, Team.RED, new HashMap<>()).getLast(),
+          new Node(2, 0));
 
         /* 0---------
            ----------
@@ -402,7 +404,8 @@ public class PathFinderUnitTests {
         pathFinder.board[0][0] = new BoardCell(new Civilian(Team.RED, 1));
         pathFinder.board[2][4] = new BoardCell(new Civilian(Team.RED, 2));
         pathFinder.board[2][5] = new BoardCell(null);
-        assertEquals(pathFinder.pathFinder(2, 4, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node(2, 5));
+        assertEquals(pathFinder.pathFinder(2, 4, 0, 0, Team.RED, new HashMap<>()).getLast(),
+          new Node(2, 5));
 
         /* 0---------
            XXXXXXXXX-
@@ -559,7 +562,8 @@ public class PathFinderUnitTests {
         pathFinder.board[0][0] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[2][4] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[2][5] = new BoardCell(null);
-        assertEquals(pathFinder.pathFinder(2, 4, 0, 0, Team.BLUE, new HashMap<>()).getLast(), new Node(2, 5));
+        assertEquals(pathFinder.pathFinder(2, 4, 0, 0, Team.BLUE, new HashMap<>()).getLast(),
+          new Node(2, 5));
 
         /* X---------
            000000000-
@@ -662,7 +666,8 @@ public class PathFinderUnitTests {
         pathFinder.board[3][6] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[3][7] = new BoardCell(new Civilian(Team.BLUE, 1));
         pathFinder.board[3][8] = new BoardCell(new Civilian(Team.BLUE, 1));
-        assertEquals(pathFinder.pathFinder(2, 7, 0, 0, Team.RED, new HashMap<>()).getLast(), new Node (2, 0));
+        assertEquals(pathFinder.pathFinder(2, 7, 0, 0, Team.RED, new HashMap<>()).getLast(),
+          new Node(2, 0));
 
         // Out of bounds start
         assertNull(pathFinder.pathFinder(-1, -1, 0, 0, Team.BLUE, new HashMap<>()));
@@ -675,7 +680,7 @@ public class PathFinderUnitTests {
     }
 
     @Test
-    void testDistanceBetweenNodes(){
+    void testDistanceBetweenNodes() {
         assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 2), 1);
         assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 3), 1);
         assertEquals(pathFinder.distanceBetweenNodes(3, 3, 2, 4), 1);
