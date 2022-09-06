@@ -92,10 +92,11 @@ public class GameController {
                 return true;
             }
             case GOOD -> { // arguments are parsable as positive integers
+                // TODO: Replace the following "Executing move command" info with actual command
                 UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                   "Executing move command...", Type.INFO));
                 viewInterface.displayConsoleLog();
-                return false;
+                return true;
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
