@@ -60,6 +60,8 @@ public class GameController {
             Command userCommand = CommandList.getCommandFromAlias(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
+            } else {
+                executeCommand(userCommand);
             }
         }
     }
