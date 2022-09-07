@@ -63,9 +63,20 @@ public class Help extends Command {
     public ArgStatus validateArguments() {
         if (hasTooManyArguments()) {
             return ArgStatus.TOOMANY;
-        } else if (arguments.size() < 1) {
+        }
+        if (arguments.size() < 1) {
             return ArgStatus.NOARGS;
-        } else if (CommandList.isAnAlias(arguments.get(0))) {
+        }
+        boolean isPositiveInt = false;
+        try {
+            int i = Integer.parseInt(arguments.get(0));
+            if (i > 0) {
+                isPositiveInt = true;
+            }
+        } catch (NumberFormatException nfe) {
+            isPositiveInt = false;
+        }
+        if (CommandList.isAnAlias(arguments.get(0)) | isPositiveInt) {
             return ArgStatus.GOOD;
         }
         return ArgStatus.BAD;
