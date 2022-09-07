@@ -104,4 +104,9 @@ public class Select extends Command {
         return aliases;
     }
 
+    @Override
+    public byte getMaxArguments() {
+        return maxArguments;
+    }
+
 }

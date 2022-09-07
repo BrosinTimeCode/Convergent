@@ -104,4 +104,9 @@ public class Move extends Command {
         return aliases;
     }
 
+    @Override
+    public byte getMaxArguments() {
+        return maxArguments;
+    }
+
 }

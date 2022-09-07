@@ -73,4 +73,6 @@ public interface CommandList {
 
     List<String> getAliases();
 
+    byte getMaxArguments();
+
 }

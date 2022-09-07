@@ -88,4 +88,9 @@ public class Exit extends Command {
     public List<String> getAliases() {
         return aliases;
     }
+
+    @Override
+    public byte getMaxArguments() {
+        return maxArguments;
+    }
 }

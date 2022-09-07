@@ -10,17 +10,5 @@ import org.junit.jupiter.api.Test;
 
 public class SelectTests {
 
-    @BeforeEach
-    void initAll() {
-        CommandList.initializeCommands();
-    }
-
-    @Test
-    void selectAliasesGetSelectCommand() {
-        List<String> aliases = Select.getInstance().getAliases();
-        for (String alias : aliases) {
-            assertEquals(Select.getInstance(), CommandList.getCommandFromAlias(alias));
-        }
-    }
 
 }

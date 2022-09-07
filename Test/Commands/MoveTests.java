@@ -10,17 +10,5 @@ import org.junit.jupiter.api.Test;
 
 public class MoveTests {
 
-    @BeforeEach
-    void initAll() {
-        CommandList.initializeCommands();
-    }
-
-    @Test
-    void moveAliasesGetMoveCommand() {
-        List<String> aliases = Move.getInstance().getAliases();
-        for (String alias : aliases) {
-            assertEquals(Move.getInstance(), CommandList.getCommandFromAlias(alias));
-        }
-    }
 
 }

@@ -10,17 +10,5 @@ import org.junit.jupiter.api.Test;
 
 public class AttackTests {
 
-    @BeforeEach
-    void initAll() {
-        CommandList.initializeCommands();
-    }
-
-    @Test
-    void attackAliasesGetAttackCommand() {
-        List<String> aliases = Attack.getInstance().getAliases();
-        for (String alias : aliases) {
-            assertEquals(Attack.getInstance(), CommandList.getCommandFromAlias(alias));
-        }
-    }
 
 }
