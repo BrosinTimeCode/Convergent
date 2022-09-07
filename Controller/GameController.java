@@ -6,6 +6,7 @@ import Commands.Help;
 import Commands.Attack;
 import Commands.Move;
 import Commands.Select;
+import Log.PageBook;
 import Log.UserLog;
 import Log.UserLogItem;
 import Log.UserLogItem.Type;
@@ -208,24 +209,39 @@ public class GameController {
     public boolean executeHelp(Help helpCommand) {
         switch (helpCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, a list of commands is printed
+                List<UserLogItem> aliasesList = new ArrayList<>();
                 for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
-                    UserLog.add(
+                    aliasesList.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
+                PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(), 10,
+                  aliasesList, 1);
                 viewInterface.displayConsoleLog();
                 return true;
             }
-            case GOOD -> { // if it found the command the user requested help for
-                Command command = CommandList.getCommand(helpCommand.getArgument(0));
-                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                  command.getName() + " - " + command.getDescription() + " Usages:",
-                  Type.INFO));
-                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
-                usages.forEach((key, value) -> UserLog.add(
-                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.getDefaultAlias() + " " + value, Type.INFO)));
-                viewInterface.displayConsoleLog();
-                return true;
+            case GOOD -> { // if user asked for a page number or a command alias that was found
+                if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
+                    Command command = CommandList.getCommand(helpCommand.getArgument(0));
+                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                      command.getName() + " - " + command.getDescription() + " Usages:",
+                      Type.INFO));
+                    HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                    usages.forEach((key, value) -> UserLog.add(
+                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.getDefaultAlias() + " " + value, Type.INFO)));
+                    viewInterface.displayConsoleLog();
+                    return true;
+                } else {
+                    List<UserLogItem> aliasesList = new ArrayList<>();
+                    for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
+                        aliasesList.add(
+                          new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
+                    }
+                    PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(), 10,
+                      aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
+                    viewInterface.displayConsoleLog();
+                    return true;
+                }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
