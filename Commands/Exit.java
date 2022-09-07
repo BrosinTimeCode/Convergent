@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Exit extends Command {
 
+    private static Exit instance = null;
     private final static byte maxArguments = 0;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
@@ -16,6 +17,13 @@ public class Exit extends Command {
         CommandList.registerAlias("exit", this);
         CommandList.registerAlias("quit", this);
         CommandList.registerAlias("stop", this);
+    }
+
+    public static Exit getInstance() {
+        if (instance == null) {
+            instance = new Exit();
+        }
+        return instance;
     }
 
     @Override

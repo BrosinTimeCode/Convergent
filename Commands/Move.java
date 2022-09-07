@@ -7,17 +7,25 @@ import java.util.Map;
 
 public class Move extends Command {
 
+    private static Move instance = null;
     private final static byte maxArguments = 3;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
 
-    public Move() {
+    private Move() {
         usages.put(0, "");
         usages.put(1, "(target)");
         usages.put(2, "(x) (y)");
         usages.put(3, "(unit) (x) (y)");
         CommandList.registerAlias("move", this);
         CommandList.registerAlias("m", this);
+    }
+
+    public static Move getInstance() {
+        if (instance == null) {
+            instance = new Move();
+        }
+        return instance;
     }
 
     @Override

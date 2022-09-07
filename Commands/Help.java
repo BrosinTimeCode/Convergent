@@ -7,15 +7,23 @@ import java.util.Map;
 
 public class Help extends Command {
 
+    private static Help instance = null;
     private final static byte maxArguments = 1;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
 
-    public Help() {
+    private Help() {
         usages.put(0, "");
         usages.put(1, "(command)");
         CommandList.registerAlias("help", this);
         CommandList.registerAlias("h", this);
+    }
+
+    public static Command getInstance() {
+        if (instance == null) {
+            instance = new Help();
+        }
+        return instance;
     }
 
     @Override

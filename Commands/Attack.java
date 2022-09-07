@@ -7,11 +7,12 @@ import java.util.Map;
 
 public class Attack extends Command {
 
+    private static Attack instance = null;
     private final static byte maxArguments = 3;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
 
-    public Attack() {
+    private Attack() {
         usages.put(0, "");
         usages.put(1, "(target)");
         usages.put(2, "(x) (y)");
@@ -19,6 +20,13 @@ public class Attack extends Command {
         CommandList.registerAlias("attack", this);
         CommandList.registerAlias("atk", this);
         CommandList.registerAlias("a", this);
+    }
+
+    public static Attack getInstance() {
+        if (instance == null) {
+            instance = new Attack();
+        }
+        return instance;
     }
 
     @Override

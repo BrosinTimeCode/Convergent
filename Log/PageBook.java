@@ -35,7 +35,7 @@ public interface PageBook {
         }
     }
 
-    static void paginateAndGet(String title, String commandAlias, int lines,
+    static void paginateAndGetPage(String title, String commandAlias, int lines,
       List<UserLogItem> list, int pageNumber) {
         if (list.size() < lines - 1) {
             for (UserLogItem log : list) {

@@ -58,7 +58,7 @@ public class GameController {
         viewInterface.displayHelp();
         while (true) {
             String userInput = viewInterface.getUserInput();
-            Command userCommand = CommandList.getCommandFromAlias(userInput);
+            Command userCommand = CommandList.getCommandFromInput(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             } else {
@@ -84,7 +84,7 @@ public class GameController {
     public boolean executeMove(Move moveCommand) {
         switch (moveCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.getCommand(moveCommand.getDefaultAlias());
+                Command command = CommandList.getCommandFromAlias(moveCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
                   Type.INFO));
@@ -121,7 +121,7 @@ public class GameController {
     public boolean executeAttack(Attack attackCommand) {
         switch (attackCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.getCommand(attackCommand.getDefaultAlias());
+                Command command = CommandList.getCommandFromAlias(attackCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
                   Type.INFO));
@@ -214,7 +214,7 @@ public class GameController {
                     aliasesList.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
-                PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(),
+                PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
                   viewInterface.getConsoleLogHeight(),
                   aliasesList, 1);
                 viewInterface.displayConsoleLog();
@@ -222,7 +222,7 @@ public class GameController {
             }
             case GOOD -> { // if user asked for a page number or a command alias that was found
                 if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
-                    Command command = CommandList.getCommand(helpCommand.getArgument(0));
+                    Command command = CommandList.getCommandFromAlias(helpCommand.getArgument(0));
                     UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                       command.getName() + " - " + command.getDescription() + " Usages:",
                       Type.INFO));
@@ -238,7 +238,7 @@ public class GameController {
                         aliasesList.add(
                           new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                     }
-                    PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(),
+                    PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
                       viewInterface.getConsoleLogHeight(),
                       aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
                     viewInterface.displayConsoleLog();
