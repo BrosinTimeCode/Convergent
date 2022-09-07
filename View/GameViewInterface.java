@@ -24,4 +24,8 @@ public interface GameViewInterface {
 
     void displayConsoleLog();
 
+    void setConsoleLogHeight(int height);
+
+    int getConsoleLogHeight();
+
 }

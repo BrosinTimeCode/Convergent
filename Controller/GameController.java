@@ -214,7 +214,8 @@ public class GameController {
                     aliasesList.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
-                PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(), 10,
+                PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(),
+                  viewInterface.getConsoleLogHeight(),
                   aliasesList, 1);
                 viewInterface.displayConsoleLog();
                 return true;
@@ -237,7 +238,8 @@ public class GameController {
                         aliasesList.add(
                           new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                     }
-                    PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(), 10,
+                    PageBook.paginateAndGet("List of commands", helpCommand.getDefaultAlias(),
+                      viewInterface.getConsoleLogHeight(),
                       aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
                     viewInterface.displayConsoleLog();
                     return true;
