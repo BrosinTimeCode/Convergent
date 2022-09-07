@@ -11,12 +11,16 @@ public class Exit extends Command {
     private final static byte maxArguments = 0;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> aliases = new ArrayList<>();
 
     public Exit() {
         usages.put(0, "");
-        CommandList.registerAlias("exit", this);
-        CommandList.registerAlias("quit", this);
-        CommandList.registerAlias("stop", this);
+        aliases.add("exit");
+        aliases.add("quit");
+        aliases.add("stop");
+        for (String alias : aliases) {
+            CommandList.registerAlias(alias, this);
+        }
     }
 
     public static Exit getInstance() {
@@ -78,5 +82,10 @@ public class Exit extends Command {
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
         return arguments.get(index);
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return aliases;
     }
 }

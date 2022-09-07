@@ -11,14 +11,18 @@ public class Select extends Command {
     private final static byte maxArguments = 2;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> aliases = new ArrayList<>();
 
     private Select() {
         usages.put(0, "");
         usages.put(1, "(unit)");
         usages.put(2, "(x) (y)");
-        CommandList.registerAlias("select", this);
-        CommandList.registerAlias("sel", this);
-        CommandList.registerAlias("s", this);
+        aliases.add("select");
+        aliases.add("sel");
+        aliases.add("s");
+        for (String alias : aliases) {
+            CommandList.registerAlias(alias, this);
+        }
     }
 
     public static Select getInstance() {
@@ -93,6 +97,11 @@ public class Select extends Command {
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
         return arguments.get(index);
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return aliases;
     }
 
 }

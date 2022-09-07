@@ -11,12 +11,16 @@ public class Help extends Command {
     private final static byte maxArguments = 1;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> aliases = new ArrayList<>();
 
     private Help() {
         usages.put(0, "");
         usages.put(1, "(command)");
-        CommandList.registerAlias("help", this);
-        CommandList.registerAlias("h", this);
+        aliases.add("help");
+        aliases.add("h");
+        for (String alias : aliases) {
+            CommandList.registerAlias(alias, this);
+        }
     }
 
     public static Command getInstance() {
@@ -93,6 +97,11 @@ public class Help extends Command {
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
         return arguments.get(index);
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return aliases;
     }
 
 }

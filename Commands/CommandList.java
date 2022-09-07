@@ -71,4 +71,6 @@ public interface CommandList {
 
     String getArgument(int index) throws IndexOutOfBoundsException;
 
+    List<String> getAliases();
+
 }
