@@ -30,7 +30,7 @@ public interface PageBook {
             return list;
         }
 
-        public List<UserLogItem> getAll() {
+        public List<UserLogItem> getAllItems() {
             return this.log;
         }
     }
@@ -64,7 +64,7 @@ public interface PageBook {
             pages.add(page);
             i++;
         }
-        for (UserLogItem log : pages.get(pageNumber - 1).getAll()) {
+        for (UserLogItem log : pages.get(pageNumber - 1).getAllItems()) {
             UserLog.add(log);
         }
     }
