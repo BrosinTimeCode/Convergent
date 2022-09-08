@@ -23,7 +23,7 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        List<Page> pageBook = PageBook.paginate("", "", linesPerPage, log);
+        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
         assertEquals(1, pageBook.size());
     }
 
@@ -37,9 +37,9 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        List<Page> pageBook = PageBook.paginate("", "", linesPerPage, log);
+        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
         assertEquals(1, pageBook.size());
-        assertEquals(itemCount, pageBook.get(0).getAllItems().size());
+        assertEquals(itemCount, pageBook.get(0).size());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        List<Page> pageBook = PageBook.paginate("", "", linesPerPage, log);
+        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
         assertEquals(2, pageBook.size());
     }
 
@@ -78,11 +78,11 @@ public class PageBookTests {
         for (int i=0; i<2; i++) {
             log2.add(new UserLogItem(TextColor.ANSI.WHITE, "line" + i, Type.INFO));
         }
-        List<Page> pageBook1 = PageBook.paginate("", "", 10, log1);
+        PageBook pageBook1 = PageBook.fromUserLogList("", "", 10, log1);
         Page pageA = pageBook1.get(0);
-        List<Page> pageBook2 = PageBook.paginate("", "", 10, log2);
+        PageBook pageBook2 = PageBook.fromUserLogList("", "", 10, log2);
         Page pageB = pageBook2.get(0);
-        List<Page> pageBook3 = PageBook.paginate("", "", 10, log1);
+        PageBook pageBook3 = PageBook.fromUserLogList("", "", 10, log1);
         Page pageC = pageBook3.get(0);
         assertNotEquals(pageA, pageB);
         assertEquals(pageA, pageC);
@@ -91,7 +91,7 @@ public class PageBookTests {
     @Test
     void paginatingAnEmptyList_returnsAnEmptyPage() {
         List<UserLogItem> log = new ArrayList<>();
-        List<Page> pageBook = PageBook.paginate("", "", 10, log);
-        assertEquals(log.size(), pageBook.get(0).getAllItems().size());
+        PageBook pageBook = PageBook.fromUserLogList("", "", 10, log);
+        assertEquals(log.size(), pageBook.get(0).size());
     }
 }
