@@ -2,7 +2,6 @@ package Test.Commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import Commands.Attack;
 import Commands.Command;
 import Commands.CommandList;
 import java.util.List;
