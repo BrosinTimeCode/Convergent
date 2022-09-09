@@ -8,23 +8,39 @@ import com.googlecode.lanterna.TextColor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
 public class PageBookTests {
 
     @Test
-    void paginatingUserLogList_withLessItemsThanItemsPerPage_returnsOnePage() {
+    void paginatingUserLogList_withSameOrLessItemsThanItemsPerPage_returnsOnePage() {
         List<UserLogItem> log = new ArrayList<>();
         int itemCount = 5;
         int linesPerPage = 6;
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
-        assertEquals(1, pageBook.size());
+        PageBook pageBook1 = PageBook.fromUserLogList("", "", linesPerPage, log);
+        Page page1 = PageBook.paginateAndGetPage("", "", linesPerPage, log, 2);
+        assertEquals(1, pageBook1.size());
+        for (int i = 0; i < page1.size(); i++) {
+            assertEquals(log.get(i), page1.get(i));
+        }
+
+        itemCount = 8;
+        linesPerPage = 8;
+        log.clear();
+        for (int i = 0; i < itemCount; i++) {
+            log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
+        }
+        PageBook pageBook2 = PageBook.fromUserLogList("", "", linesPerPage, log);
+        Page page2 = PageBook.paginateAndGetPage("", "", linesPerPage, log, 2);
+        assertEquals(1, pageBook2.size());
+        for (int i = 0; i < page2.size(); i++) {
+            assertEquals(log.get(i), page2.get(i));
+        }
     }
 
     // Paginating a list resulting in a single page should return an identical list and should not
@@ -43,6 +59,20 @@ public class PageBookTests {
     }
 
     @Test
+    void pageBook_requestingPageOneOfMultiple_returnsPageWithHeader() {
+        List<UserLogItem> log = new ArrayList<>();
+        int itemCount = 10;
+        int linesPerPage = 5;
+        for (int i = 0; i < itemCount; i++) {
+            log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
+        }
+        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
+        Page page = PageBook.paginateAndGetPage("", "", linesPerPage, log, 1);
+        assertTrue(pageBook.get(0).hasHeader());
+        assertTrue(page.hasHeader());
+    }
+
+    @Test
     void pageBook_withLessPagesThanRequested_returnsLastPage() {
         List<UserLogItem> log = new ArrayList<>();
         int itemCount = 10;
@@ -52,12 +82,14 @@ public class PageBookTests {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
         Page page5 = PageBook.paginateAndGetPage("", "", linesPerPage, log, pageNumber);
-        Page page2 = PageBook.paginateAndGetPage("", "", linesPerPage, log, pageNumber);
-        assertEquals(page2, page5);
+        Page page2 = PageBook.paginateAndGetPage("", "", linesPerPage, log, 2);
+        for (int i = 1; i < page5.size(); i++) {
+            assertEquals(page2.get(i), page5.get(i));
+        }
     }
 
     @Test
-    void paginatingUserLogList_withSameItemsAsItemsPerPage_returnsTwoPages() {
+    void paginatingUserLogList_withSameItemsAsItemsPerPage_returnsOnePage() {
         List<UserLogItem> log = new ArrayList<>();
         int itemCount = 5;
         int linesPerPage = 5;
@@ -65,17 +97,29 @@ public class PageBookTests {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
         PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
-        assertEquals(2, pageBook.size());
+        assertEquals(1, pageBook.size());
+    }
+
+    @Test
+    void paginatingUserLogList_withTwiceItemsAsPerPage_returnsThreePages() {
+        List<UserLogItem> log = new ArrayList<>();
+        int itemCount = 10;
+        int linesPerPage = 5;
+        for (int i = 0; i < itemCount; i++) {
+            log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
+        }
+        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
+        assertEquals(3, pageBook.size());
     }
 
     @Test
     void pageBookWithPreviousPaginationCall_callingPagination_returnsOnlyNewPagination() {
         List<UserLogItem> log1 = new ArrayList<>();
-        for (int i=0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             log1.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
         List<UserLogItem> log2 = new ArrayList<>();
-        for (int i=0; i<2; i++) {
+        for (int i = 0; i < 2; i++) {
             log2.add(new UserLogItem(TextColor.ANSI.WHITE, "line" + i, Type.INFO));
         }
         PageBook pageBook1 = PageBook.fromUserLogList("", "", 10, log1);
@@ -84,8 +128,10 @@ public class PageBookTests {
         Page pageB = pageBook2.get(0);
         PageBook pageBook3 = PageBook.fromUserLogList("", "", 10, log1);
         Page pageC = pageBook3.get(0);
-        assertNotEquals(pageA, pageB);
-        assertEquals(pageA, pageC);
+        assertFalse(pageA.getAllLines().containsAll(pageB.getAllLines()) && pageB.getAllLines()
+          .containsAll(pageA.getAllLines()));
+        assertTrue(pageA.getAllLines().containsAll(pageC.getAllLines()) && pageC.getAllLines()
+          .containsAll(pageA.getAllLines()));
     }
 
     @Test

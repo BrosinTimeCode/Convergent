@@ -5,67 +5,102 @@ import com.googlecode.lanterna.TextColor;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface PageBook {
+public class PageBook {
 
-    class Page {
+    public static class Page {
 
-        private final List<UserLogItem> log = new ArrayList<>();
-        private final int lines;
+        private final List<UserLogItem> list = new ArrayList<>();
         private final String header;
 
-        private Page(int lines, String header) {
-            this.lines = lines;
+        private Page(String header, List<UserLogItem> list) {
             this.header = header;
+            if (this.header != null) {
+                this.list.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, this.header, Type.INFO));
+            }
+            this.list.addAll(list);
         }
 
-        public List<UserLogItem> convert(List<UserLogItem> list) {
-            this.log.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, this.header, Type.INFO));
-            for (int i = 0; i < lines; i++) {
-                if (list.size() == 0 | this.log.size() >= lines) {
-                    break;
-                }
-                this.log.add(list.get(0));
-                list.remove(0);
-            }
+        // returns an int of the line count
+        public int size() {
+            return list.size();
+        }
+
+        // returns a UserLogItem object from the index in the Page
+        public UserLogItem get(int lineNumber) {
+            return this.list.get(lineNumber);
+        }
+
+        public List<UserLogItem> getAllLines() {
             return list;
         }
 
-        public List<UserLogItem> getAllItems() {
-            return this.log;
+        public boolean hasHeader() {
+            return header != null;
         }
     }
 
-    static void paginateAndGetPage(String title, String commandAlias, int lines,
-      List<UserLogItem> list, int pageNumber) {
-        if (list.size() < lines - 1) {
-            for (UserLogItem log : list) {
-                UserLog.add(log);
+    private final List<Page> pages;
+
+    private PageBook(List<Page> pages) {
+        this.pages = new ArrayList<>(pages);
+    }
+
+    // returns a PageBook object from a List<UserLogItem>
+    public static PageBook fromUserLogList(String title, String commandName, int linesPerPage,
+      List<UserLogItem> list) {
+        int pageCount = list.size() / (linesPerPage - 1);
+        if (pageCount > 1) {
+            pageCount++;
+        }
+        String header = title + " - Page (";
+        if (pageCount <= 1) {
+            Page page = new Page(null, list);
+            List<Page> book = new ArrayList<>();
+            book.add(page);
+            return PageBook.fromPages(book);
+        }
+        List<Page> book = new ArrayList<>();
+        for (int i = 0; i < pageCount; i++) {
+            if (i + 1 == pageCount) {
+                book.add(new Page(header, list.subList(i * linesPerPage, list.size())));
+            } else {
+                book.add(new Page(header, list.subList(i * linesPerPage, (i + 1) * linesPerPage)));
             }
-            return;
         }
-        if (list.size() < 1) {
-            UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-              "PageBook could not paginate because the list is empty!", Type.DEV));
-            return;
+        return PageBook.fromPages(book);
+    }
+
+    private static PageBook fromPages(List<Page> book) {
+        return new PageBook(book);
+    }
+
+    // returns an int of the page count
+    public int size() {
+        return this.pages.size();
+    }
+
+    // returns a Page object from the index in the PageBook
+    public Page get(int pageNumber) {
+        return pages.get(pageNumber);
+    }
+
+    // returns a Page object by pageNumber from an abstract PageBook
+    public static Page paginateAndGetPage(String title, String commandName, int linesPerPage,
+      List<UserLogItem> list, int pageNumber) {
+        int pageCount = list.size() / (linesPerPage - 1);
+        if (pageNumber > pageCount) {
+            pageNumber = pageCount;
         }
-        final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (lines - 1));
-        if (pageNumber < 1 | pageNumber > TOTAL_PAGES) {
-            UserLog.add(
-              new UserLogItem(TextColor.ANSI.RED, "Page " + pageNumber + " does not exist!",
-                Type.INFO));
-            return;
+        if (pageCount <= 1) {
+            return new Page(null, list);
         }
-        int i = 1;
-        List<Page> pages = new ArrayList<>();
-        while (list.size() > 0 && i <= pageNumber) {
-            Page page = new Page(lines, title + " - Page (" + i + "/" + TOTAL_PAGES
-              + ") - Type " + commandAlias + " (page)");
-            list = new ArrayList<>(page.convert(list));
-            pages.add(page);
-            i++;
+        List<UserLogItem> newList;
+        if (pageNumber > pageCount) {
+            newList = list.subList((pageCount - 1) * (linesPerPage - 1), list.size());
+        } else {
+            newList = list.subList((pageNumber - 1) * (linesPerPage - 1), list.size());
         }
-        for (UserLogItem log : pages.get(pageNumber - 1).getAllItems()) {
-            UserLog.add(log);
-        }
+        return new Page("", newList);
     }
 }

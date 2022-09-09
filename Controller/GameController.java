@@ -214,9 +214,9 @@ public class GameController {
                     aliasesList.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
-                PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
-                  viewInterface.getConsoleLogHeight(),
-                  aliasesList, 1);
+                UserLog.add(
+                  PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
+                    viewInterface.getConsoleLogHeight(), aliasesList, 1));
                 viewInterface.displayConsoleLog();
                 return true;
             }
