@@ -36,6 +36,10 @@ public class PageBook {
         public boolean hasHeader() {
             return header != null;
         }
+
+        public boolean contains(UserLogItem item) {
+            return this.list.contains(item);
+        }
     }
 
     private final List<Page> pages;
@@ -62,7 +66,7 @@ public class PageBook {
         final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage));
 
         List<Page> book = new ArrayList<>();
-        for (int i = 0; i < TOTAL_PAGES; i++) {
+        for (int i = 1; i < TOTAL_PAGES + 1; i++) {
             // Sets header to:
             // <title> - Page (<current>/<total>) - Type "command <page>"
             String header =
@@ -72,8 +76,8 @@ public class PageBook {
             // Create a sublist for each page; flexes to account for potentially fewer lines on
             // the last page
             book.add(new Page(
-              header, list.subList(i * (linesPerPage + 1),
-              (i + 1 == TOTAL_PAGES) ? list.size() : (i + 1) * linesPerPage)));
+              header, list.subList((i - 1) * (linesPerPage),
+              i == TOTAL_PAGES ? list.size() : i * (linesPerPage))));
         }
         return PageBook.fromPages(book);
     }
@@ -124,5 +128,14 @@ public class PageBook {
 
     public List<Page> getAll() {
         return this.pages;
+    }
+
+    public boolean contains(UserLogItem item) {
+        for (Page page : this.pages) {
+            if (page.contains(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

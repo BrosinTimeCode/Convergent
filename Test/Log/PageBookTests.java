@@ -73,6 +73,20 @@ public class PageBookTests {
     }
 
     @Test
+    void pageBook_createdWithMultiplePages_hasAllOriginalLines() {
+        List<UserLogItem> log = new ArrayList<>();
+        int itemCount = 16;
+        int linesPerPage = 5;
+        for (int i = 0; i < itemCount; i++) {
+            log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
+        }
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
+        for (UserLogItem i : log) {
+            assertTrue(pageBook.contains(i));
+        }
+    }
+
+    @Test
     void pageBookWithMultiplePages_pageLinesEqualLinesPerPage() {
         List<UserLogItem> log = new ArrayList<>();
         int itemCount = 10;
