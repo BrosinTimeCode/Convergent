@@ -46,27 +46,34 @@ public class PageBook {
 
     public static PageBook fromUserLogList(String title, String commandName, int linesPerPage,
       List<UserLogItem> list) {
-        int pageCount = list.size() / (linesPerPage - 1);
-        if (pageCount > 1) {
-            pageCount++;
-        }
-        if (pageCount <= 1) {
-            Page page = new Page(null, list);
+
+        // IF the list fits on one page, return a Page without a header
+        if (list.size() <= linesPerPage) {
             List<Page> book = new ArrayList<>();
-            book.add(page);
+            book.add(new Page(null, list));
             return PageBook.fromPages(book);
         }
+
+        // ELSE linesPerPage is decremented by 1 to make room for a header
+        linesPerPage--;
+
+        // Rounds up the quotient of (total lines) / (lines per page)
+        // linesPerPage is decremented to make room for the header
+        final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage));
+
         List<Page> book = new ArrayList<>();
-        for (int i = 0; i < pageCount; i++) {
-            if (i + 1 == pageCount) {
-                book.add(new Page(
-                  title + " - Page (" + (i + 1) + "/" + pageCount + ") - Type \"" + commandName
-                    + " [page]\"", list.subList(i * linesPerPage, list.size())));
-            } else {
-                book.add(new Page(
-                  title + " - Page (" + (i + 1) + "/" + pageCount + ") - Type \"" + commandName
-                    + " [page]\"", list.subList(i * linesPerPage, (i + 1) * linesPerPage - 1)));
-            }
+        for (int i = 0; i < TOTAL_PAGES; i++) {
+            // Sets header to:
+            // <title> - Page (<current>/<total>) - Type "command <page>"
+            String header =
+              title + " - Page (" + (i + 1) + "/" + TOTAL_PAGES + ") - Type \"" + commandName
+                + " [page]\"";
+
+            // Create a sublist for each page; flexes to account for potentially fewer lines on
+            // the last page
+            book.add(new Page(
+              header, list.subList(i * (linesPerPage + 1),
+              (i + 1 == TOTAL_PAGES) ? list.size() : (i + 1) * linesPerPage)));
         }
         return PageBook.fromPages(book);
     }
@@ -85,18 +92,33 @@ public class PageBook {
 
     public static Page paginateAndGetPage(String title, String commandName, int linesPerPage,
       List<UserLogItem> list, int pageNumber) {
+
+        // IF the list fits on one page, return a Page without a header
         if (list.size() <= linesPerPage) {
             return new Page(null, list);
         }
-        final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage - 1));
+
+        // ELSE linesPerPage is decremented by 1 to make room for a header
+        linesPerPage--;
+
+        // Rounds up the quotient of (total lines) / (lines per page)
+        // linesPerPage is decremented to make room for the header
+        final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage));
+
+        // If the user requested a page greater than actual page count, set to last page
         if (pageNumber > TOTAL_PAGES) {
             pageNumber = TOTAL_PAGES;
         }
+        // Sets header to:
+        // <title> - Page (<current>/<total>) - Type "command [page]"
         final String header =
           title + " - Page (" + pageNumber + "/" + TOTAL_PAGES + ") - Type \"" + commandName
             + " [page]\"";
-        List<UserLogItem> newList = list.subList((pageNumber - 1) * (linesPerPage - 1),
-          pageNumber == TOTAL_PAGES ? list.size() : pageNumber * (linesPerPage - 1));
+
+        // Creates a sublist of <list> based on what lines would appear on <pageNumber>; flexes to
+        // account for potentially fewer lines on the last page
+        List<UserLogItem> newList = list.subList((pageNumber - 1) * (linesPerPage),
+          pageNumber == TOTAL_PAGES ? list.size() : pageNumber * (linesPerPage));
         return new Page(header, newList);
     }
 
