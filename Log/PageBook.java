@@ -85,25 +85,18 @@ public class PageBook {
 
     public static Page paginateAndGetPage(String title, String commandName, int linesPerPage,
       List<UserLogItem> list, int pageNumber) {
-
-        int pageCount = list.size() <= linesPerPage ? 1
-          : (int) Math.ceil((double) list.size() / (linesPerPage - 1));
-        if (pageNumber > pageCount) {
-            pageNumber = pageCount;
-        }
-        if (pageCount <= 1) {
+        if (list.size() <= linesPerPage) {
             return new Page(null, list);
         }
-        String header =
-          title + " - Page (" + pageNumber + "/" + pageCount + ") - Type \"" + commandName
-            + " [page]\"";
-        List<UserLogItem> newList;
-        if (pageNumber == pageCount) {
-            newList = list.subList((pageNumber - 1) * (linesPerPage - 1), list.size());
-        } else {
-            newList = list.subList((pageNumber - 1) * (linesPerPage - 1),
-              pageNumber * (linesPerPage - 1));
+        final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage - 1));
+        if (pageNumber > TOTAL_PAGES) {
+            pageNumber = TOTAL_PAGES;
         }
+        final String header =
+          title + " - Page (" + pageNumber + "/" + TOTAL_PAGES + ") - Type \"" + commandName
+            + " [page]\"";
+        List<UserLogItem> newList = list.subList((pageNumber - 1) * (linesPerPage - 1),
+          pageNumber == TOTAL_PAGES ? list.size() : pageNumber * (linesPerPage - 1));
         return new Page(header, newList);
     }
 
