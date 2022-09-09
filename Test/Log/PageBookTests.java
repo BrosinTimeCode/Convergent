@@ -22,8 +22,8 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook1 = PageBook.fromUserLogList("", "", linesPerPage, log);
-        Page page1 = PageBook.paginateAndGetPage("", "", linesPerPage, log, 2);
+        PageBook pageBook1 = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
+        Page page1 = PageBook.paginateAndGetPage("Test", "command", linesPerPage, log, 2);
         assertEquals(1, pageBook1.size());
         for (int i = 0; i < page1.size(); i++) {
             assertEquals(log.get(i), page1.get(i));
@@ -35,8 +35,8 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook2 = PageBook.fromUserLogList("", "", linesPerPage, log);
-        Page page2 = PageBook.paginateAndGetPage("", "", linesPerPage, log, 2);
+        PageBook pageBook2 = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
+        Page page2 = PageBook.paginateAndGetPage("Test", "command", linesPerPage, log, 2);
         assertEquals(1, pageBook2.size());
         for (int i = 0; i < page2.size(); i++) {
             assertEquals(log.get(i), page2.get(i));
@@ -53,7 +53,7 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
         assertEquals(1, pageBook.size());
         assertEquals(itemCount, pageBook.get(0).size());
     }
@@ -66,10 +66,26 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
-        Page page = PageBook.paginateAndGetPage("", "", linesPerPage, log, 1);
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
+        Page page = PageBook.paginateAndGetPage("Test", "command", linesPerPage, log, 1);
         assertTrue(pageBook.get(0).hasHeader());
         assertTrue(page.hasHeader());
+    }
+
+    @Test
+    void pageBookWithMultiplePages_pageLinesEqualLinesPerPage() {
+        List<UserLogItem> log = new ArrayList<>();
+        int itemCount = 10;
+        int linesPerPage = 5;
+        for (int i = 0; i < itemCount; i++) {
+            log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
+        }
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
+        Page page = PageBook.paginateAndGetPage("Test", "command", linesPerPage, log, 1);
+        for (Page p : pageBook.getAll()) {
+            assertTrue(p.size() <= linesPerPage);
+        }
+        assertEquals(linesPerPage, page.size());
     }
 
     @Test
@@ -81,8 +97,8 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        Page page5 = PageBook.paginateAndGetPage("", "", linesPerPage, log, pageNumber);
-        Page page2 = PageBook.paginateAndGetPage("", "", linesPerPage, log, 2);
+        Page page5 = PageBook.paginateAndGetPage("Test", "command", linesPerPage, log, pageNumber);
+        Page page2 = PageBook.paginateAndGetPage("Test", "command", linesPerPage, log, 2);
         for (int i = 1; i < page5.size(); i++) {
             assertEquals(page2.get(i), page5.get(i));
         }
@@ -96,7 +112,7 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
         assertEquals(1, pageBook.size());
     }
 
@@ -108,7 +124,7 @@ public class PageBookTests {
         for (int i = 0; i < itemCount; i++) {
             log.add(new UserLogItem(TextColor.ANSI.WHITE, "item" + i, Type.INFO));
         }
-        PageBook pageBook = PageBook.fromUserLogList("", "", linesPerPage, log);
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", linesPerPage, log);
         assertEquals(3, pageBook.size());
     }
 
@@ -122,11 +138,11 @@ public class PageBookTests {
         for (int i = 0; i < 2; i++) {
             log2.add(new UserLogItem(TextColor.ANSI.WHITE, "line" + i, Type.INFO));
         }
-        PageBook pageBook1 = PageBook.fromUserLogList("", "", 10, log1);
+        PageBook pageBook1 = PageBook.fromUserLogList("Test", "command", 10, log1);
         Page pageA = pageBook1.get(0);
-        PageBook pageBook2 = PageBook.fromUserLogList("", "", 10, log2);
+        PageBook pageBook2 = PageBook.fromUserLogList("Test", "command", 10, log2);
         Page pageB = pageBook2.get(0);
-        PageBook pageBook3 = PageBook.fromUserLogList("", "", 10, log1);
+        PageBook pageBook3 = PageBook.fromUserLogList("Test", "command", 10, log1);
         Page pageC = pageBook3.get(0);
         assertFalse(pageA.getAllLines().containsAll(pageB.getAllLines()) && pageB.getAllLines()
           .containsAll(pageA.getAllLines()));
@@ -137,7 +153,7 @@ public class PageBookTests {
     @Test
     void paginatingAnEmptyList_returnsAnEmptyPage() {
         List<UserLogItem> log = new ArrayList<>();
-        PageBook pageBook = PageBook.fromUserLogList("", "", 10, log);
+        PageBook pageBook = PageBook.fromUserLogList("Test", "command", 10, log);
         assertEquals(log.size(), pageBook.get(0).size());
     }
 }

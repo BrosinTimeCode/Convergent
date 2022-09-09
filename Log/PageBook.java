@@ -21,12 +21,10 @@ public class PageBook {
             this.list.addAll(list);
         }
 
-        // returns an int of the line count
         public int size() {
             return list.size();
         }
 
-        // returns a UserLogItem object from the index in the Page
         public UserLogItem get(int lineNumber) {
             return this.list.get(lineNumber);
         }
@@ -46,14 +44,12 @@ public class PageBook {
         this.pages = new ArrayList<>(pages);
     }
 
-    // returns a PageBook object from a List<UserLogItem>
     public static PageBook fromUserLogList(String title, String commandName, int linesPerPage,
       List<UserLogItem> list) {
         int pageCount = list.size() / (linesPerPage - 1);
         if (pageCount > 1) {
             pageCount++;
         }
-        String header = title + " - Page (";
         if (pageCount <= 1) {
             Page page = new Page(null, list);
             List<Page> book = new ArrayList<>();
@@ -63,9 +59,13 @@ public class PageBook {
         List<Page> book = new ArrayList<>();
         for (int i = 0; i < pageCount; i++) {
             if (i + 1 == pageCount) {
-                book.add(new Page(header, list.subList(i * linesPerPage, list.size())));
+                book.add(new Page(
+                  title + " - Page (" + (i + 1) + "/" + pageCount + ") - Type \"" + commandName
+                    + " [page]\"", list.subList(i * linesPerPage, list.size())));
             } else {
-                book.add(new Page(header, list.subList(i * linesPerPage, (i + 1) * linesPerPage)));
+                book.add(new Page(
+                  title + " - Page (" + (i + 1) + "/" + pageCount + ") - Type \"" + commandName
+                    + " [page]\"", list.subList(i * linesPerPage, (i + 1) * linesPerPage - 1)));
             }
         }
         return PageBook.fromPages(book);
@@ -75,32 +75,39 @@ public class PageBook {
         return new PageBook(book);
     }
 
-    // returns an int of the page count
     public int size() {
         return this.pages.size();
     }
 
-    // returns a Page object from the index in the PageBook
     public Page get(int pageNumber) {
         return pages.get(pageNumber);
     }
 
-    // returns a Page object by pageNumber from an abstract PageBook
     public static Page paginateAndGetPage(String title, String commandName, int linesPerPage,
       List<UserLogItem> list, int pageNumber) {
-        int pageCount = list.size() / (linesPerPage - 1);
+
+        int pageCount = list.size() <= linesPerPage ? 1
+          : (int) Math.ceil((double) list.size() / (linesPerPage - 1));
         if (pageNumber > pageCount) {
             pageNumber = pageCount;
         }
         if (pageCount <= 1) {
             return new Page(null, list);
         }
+        String header =
+          title + " - Page (" + pageNumber + "/" + pageCount + ") - Type \"" + commandName
+            + " [page]\"";
         List<UserLogItem> newList;
-        if (pageNumber > pageCount) {
-            newList = list.subList((pageCount - 1) * (linesPerPage - 1), list.size());
-        } else {
+        if (pageNumber == pageCount) {
             newList = list.subList((pageNumber - 1) * (linesPerPage - 1), list.size());
+        } else {
+            newList = list.subList((pageNumber - 1) * (linesPerPage - 1),
+              pageNumber * (linesPerPage - 1));
         }
-        return new Page("", newList);
+        return new Page(header, newList);
+    }
+
+    public List<Page> getAll() {
+        return this.pages;
     }
 }
