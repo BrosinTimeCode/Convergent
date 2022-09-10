@@ -60,6 +60,8 @@ public class Board {
                 moveUnit(unit, row, column);
                 break;
             }
+            UnitLocation previousLocation = globalUnits.get(unit.getId());
+            board[previousLocation.row][previousLocation.column].emptyCell();
             globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
         }
     }
