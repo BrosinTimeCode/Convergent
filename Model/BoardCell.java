@@ -13,7 +13,7 @@ public class BoardCell {
     public void emptyCell() {
         this.unit = null;
     }
-
+    
     public boolean setUnit(BaseUnit unit) {
         if(this.unit == null) {
             this.unit = unit;

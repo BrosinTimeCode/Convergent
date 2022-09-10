@@ -3,6 +3,7 @@ package Model;
 import Units.BaseUnit;
 
 public class UnitLocation {
+
   protected int row;
   protected int column;
   private BaseUnit unit;

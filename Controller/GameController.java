@@ -4,6 +4,7 @@ import Commands.Attack;
 import Commands.Command;
 import Commands.CommandList;
 import Commands.Help;
+import Commands.Attack;
 import Commands.Move;
 import Commands.Select;
 import Log.UserLog;
@@ -23,7 +24,7 @@ public class GameController {
     GameViewInterface viewInterface;
     Board board;
     private BaseUnit player1SelectedUnit;
-    private HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
+    private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
@@ -47,20 +48,21 @@ public class GameController {
     public void initialize() {
         Timer timer = new Timer();
         long oneSecond = 1000;
+        RefreshMapTask task = new RefreshMapTask(viewInterface, board);
+        timer.schedule(task, 0, oneSecond);
         DamageEntityTask damageTask = new DamageEntityTask(this);
-        RefreshMapTask refreshMapTask = new RefreshMapTask(viewInterface, board);
         timer.schedule(damageTask, 0, oneSecond);
-        timer.schedule(refreshMapTask, 0, oneSecond);
     }
 
     public void handleUserInput() {
         viewInterface.displayHelp();
         while (true) {
             String userInput = viewInterface.getUserInput();
-            Command userCommand = CommandList.getCommandFromInput(userInput);
+            Command userCommand = CommandList.getCommandFromAlias(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
-            } else if (!executeCommand(userCommand)) {
+            } else {
+                executeCommand(userCommand);
             }
         }
     }
@@ -70,6 +72,8 @@ public class GameController {
             return executeMove((Move) command);
         } else if (command instanceof Select) {
             return executeSelect((Select) command);
+        } else if (command instanceof Attack) {
+            return executeAttack((Attack) command);
         } else if (command instanceof Help) {
             return executeHelp((Help) command);
         } else if (command instanceof Attack) {
@@ -129,14 +133,45 @@ public class GameController {
             entitiesUnderAttack.remove(player1SelectedUnit);
             board.moveUnit(player1SelectedUnit, row, column);
             return true;
+            
+    public boolean executeAttack(Attack attackCommand) {
+        switch (attackCommand.validateArguments()) {
+            case NOARGS -> { // with no arguments, general info is printed
+                Command command = CommandList.getCommand(attackCommand.getDefaultAlias());
+                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                  command.getName() + " - " + command.getDescription() + " Usages:",
+                  Type.INFO));
+                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                usages.forEach((key, value) -> UserLog.add(
+                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                viewInterface.displayConsoleLog();
+                return true;
+            }
+            case GOOD -> { // arguments are parsable as positive integers
+                // TODO: Replace the following "Executing attack command" info with actual command
+                List<String> arguments = new ArrayList<>(attackCommand.getArguments());
+                if (arguments.size() == 1 | arguments.size() == 3) {
+                    return true;
+                } else {
+                    return attackUnit(Integer.parseInt(arguments.get(0)),
+                      Integer.parseInt(arguments.get(1)));
+                }
+            }
+            case TOOMANY -> { // too many arguments given
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Too many arguments! Usage: " + attackCommand.getBasicUsage(), Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
+            case BAD -> { // arguments are not parsable as positive integers
+                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                viewInterface.displayConsoleLog();
+                return false;
+            }
         }
         return false;
-    }
-
-    public boolean executeAttack(Attack attackCommand) {
-        List<String> arguments = new ArrayList<>(attackCommand.getArguments());
-        return attackUnit(Integer.parseInt(arguments.get(0)),
-                Integer.parseInt(arguments.get(1)));
     }
 
     public boolean attackUnit(int row, int column) {
