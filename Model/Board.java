@@ -2,6 +2,7 @@ package Model;
 
 import Units.BaseUnit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Board {
@@ -66,6 +67,16 @@ public class Board {
                 board[previousLocation.row][previousLocation.column].emptyCell();
             }
             globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
+        }
+        // Unit is in a square with an ally
+        UnitLocation endingLocation = globalUnits.get(unit.getId());
+        if(!board[endingLocation.row][endingLocation.column].unit.equals(unit)) {
+            ArrayList<Node> reversePath = path.getReversePath();
+            for(Node node: reversePath) {
+                if(board[node.getRow()][node.getColumn()].setUnit(unit)) {
+                    break;
+                }
+            }
         }
     }
 

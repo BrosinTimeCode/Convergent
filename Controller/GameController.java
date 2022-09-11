@@ -28,7 +28,7 @@ public class GameController {
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
-            Random randomGenerator = new Random();
+            Random randomGenerator = new Random(23);
             int rows = randomGenerator.nextInt(20) + 1;
             int columns = randomGenerator.nextInt(20) + 1;
             board = new TestBoard(rows, columns);

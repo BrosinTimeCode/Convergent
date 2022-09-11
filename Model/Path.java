@@ -1,6 +1,9 @@
 package Model;
 
+import java.lang.reflect.Array;
+import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Objects;
 
 // A path contains nodes and goes from one location to another
@@ -30,6 +33,15 @@ public class Path {
 
     public int getLength() {
         return path.size();
+    }
+
+    public ArrayList<Node> getReversePath() {
+        ArrayList<Node> reversePath = new ArrayList<>();
+        ListIterator<Node> iterator = path.listIterator(path.size());
+        while(iterator.hasPrevious()) {
+            reversePath.add(iterator.previous());
+        }
+        return reversePath;
     }
 
     @Override
