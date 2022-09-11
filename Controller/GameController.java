@@ -76,8 +76,6 @@ public class GameController {
             return executeAttack((Attack) command);
         } else if (command instanceof Help) {
             return executeHelp((Help) command);
-        } else if (command instanceof Attack) {
-            return executeAttack((Attack) command);
         }
         return false;
     }
@@ -133,6 +131,9 @@ public class GameController {
             entitiesUnderAttack.remove(player1SelectedUnit);
             board.moveUnit(player1SelectedUnit, row, column);
             return true;
+        }
+        return false;
+    }
             
     public boolean executeAttack(Attack attackCommand) {
         switch (attackCommand.validateArguments()) {
