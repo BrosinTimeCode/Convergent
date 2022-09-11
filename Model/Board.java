@@ -56,12 +56,12 @@ public class Board {
         Path path = pathFinder(location.row, location.column, row, column);
         for(Node node: path.path) {
             // If an enemy node is blocking re-path
-            if(!board[node.getRow()][node.getColumn()].setUnit(unit) || !board[node.getRow()][node.getColumn()].unit.isAlly(unit)) {
+            if(!board[node.getRow()][node.getColumn()].setUnit(unit) && !board[node.getRow()][node.getColumn()].unit.isAlly(unit)) {
                 moveUnit(unit, row, column);
                 break;
             }
             UnitLocation previousLocation = globalUnits.get(unit.getId());
-            board[previousLocation.row][previousLocation.column].emptyCell();
+            //board[previousLocation.row][previousLocation.column].emptyCell();
             globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
         }
     }
