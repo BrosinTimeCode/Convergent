@@ -97,9 +97,15 @@ public class GameController {
             }
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(moveCommand.getArguments());
-                if (arguments.size() == 1) {
+                if(arguments.size() == 3) {
                     return true;
-                } else {
+                }
+                if (arguments.size() == 1) {
+                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                        "Executing move command...", Type.INFO));
+                    viewInterface.displayConsoleLog();
+                    return moveToUnit(Integer.parseInt(arguments.get(0)));
+                } else if (arguments.size() == 2){
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                             "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
@@ -133,6 +139,15 @@ public class GameController {
             return true;
         }
         return false;
+    }
+
+    public boolean moveToUnit(int id) {
+        if (player1SelectedUnit == null) {
+            return false;
+        }
+        entitiesUnderAttack.remove(player1SelectedUnit);
+        board.moveToUnit(player1SelectedUnit, id);
+        return true;
     }
             
     public boolean executeAttack(Attack attackCommand) {

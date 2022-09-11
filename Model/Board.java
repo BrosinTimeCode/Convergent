@@ -80,6 +80,11 @@ public class Board {
         }
     }
 
+    public void moveToUnit(BaseUnit unit, int id) {
+        UnitLocation location = globalUnits.get(id);
+        moveUnit(unit, location.row, location.column);
+    }
+
     public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team,
       String unitType) {
         if (board[locationRow][locationColumn].unit == null) {
