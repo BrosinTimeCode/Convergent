@@ -61,7 +61,10 @@ public class Board {
                 break;
             }
             UnitLocation previousLocation = globalUnits.get(unit.getId());
-            //board[previousLocation.row][previousLocation.column].emptyCell();
+            // If current unit populated last location remove it
+            if(board[previousLocation.row][previousLocation.column].unit.equals(unit)) {
+                board[previousLocation.row][previousLocation.column].emptyCell();
+            }
             globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
         }
     }
