@@ -41,15 +41,17 @@ public class CommandLineInterface implements GameViewInterface {
 
     public void displayBoard(Board board) {
         try {
+            // board
             textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
             textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
             String[] rows = board.toString().split("\\r?\\n");
             for (int row = 0; row < rows.length; row++) {
                 textGraphics.putString(boardPositionX, row + boardPositionY, rows[row]);
             }
-            // display a box as the border
+
+            // border
             textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-            textGraphics.setBackgroundColor(TextColor.ANSI.CYAN);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK_BRIGHT);
             textGraphics.putString(boardPositionX - 1, boardPositionY - 1,
               " ".repeat(board.getBoardWidth() * 2 + 2));
             for (int i = 0; i < board.getBoardHeight(); i++) {
@@ -59,6 +61,15 @@ public class CommandLineInterface implements GameViewInterface {
             }
             textGraphics.putString(boardPositionX - 1, boardPositionY + board.getBoardHeight(),
               " ".repeat(board.getBoardWidth() * 2 + 2));
+
+            // coordinates - Y
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            for (int i = 0; i < board.getBoardHeight(); i++) {
+                textGraphics.putString(i >= 10 ? boardPositionX - 1 : boardPositionX - 2,
+                  boardPositionY + i, String.valueOf(i));
+            }
+
             terminal.flush();
             resetTextGraphicsColors();
         } catch (IOException e) {
