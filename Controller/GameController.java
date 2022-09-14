@@ -23,7 +23,7 @@ public class GameController {
 
     GameViewInterface viewInterface;
     Board board;
-    private BaseUnit player1SelectedUnit;
+    private static BaseUnit player1SelectedUnit;
     private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
 
     public GameController(int viewType, int[] boardSize) {
@@ -292,5 +292,9 @@ public class GameController {
 
     public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {
         return entitiesUnderAttack;
+    }
+
+    public static boolean isPlayer1SelectedUnit(BaseUnit unit) {
+        return player1SelectedUnit == unit;
     }
 }
