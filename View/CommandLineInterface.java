@@ -1,9 +1,11 @@
 package View;
 
+import Controller.GameController;
 import Log.UserLog;
 import Log.UserLogItem;
 import Model.Board;
 import Log.UserLogItem.Type;
+import Units.BaseUnit;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
@@ -42,11 +44,17 @@ public class CommandLineInterface implements GameViewInterface {
     public void displayBoard(Board board) {
         try {
             // board
-            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-            textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             String[] rows = board.toString().split("\\r?\\n");
             for (int row = 0; row < rows.length; row++) {
-                textGraphics.putString(boardPositionX, row + boardPositionY, rows[row]);
+                String[] cols = rows[row].split(" ");
+                for (int col = 0; col < cols.length; col++) {
+                    BaseUnit unit = board.getUnit(row, col);
+                    textGraphics.setForegroundColor(GameController.isPlayer1SelectedUnit(unit) && unit != null ? TextColor.ANSI.CYAN_BRIGHT : TextColor.ANSI.WHITE);
+                    textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+                    textGraphics.putString(col * 2 + boardPositionX, row + boardPositionY, cols[col] + " ");
+                }
             }
 
             // border
