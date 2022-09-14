@@ -30,12 +30,12 @@ public class CommandLineInterface implements GameViewInterface {
     public CommandLineInterface(Board board) {
 
         terminal = null;
-        boardPositionX = 2;
-        boardPositionY = 1;
+        boardPositionX = 5;
+        boardPositionY = 4;
         inputPositionX = 2;
-        inputPositionY = board.getBoardHeight() + 13;
+        inputPositionY = board.getBoardHeight() + 17;
         logPositionX = 2;
-        logPositionY = board.getBoardHeight() + 2;
+        logPositionY = board.getBoardHeight() + 6;
 
     }
 
@@ -47,6 +47,18 @@ public class CommandLineInterface implements GameViewInterface {
             for (int row = 0; row < rows.length; row++) {
                 textGraphics.putString(boardPositionX, row + boardPositionY, rows[row]);
             }
+            // display a box as the border
+            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
+            textGraphics.setBackgroundColor(TextColor.ANSI.CYAN);
+            textGraphics.putString(boardPositionX - 1, boardPositionY - 1,
+              " ".repeat(board.getBoardWidth() * 2 + 2));
+            for (int i = 0; i < board.getBoardHeight(); i++) {
+                textGraphics.putString(boardPositionX - 1, boardPositionY + i, " ");
+                textGraphics.putString(boardPositionX + board.getBoardWidth() * 2,
+                  boardPositionY + i, " ");
+            }
+            textGraphics.putString(boardPositionX - 1, boardPositionY + board.getBoardHeight(),
+              " ".repeat(board.getBoardWidth() * 2 + 2));
             terminal.flush();
             resetTextGraphicsColors();
         } catch (IOException e) {
