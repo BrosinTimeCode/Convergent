@@ -66,7 +66,7 @@ public class CommandLineInterface implements GameViewInterface {
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             for (int i = 0; i < board.getBoardHeight(); i++) {
-                textGraphics.putString(i >= 10 ? boardPositionX - 1 : boardPositionX - 2,
+                textGraphics.putString(i >= 10 ? boardPositionX - 3 : boardPositionX - 2,
                   boardPositionY + i, String.valueOf(i));
             }
 
