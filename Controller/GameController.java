@@ -97,20 +97,20 @@ public class GameController {
             }
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(moveCommand.getArguments());
-                if(arguments.size() == 3) {
+                if (arguments.size() == 3) {
                     return true;
                 }
                 if (arguments.size() == 1) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing move command...", Type.INFO));
+                      "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
-                } else if (arguments.size() == 2){
+                } else if (arguments.size() == 2) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                            "Executing move command...", Type.INFO));
+                      "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveUnit(Integer.parseInt(arguments.get(0)),
-                            Integer.parseInt(arguments.get(1)));
+                      Integer.parseInt(arguments.get(1)));
                 }
             }
             case TOOMANY -> { // too many arguments given
@@ -149,7 +149,7 @@ public class GameController {
         board.moveToUnit(player1SelectedUnit, id);
         return true;
     }
-            
+
     public boolean executeAttack(Attack attackCommand) {
         switch (attackCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed

@@ -38,7 +38,7 @@ public class Path {
     public ArrayList<Node> getReversePath() {
         ArrayList<Node> reversePath = new ArrayList<>();
         ListIterator<Node> iterator = path.listIterator(path.size());
-        while(iterator.hasPrevious()) {
+        while (iterator.hasPrevious()) {
             reversePath.add(iterator.previous());
         }
         return reversePath;
