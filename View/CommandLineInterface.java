@@ -70,6 +70,18 @@ public class CommandLineInterface implements GameViewInterface {
                   boardPositionY + i, String.valueOf(i));
             }
 
+            // coordinates - X
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            for (int i = 0; i < board.getBoardWidth(); i++) {
+                textGraphics.putString(boardPositionX + i * 2, boardPositionY - 2, String.valueOf(i % 10));
+            }
+            if (board.getBoardWidth() >= 10) {
+                for (int i = 10; i < board.getBoardWidth(); i++) {
+                    textGraphics.putString(boardPositionX + i * 2, boardPositionY - 3, String.valueOf(i / 10));
+                }
+            }
+
             terminal.flush();
             resetTextGraphicsColors();
         } catch (IOException e) {
