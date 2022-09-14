@@ -2,6 +2,7 @@ package Model;
 
 import Units.BaseUnit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Board {
@@ -49,6 +50,40 @@ public class Board {
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
         return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd,
           board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
+    }
+
+    public void moveUnit(BaseUnit unit, int row, int column) {
+        UnitLocation location = globalUnits.get(unit.getId());
+        Path path = pathFinder(location.row, location.column, row, column);
+        for (Node node : path.path) {
+            // If an enemy node is blocking re-path
+            if (!board[node.getRow()][node.getColumn()].setUnit(unit)
+              && !board[node.getRow()][node.getColumn()].unit.isAlly(unit)) {
+                moveUnit(unit, row, column);
+                break;
+            }
+            UnitLocation previousLocation = globalUnits.get(unit.getId());
+            // If current unit populated last location remove it
+            if (board[previousLocation.row][previousLocation.column].unit.equals(unit)) {
+                board[previousLocation.row][previousLocation.column].emptyCell();
+            }
+            globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
+        }
+        // Unit is in a square with an ally
+        UnitLocation endingLocation = globalUnits.get(unit.getId());
+        if (!board[endingLocation.row][endingLocation.column].unit.equals(unit)) {
+            ArrayList<Node> reversePath = path.getReversePath();
+            for (Node node : reversePath) {
+                if (board[node.getRow()][node.getColumn()].setUnit(unit)) {
+                    break;
+                }
+            }
+        }
+    }
+
+    public void moveToUnit(BaseUnit unit, int id) {
+        UnitLocation location = globalUnits.get(id);
+        moveUnit(unit, location.row, location.column);
     }
 
     public boolean newUnit(int locationRow, int locationColumn, BaseUnit.Team team,

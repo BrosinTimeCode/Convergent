@@ -1,5 +1,6 @@
 package Controller;
 
+import Commands.Attack;
 import Commands.Command;
 import Commands.CommandList;
 import Commands.Help;
@@ -15,11 +16,8 @@ import View.CommandLineInterface;
 import Model.TestBoard;
 import Model.Board;
 import com.googlecode.lanterna.TextColor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
+
+import java.util.*;
 
 public class GameController {
 
@@ -30,7 +28,10 @@ public class GameController {
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
-            board = new TestBoard();
+            Random randomGenerator = new Random(23);
+            int rows = randomGenerator.nextInt(20) + 1;
+            int columns = randomGenerator.nextInt(20) + 1;
+            board = new TestBoard(rows, columns);
         } else {
             board = new Board(boardSize[0], boardSize[1]);
         }
@@ -95,11 +96,22 @@ public class GameController {
                 return true;
             }
             case GOOD -> { // arguments are parsable as positive integers
-                // TODO: Replace the following "Executing move command" info with actual command
-                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                  "Executing move command...", Type.INFO));
-                viewInterface.displayConsoleLog();
-                return true;
+                List<String> arguments = new ArrayList<>(moveCommand.getArguments());
+                if (arguments.size() == 3) {
+                    return true;
+                }
+                if (arguments.size() == 1) {
+                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                      "Executing move command...", Type.INFO));
+                    viewInterface.displayConsoleLog();
+                    return moveToUnit(Integer.parseInt(arguments.get(0)));
+                } else if (arguments.size() == 2) {
+                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                      "Executing move command...", Type.INFO));
+                    viewInterface.displayConsoleLog();
+                    return moveUnit(Integer.parseInt(arguments.get(0)),
+                      Integer.parseInt(arguments.get(1)));
+                }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
@@ -115,6 +127,27 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    public boolean moveUnit(int row, int column) {
+        if (player1SelectedUnit == null) {
+            return false;
+        }
+        if (checkBounds(row, column)) {
+            entitiesUnderAttack.remove(player1SelectedUnit);
+            board.moveUnit(player1SelectedUnit, row, column);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean moveToUnit(int id) {
+        if (player1SelectedUnit == null) {
+            return false;
+        }
+        entitiesUnderAttack.remove(player1SelectedUnit);
+        board.moveToUnit(player1SelectedUnit, id);
+        return true;
     }
 
     public boolean executeAttack(Attack attackCommand) {

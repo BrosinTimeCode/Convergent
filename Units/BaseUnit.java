@@ -25,6 +25,10 @@ public abstract class BaseUnit {
         return team;
     }
 
+    public boolean isAlly(BaseUnit unit) {
+        return unit.team == this.team;
+    }
+
     public int getId() {
         return id;
     }

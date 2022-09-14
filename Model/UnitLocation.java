@@ -14,4 +14,9 @@ public class UnitLocation {
         this.unit = unit;
     }
 
+    public void setLocation(int row, int column) {
+        this.row = row;
+        this.column = column;
+    }
+
 }
