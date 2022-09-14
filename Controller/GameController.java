@@ -179,6 +179,8 @@ public class GameController {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
                 player1SelectedUnit = null;
+                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
+                viewInterface.displayConsoleLog();
                 return true;
             }
             case GOOD -> { // arguments are parsable as positive integers
