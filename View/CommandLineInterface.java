@@ -134,7 +134,7 @@ public class CommandLineInterface implements GameViewInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public void refreshBoard(Board board) {
