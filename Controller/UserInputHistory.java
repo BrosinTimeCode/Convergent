@@ -27,7 +27,7 @@ public class UserInputHistory {
     }
 
     /**
-     * Gets the record from the list previous from the Browser chronologically and moves the Browser
+     * Gets the previous record from the list by the Browser chronologically and moves the Browser
      * backward by one. If the browser is at the first record, the first record is returned and the
      * Browser does not move. If the list is empty, an empty String is returned.
      *
@@ -44,7 +44,7 @@ public class UserInputHistory {
     }
 
     /**
-     * Gets the record from the list next from the Browser chronologically and moves the Browser
+     * Gets the next record from the list by the Browser chronologically and moves the Browser
      * forward by one. If the browser is at the last record or the list is empty, an empty String is
      * returned and the Browser does not move.
      *
