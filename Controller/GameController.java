@@ -25,6 +25,7 @@ public class GameController {
     Board board;
     private BaseUnit player1SelectedUnit;
     private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
+    private final UserInputHistory inputHistory;
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
@@ -43,6 +44,8 @@ public class GameController {
         }
         CommandList.initializeCommands();
         entitiesUnderAttack = new HashMap<>();
+        inputHistory = new UserInputHistory();
+        viewInterface.displayHelp();
     }
 
     public void initialize() {
