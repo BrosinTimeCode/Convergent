@@ -67,6 +67,21 @@ public class GameController {
         }
     }
 
+    private String charListToString(List<Character> list) {
+        if (list.size() == 0) {
+            return "";
+        }
+        return list.toString().substring(1, 3 * list.size() - 1).replaceAll(", ", "");
+    }
+
+    private List<Character> stringToCharList(String string) {
+        List<Character> list = new ArrayList<>();
+        for (char c : string.toCharArray()) {
+            list.add(c);
+        }
+        return list;
+    }
+
     public boolean executeCommand(Command command) {
         if (command instanceof Move) {
             return executeMove((Move) command);
