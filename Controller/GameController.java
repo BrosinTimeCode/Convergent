@@ -87,10 +87,12 @@ public class GameController {
                 }
                 case ArrowDown -> {
                     input.clear();
+                    viewInterface.clearInput();
                     input.addAll(stringToCharList(this.inputHistory.next()));
                 }
                 case ArrowUp -> {
                     input.clear();
+                    viewInterface.clearInput();
                     input.addAll(stringToCharList(this.inputHistory.previous()));
                 }
             }
