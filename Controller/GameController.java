@@ -4,7 +4,6 @@ import Commands.Attack;
 import Commands.Command;
 import Commands.CommandList;
 import Commands.Help;
-import Commands.Attack;
 import Commands.Move;
 import Commands.Select;
 import Log.UserLog;
@@ -17,6 +16,7 @@ import Model.TestBoard;
 import Model.Board;
 import com.googlecode.lanterna.TextColor;
 
+import com.googlecode.lanterna.input.KeyStroke;
 import java.util.*;
 
 public class GameController {
@@ -57,16 +57,52 @@ public class GameController {
         timer.schedule(damageTask, 0, oneSecond);
     }
 
-    public void handleUserInput() {
-        viewInterface.displayHelp();
-        while (true) {
-            String userInput = viewInterface.getUserInput();
-            Command userCommand = CommandList.getCommandFromAlias(userInput);
-            if (userCommand == null) {
-                viewInterface.displayInvalidCommand();
-            } else {
-                executeCommand(userCommand);
+    public void getUserInput() {
+        List<Character> input = new ArrayList<>();
+        viewInterface.clearInput();
+        boolean inputClosed = false;
+        do {
+            viewInterface.displayInput(charListToString(input));
+            KeyStroke keyStroke = viewInterface.getUserKeyStroke();
+            switch (keyStroke.getKeyType()) {
+                case Escape -> {
+                    input.clear();
+                    viewInterface.clearInput();
+                    inputClosed = true;
+                }
+                case Character -> {
+                    input.add(keyStroke.getCharacter());
+                }
+                case Enter -> {
+                    this.inputHistory.add(charListToString(input));
+                    handleUserInput(charListToString(input));
+                    input.clear();
+                    inputClosed = true;
+                }
+                case Backspace -> {
+                    if (input.size() >= 1) {
+                        input.remove(input.size() - 1);
+                    }
+                    viewInterface.clearInput();
+                }
+                case ArrowDown -> {
+                    input.clear();
+                    input.addAll(stringToCharList(this.inputHistory.next()));
+                }
+                case ArrowUp -> {
+                    input.clear();
+                    input.addAll(stringToCharList(this.inputHistory.previous()));
+                }
             }
+        } while (!inputClosed);
+    }
+
+    public void handleUserInput(String input) {
+        Command userCommand = CommandList.getCommandFromAlias(input);
+        if (userCommand == null) {
+            viewInterface.displayInvalidCommand();
+        } else {
+            executeCommand(userCommand);
         }
     }
 
