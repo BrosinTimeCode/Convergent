@@ -172,4 +172,27 @@ public class CommandLineInterface implements GameViewInterface {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void displayInput(String input) {
+        try {
+            resetTextGraphicsColors();
+            textGraphics.putString(this.inputPositionX, this.inputPositionY, "/" + input);
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void clearInput() {
+        try {
+            textGraphics.drawLine(this.inputPositionX + 1, this.inputPositionY,
+              terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
