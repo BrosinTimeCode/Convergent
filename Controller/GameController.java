@@ -188,7 +188,7 @@ public class GameController {
         return false;
     }
 
-    public boolean moveUnit(int row, int column) {
+    public boolean moveUnit(int column, int row) {
         if (player1SelectedUnit == null) {
             return false;
         }
@@ -249,7 +249,7 @@ public class GameController {
         return false;
     }
 
-    public boolean attackUnit(int row, int column) {
+    public boolean attackUnit(int column, int row) {
         // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
@@ -355,7 +355,7 @@ public class GameController {
         return false;
     }
 
-    public boolean selectUnit(int row, int column) {
+    public boolean selectUnit(int column, int row) {
         if (checkBounds(row, column)) {
             player1SelectedUnit = board.getUnit(row, column);
             return true;
