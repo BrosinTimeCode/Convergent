@@ -15,10 +15,6 @@ public class BoardCell {
         }
     }
 
-    public void emptyCell() {
-        this.unit = null;
-    }
-
     public void removeUnit(int id) {
         // Current unit is visible unit
         if(units.get(id) == unit) {
@@ -32,14 +28,6 @@ public class BoardCell {
                 }
             }
         }
-    }
-
-    public boolean setUnit(BaseUnit unit) {
-        if (this.unit == null) {
-            this.unit = unit;
-            return true;
-        }
-        return false;
     }
 
     public void addUnit(BaseUnit unit) {
