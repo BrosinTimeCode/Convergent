@@ -71,7 +71,7 @@ public class CommandLineInterface implements GameViewInterface {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
-            TerminalSize terminalSize = new TerminalSize(inputPositionX + 82, inputPositionY + 2);
+            TerminalSize terminalSize = new TerminalSize(inputPositionX + 83, inputPositionY + 2);
             defaultTerminalFactory.setInitialTerminalSize(terminalSize);
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();

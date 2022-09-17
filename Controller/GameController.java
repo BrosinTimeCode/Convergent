@@ -71,7 +71,9 @@ public class GameController {
                     inputClosed = true;
                 }
                 case Character -> {
-                    input.add(keyStroke.getCharacter());
+                    if (input.size() < 80) {
+                        input.add(keyStroke.getCharacter());
+                    }
                 }
                 case Enter -> {
                     this.inputHistory.add(charListToString(input));
