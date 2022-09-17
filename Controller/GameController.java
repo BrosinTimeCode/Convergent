@@ -32,6 +32,9 @@ public class GameController {
     public GameController(int viewType, BoardType boardType, int width, int height) {
         int rows = height;
         int columns = width;
+        /* Command line arguments give size of board. No arguments results in height and width of board
+           being random from 0 to 30
+         */
         if(rows == 0 && columns == 0) {
             Random randomGenerator = new Random();
             rows = randomGenerator.nextInt(30) + 1;
