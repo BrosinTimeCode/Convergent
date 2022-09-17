@@ -6,6 +6,8 @@ public class Main {
         int[] boardSize = {10};
         GameController controller = new GameController(-1, boardSize);
         controller.initialize();
-        controller.handleUserInput();
+        while (true) {
+            controller.getUserInput();
+        }
     }
 }

@@ -15,8 +15,6 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CommandLineInterface implements GameViewInterface {
 
@@ -112,16 +110,12 @@ public class CommandLineInterface implements GameViewInterface {
         displayConsoleLog();
     }
 
-    public void displayCommandError(String error) {
-        System.out.println(error);
-    }
-
     @Override
     public void initialize() {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             defaultTerminalFactory.setTerminalEmulatorTitle("RTS Game");
-            TerminalSize terminalSize = new TerminalSize(inputPositionX + 82, inputPositionY + 2);
+            TerminalSize terminalSize = new TerminalSize(inputPositionX + 83, inputPositionY + 2);
             defaultTerminalFactory.setInitialTerminalSize(terminalSize);
             terminal = defaultTerminalFactory.createTerminal();
             textGraphics = terminal.newTextGraphics();
@@ -135,54 +129,13 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     @Override
-    public String getUserInput() {
-        int x = inputPositionX;
-        int y = inputPositionY;
+    public KeyStroke getUserKeyStroke() {
         try {
-            resetTextGraphicsColors();
-            textGraphics.putString(x, y, "/");
-            terminal.flush();
-
-            KeyStroke keyStroke = terminal.readInput();
-            List<Character> input = new ArrayList<>();
-            do {
-                if (keyStroke.getKeyType() == KeyType.Escape) {
-                    break;
-                }
-                if (keyStroke.getKeyType().equals(KeyType.Character)) {
-                    input.add(keyStroke.getCharacter());
-                } else if (keyStroke.getKeyType().equals(KeyType.Backspace)
-                  && input.size() >= 1) {
-                    input.remove(input.size() - 1);
-                }
-                textGraphics.drawLine(x + 1, y,
-                  terminal.getTerminalSize().getColumns() - 1, y,
-                  ' ');
-                if (input.size() < 1) {
-                    textGraphics.putString(x + 1, y,
-                      "");
-                } else {
-                    textGraphics.putString(x + 1, y,
-                      input.toString().substring(1, 3 * input.size() - 1)
-                        .replaceAll(", ", ""));
-                }
-                terminal.flush();
-                keyStroke = terminal.readInput();
-            } while (keyStroke.getKeyType() != KeyType.Enter);
-            textGraphics.drawLine(x + 1, y,
-              terminal.getTerminalSize().getColumns() - 1, y,
-              ' ');
-            terminal.flush();
-            return input.toString().substring(1, 3 * input.size() - 1)
-              .replaceAll(", ", "");
+            return terminal.readInput();
         } catch (IOException e) {
             e.printStackTrace();
+            return new KeyStroke(KeyType.Unknown);
         }
-        return null;
-    }
-
-    public void refreshBoard(Board board) {
-        displayBoard(board);
     }
 
     private void resetTextGraphicsColors() {
@@ -218,6 +171,26 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     @Override
+    public void displayInput(String input) {
+        try {
+            resetTextGraphicsColors();
+            textGraphics.putString(this.inputPositionX, this.inputPositionY, "/" + input);
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void clearInput() {
+        try {
+            textGraphics.drawLine(this.inputPositionX + 1, this.inputPositionY,
+              terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
     public void setConsoleLogHeight(int height) {
         this.logHeight = height;
     }
@@ -225,5 +198,6 @@ public class CommandLineInterface implements GameViewInterface {
     @Override
     public int getConsoleLogHeight() {
         return this.logHeight;
+       
     }
 }
