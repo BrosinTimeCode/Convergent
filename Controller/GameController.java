@@ -10,6 +10,7 @@ import Log.PageBook;
 import Log.UserLog;
 import Log.UserLogItem;
 import Log.UserLogItem.Type;
+import Model.TestBoard.BoardType;
 import Units.BaseUnit;
 import View.GameViewInterface;
 import View.CommandLineInterface;
@@ -28,14 +29,18 @@ public class GameController {
     private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
     private final UserInputHistory inputHistory;
 
-    public GameController(int viewType, int[] boardSize) {
-        if (boardSize.length != 2) {
-            Random randomGenerator = new Random(89);
-            int rows = randomGenerator.nextInt(20) + 1;
-            int columns = randomGenerator.nextInt(20) + 1;
-            board = new TestBoard(rows, columns);
+    public GameController(int viewType, BoardType boardType, int width, int height) {
+        int rows = height;
+        int columns = width;
+        if(rows == 0 && columns == 0) {
+            Random randomGenerator = new Random();
+            rows = randomGenerator.nextInt(30) + 1;
+            columns = randomGenerator.nextInt(30) + 1;
+        }
+        if (boardType != BoardType.EMPTY) {
+            board = new TestBoard(boardType, rows, columns);
         } else {
-            board = new Board(boardSize[0], boardSize[1]);
+            board = new Board(rows, columns);
         }
         switch (viewType) {
             default -> {
