@@ -13,7 +13,7 @@ public class Main {
             width = 0;
             height = 0;
         }
-        GameController controller = new GameController(-1, BoardType.ONEVSCHECKERBOARD, width, height);
+        GameController controller = new GameController(-1, BoardType.RANDOM, width, height);
         controller.initialize();
         while (true) {
             controller.getUserInput();

@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class BoardCell {
 
     public BaseUnit unit;
-    HashMap<Integer, BaseUnit> units;
+    private final HashMap<Integer, BaseUnit> units;
 
     public BoardCell(BaseUnit unit) {
         units = new HashMap<>();
@@ -20,7 +20,18 @@ public class BoardCell {
     }
 
     public void removeUnit(int id) {
-        units.remove(id);
+        // Current unit is visible unit
+        if(units.get(id) == unit) {
+            units.remove(id);
+            if(units.isEmpty()) {
+                unit = null;
+            } else {
+                for(Integer integer: units.keySet()) {
+                    unit = units.get(integer);
+                    break;
+                }
+            }
+        }
     }
 
     public boolean setUnit(BaseUnit unit) {
@@ -33,5 +44,10 @@ public class BoardCell {
 
     public void addUnit(BaseUnit unit) {
         units.put(unit.getId(), unit);
+        this.unit = unit;
+    }
+
+    public boolean containsUnit(int id) {
+        return units.containsKey(id);
     }
 }
