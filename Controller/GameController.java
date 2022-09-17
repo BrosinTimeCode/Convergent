@@ -278,6 +278,7 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(selectCommand.getArguments());
                 if (arguments.size() == 1) {
+                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
                     return selectUnit(Integer.parseInt(arguments.get(0)),
