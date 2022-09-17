@@ -24,12 +24,12 @@ public class GameController {
 
     GameViewInterface viewInterface;
     Board board;
-    private BaseUnit player1SelectedUnit;
+    private static BaseUnit player1SelectedUnit;
     private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
-            Random randomGenerator = new Random(23);
+            Random randomGenerator = new Random(89);
             int rows = randomGenerator.nextInt(20) + 1;
             int columns = randomGenerator.nextInt(20) + 1;
             board = new TestBoard(rows, columns);
@@ -312,5 +312,9 @@ public class GameController {
 
     public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {
         return entitiesUnderAttack;
+    }
+
+    public static boolean isPlayer1SelectedUnit(BaseUnit unit) {
+        return player1SelectedUnit == unit;
     }
 }
