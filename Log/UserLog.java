@@ -1,5 +1,6 @@
 package Log;
 
+import Log.PageBook.Page;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,5 +16,7 @@ public interface UserLog {
         LOGS.add(log);
     }
 
-
+    static void add(Page page) {
+        LOGS.addAll(page.getAllLines());
+    }
 }

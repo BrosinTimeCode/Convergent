@@ -18,14 +18,14 @@ public class UserLogItem {
     }
 
     public UserLogItem(TextColor color, String memo, Type type) {
-        timestamp = Timestamp.from(Instant.now());
+        this.timestamp = Timestamp.from(Instant.now());
         this.color = color;
         this.memo = memo;
         this.type = type;
     }
 
     public String toString() {
-        return timestamp.toString() + " " + memo;
+        return this.timestamp + " [" + this.type + "] " + this.memo;
     }
 
     public TextColor getColor() {
