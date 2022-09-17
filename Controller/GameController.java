@@ -7,6 +7,7 @@ import Commands.Help;
 import Commands.Attack;
 import Commands.Move;
 import Commands.Select;
+import Log.PageBook;
 import Log.UserLog;
 import Log.UserLogItem;
 import Log.UserLogItem.Type;
@@ -58,7 +59,7 @@ public class GameController {
         viewInterface.displayHelp();
         while (true) {
             String userInput = viewInterface.getUserInput();
-            Command userCommand = CommandList.getCommandFromAlias(userInput);
+            Command userCommand = CommandList.getCommandFromInput(userInput);
             if (userCommand == null) {
                 viewInterface.displayInvalidCommand();
             } else {
@@ -84,7 +85,7 @@ public class GameController {
     public boolean executeMove(Move moveCommand) {
         switch (moveCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.getCommand(moveCommand.getDefaultAlias());
+                Command command = CommandList.getCommandFromAlias(moveCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
                   Type.INFO));
@@ -153,7 +154,7 @@ public class GameController {
     public boolean executeAttack(Attack attackCommand) {
         switch (attackCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.getCommand(attackCommand.getDefaultAlias());
+                Command command = CommandList.getCommandFromAlias(attackCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
                   Type.INFO));
@@ -211,6 +212,8 @@ public class GameController {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
                 player1SelectedUnit = null;
+                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
+                viewInterface.displayConsoleLog();
                 return true;
             }
             case GOOD -> { // arguments are parsable as positive integers
@@ -241,24 +244,41 @@ public class GameController {
     public boolean executeHelp(Help helpCommand) {
         switch (helpCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, a list of commands is printed
+                List<UserLogItem> aliasesList = new ArrayList<>();
                 for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
-                    UserLog.add(
+                    aliasesList.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
+                UserLog.add(
+                  PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
+                    viewInterface.getConsoleLogHeight(), aliasesList, 1));
                 viewInterface.displayConsoleLog();
                 return true;
             }
-            case GOOD -> { // if it found the command the user requested help for
-                Command command = CommandList.getCommand(helpCommand.getArgument(0));
-                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                  command.getName() + " - " + command.getDescription() + " Usages:",
-                  Type.INFO));
-                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
-                usages.forEach((key, value) -> UserLog.add(
-                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.getDefaultAlias() + " " + value, Type.INFO)));
-                viewInterface.displayConsoleLog();
-                return true;
+            case GOOD -> { // if user asked for a page number or a command alias that was found
+                if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
+                    Command command = CommandList.getCommandFromAlias(helpCommand.getArgument(0));
+                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                      command.getName() + " - " + command.getDescription() + " Usages:",
+                      Type.INFO));
+                    HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                    usages.forEach((key, value) -> UserLog.add(
+                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.getDefaultAlias() + " " + value, Type.INFO)));
+                    viewInterface.displayConsoleLog();
+                    return true;
+                } else {
+                    List<UserLogItem> aliasesList = new ArrayList<>();
+                    for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
+                        aliasesList.add(
+                          new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
+                    }
+                    PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
+                      viewInterface.getConsoleLogHeight(),
+                      aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
+                    viewInterface.displayConsoleLog();
+                    return true;
+                }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,

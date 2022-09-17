@@ -26,6 +26,7 @@ public class CommandLineInterface implements GameViewInterface {
     private final int inputPositionY;
     private final int logPositionX;
     private final int logPositionY;
+    private int logHeight;
 
     public CommandLineInterface(Board board) {
 
@@ -206,5 +207,15 @@ public class CommandLineInterface implements GameViewInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void setConsoleLogHeight(int height) {
+        this.logHeight = height;
+    }
+
+    @Override
+    public int getConsoleLogHeight() {
+        return this.logHeight;
     }
 }
