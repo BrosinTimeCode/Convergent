@@ -7,15 +7,27 @@ import java.util.Map;
 
 public class Help extends Command {
 
+    private static Help instance = null;
     private final static byte maxArguments = 1;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> aliases = new ArrayList<>();
 
-    public Help() {
+    private Help() {
         usages.put(0, "");
         usages.put(1, "(command)");
-        CommandList.registerAlias("help", this);
-        CommandList.registerAlias("h", this);
+        aliases.add("help");
+        aliases.add("h");
+        for (String alias : aliases) {
+            CommandList.registerAlias(alias, this);
+        }
+    }
+
+    public static Command getInstance() {
+        if (instance == null) {
+            instance = new Help();
+        }
+        return instance;
     }
 
     @Override
@@ -63,9 +75,20 @@ public class Help extends Command {
     public ArgStatus validateArguments() {
         if (hasTooManyArguments()) {
             return ArgStatus.TOOMANY;
-        } else if (arguments.size() < 1) {
+        }
+        if (arguments.size() < 1) {
             return ArgStatus.NOARGS;
-        } else if (CommandList.isAnAlias(arguments.get(0))) {
+        }
+        boolean isPositiveInt = false;
+        try {
+            int i = Integer.parseInt(arguments.get(0));
+            if (i > 0) {
+                isPositiveInt = true;
+            }
+        } catch (NumberFormatException nfe) {
+            isPositiveInt = false;
+        }
+        if (CommandList.isAnAlias(arguments.get(0)) | isPositiveInt) {
             return ArgStatus.GOOD;
         }
         return ArgStatus.BAD;
@@ -74,6 +97,16 @@ public class Help extends Command {
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
         return arguments.get(index);
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    @Override
+    public byte getMaxArguments() {
+        return maxArguments;
     }
 
 }

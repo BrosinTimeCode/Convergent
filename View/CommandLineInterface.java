@@ -1,9 +1,11 @@
 package View;
 
+import Controller.GameController;
 import Log.UserLog;
 import Log.UserLogItem;
 import Model.Board;
 import Log.UserLogItem.Type;
+import Units.BaseUnit;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
@@ -24,27 +26,69 @@ public class CommandLineInterface implements GameViewInterface {
     private final int inputPositionY;
     private final int logPositionX;
     private final int logPositionY;
+    private int logHeight;
 
     public CommandLineInterface(Board board) {
 
         terminal = null;
-        boardPositionX = 2;
-        boardPositionY = 1;
+        boardPositionX = 5;
+        boardPositionY = 4;
         inputPositionX = 2;
-        inputPositionY = board.getBoardHeight() + 13;
+        inputPositionY = board.getBoardHeight() + 17;
         logPositionX = 2;
-        logPositionY = board.getBoardHeight() + 2;
+        logPositionY = board.getBoardHeight() + 6;
 
     }
 
     public void displayBoard(Board board) {
         try {
-            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-            textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
+            // board
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             String[] rows = board.toString().split("\\r?\\n");
             for (int row = 0; row < rows.length; row++) {
-                textGraphics.putString(boardPositionX, row + boardPositionY, rows[row]);
+                String[] cols = rows[row].split(" ");
+                for (int col = 0; col < cols.length; col++) {
+                    BaseUnit unit = board.getUnit(row, col);
+                    textGraphics.setForegroundColor(GameController.isPlayer1SelectedUnit(unit) && unit != null ? TextColor.ANSI.CYAN_BRIGHT : TextColor.ANSI.WHITE);
+                    textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+                    textGraphics.putString(col * 2 + boardPositionX, row + boardPositionY, cols[col] + " ");
+                }
             }
+
+            // border
+            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK_BRIGHT);
+            textGraphics.putString(boardPositionX - 1, boardPositionY - 1,
+              " ".repeat(board.getBoardWidth() * 2 + 2));
+            for (int i = 0; i < board.getBoardHeight(); i++) {
+                textGraphics.putString(boardPositionX - 1, boardPositionY + i, " ");
+                textGraphics.putString(boardPositionX + board.getBoardWidth() * 2,
+                  boardPositionY + i, " ");
+            }
+            textGraphics.putString(boardPositionX - 1, boardPositionY + board.getBoardHeight(),
+              " ".repeat(board.getBoardWidth() * 2 + 2));
+
+            // coordinates - Y
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            for (int i = 0; i < board.getBoardHeight(); i++) {
+                textGraphics.putString(i >= 10 ? boardPositionX - 3 : boardPositionX - 2,
+                  boardPositionY + i, String.valueOf(i));
+            }
+
+            // coordinates - X
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            for (int i = 0; i < board.getBoardWidth(); i++) {
+                textGraphics.putString(boardPositionX + i * 2, boardPositionY - 2, String.valueOf(i % 10));
+            }
+            if (board.getBoardWidth() >= 10) {
+                for (int i = 10; i < board.getBoardWidth(); i++) {
+                    textGraphics.putString(boardPositionX + i * 2, boardPositionY - 3, String.valueOf(i / 10));
+                }
+            }
+
             terminal.flush();
             resetTextGraphicsColors();
         } catch (IOException e) {
@@ -146,6 +190,14 @@ public class CommandLineInterface implements GameViewInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+    public void setConsoleLogHeight(int height) {
+        this.logHeight = height;
+    }
 
+    @Override
+    public int getConsoleLogHeight() {
+        return this.logHeight;
+       
     }
 }

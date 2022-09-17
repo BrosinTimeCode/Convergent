@@ -7,18 +7,30 @@ import java.util.Map;
 
 public class Attack extends Command {
 
+    private static Attack instance = null;
     private final static byte maxArguments = 3;
     private final static List<String> arguments = new ArrayList<>();
     private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> aliases = new ArrayList<>();
 
-    public Attack() {
+    private Attack() {
         usages.put(0, "");
         usages.put(1, "(target)");
         usages.put(2, "(x) (y)");
         usages.put(3, "(unit) (x) (y)");
-        CommandList.registerAlias("attack", this);
-        CommandList.registerAlias("atk", this);
-        CommandList.registerAlias("a", this);
+        aliases.add("attack");
+        aliases.add("atk");
+        aliases.add("a");
+        for (String alias : aliases) {
+            CommandList.registerAlias(alias, this);
+        }
+    }
+
+    public static Attack getInstance() {
+        if (instance == null) {
+            instance = new Attack();
+        }
+        return instance;
     }
 
     @Override
@@ -86,6 +98,16 @@ public class Attack extends Command {
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
         return arguments.get(index);
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    @Override
+    public byte getMaxArguments() {
+        return maxArguments;
     }
 
 }

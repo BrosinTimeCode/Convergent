@@ -6,6 +6,7 @@ import Commands.CommandList;
 import Commands.Help;
 import Commands.Move;
 import Commands.Select;
+import Log.PageBook;
 import Log.UserLog;
 import Log.UserLogItem;
 import Log.UserLogItem.Type;
@@ -23,13 +24,13 @@ public class GameController {
 
     GameViewInterface viewInterface;
     Board board;
-    private BaseUnit player1SelectedUnit;
+    private static BaseUnit player1SelectedUnit;
     private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
     private final UserInputHistory inputHistory;
 
     public GameController(int viewType, int[] boardSize) {
         if (boardSize.length != 2) {
-            Random randomGenerator = new Random(23);
+            Random randomGenerator = new Random(89);
             int rows = randomGenerator.nextInt(20) + 1;
             int columns = randomGenerator.nextInt(20) + 1;
             board = new TestBoard(rows, columns);
@@ -142,7 +143,7 @@ public class GameController {
     public boolean executeMove(Move moveCommand) {
         switch (moveCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.getCommand(moveCommand.getDefaultAlias());
+                Command command = CommandList.getCommandFromAlias(moveCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
                   Type.INFO));
@@ -211,7 +212,7 @@ public class GameController {
     public boolean executeAttack(Attack attackCommand) {
         switch (attackCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.getCommand(attackCommand.getDefaultAlias());
+                Command command = CommandList.getCommandFromAlias(attackCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
                   command.getName() + " - " + command.getDescription() + " Usages:",
                   Type.INFO));
@@ -269,6 +270,8 @@ public class GameController {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
                 player1SelectedUnit = null;
+                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
+                viewInterface.displayConsoleLog();
                 return true;
             }
             case GOOD -> { // arguments are parsable as positive integers
@@ -299,24 +302,41 @@ public class GameController {
     public boolean executeHelp(Help helpCommand) {
         switch (helpCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, a list of commands is printed
+                List<UserLogItem> aliasesList = new ArrayList<>();
                 for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
-                    UserLog.add(
+                    aliasesList.add(
                       new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
+                UserLog.add(
+                  PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
+                    viewInterface.getConsoleLogHeight(), aliasesList, 1));
                 viewInterface.displayConsoleLog();
                 return true;
             }
-            case GOOD -> { // if it found the command the user requested help for
-                Command command = CommandList.getCommand(helpCommand.getArgument(0));
-                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                  command.getName() + " - " + command.getDescription() + " Usages:",
-                  Type.INFO));
-                HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
-                usages.forEach((key, value) -> UserLog.add(
-                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.getDefaultAlias() + " " + value, Type.INFO)));
-                viewInterface.displayConsoleLog();
-                return true;
+            case GOOD -> { // if user asked for a page number or a command alias that was found
+                if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
+                    Command command = CommandList.getCommandFromAlias(helpCommand.getArgument(0));
+                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                      command.getName() + " - " + command.getDescription() + " Usages:",
+                      Type.INFO));
+                    HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
+                    usages.forEach((key, value) -> UserLog.add(
+                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.getDefaultAlias() + " " + value, Type.INFO)));
+                    viewInterface.displayConsoleLog();
+                    return true;
+                } else {
+                    List<UserLogItem> aliasesList = new ArrayList<>();
+                    for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
+                        aliasesList.add(
+                          new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
+                    }
+                    PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
+                      viewInterface.getConsoleLogHeight(),
+                      aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
+                    viewInterface.displayConsoleLog();
+                    return true;
+                }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
@@ -350,5 +370,9 @@ public class GameController {
 
     public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {
         return entitiesUnderAttack;
+    }
+
+    public static boolean isPlayer1SelectedUnit(BaseUnit unit) {
+        return player1SelectedUnit == unit;
     }
 }
