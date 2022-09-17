@@ -26,8 +26,8 @@ public class TestBoard extends Board {
                 oneVSCheckerboard();
                 break;
         }
-
     }
+
     private void randomBoard() {
         Random randomGenerator = new Random();
         for (int row = 0; row < board.length; row++) {
