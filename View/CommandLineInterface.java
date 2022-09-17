@@ -198,11 +198,12 @@ public class CommandLineInterface implements GameViewInterface {
     public void clearInput() {
         try {
             textGraphics.drawLine(this.inputPositionX + 1, this.inputPositionY,
-              terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
+                terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
             terminal.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
         
     public void setConsoleLogHeight(int height) {
         this.logHeight = height;
