@@ -3,8 +3,8 @@ package View;
 import Controller.GameController;
 import Log.UserLog;
 import Log.UserLogItem;
-import Model.Board;
 import Log.UserLogItem.Type;
+import Model.Board;
 import Units.BaseUnit;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -50,9 +50,20 @@ public class CommandLineInterface implements GameViewInterface {
                 String[] cols = rows[row].split(" ");
                 for (int col = 0; col < cols.length; col++) {
                     BaseUnit unit = board.getUnit(row, col);
-                    textGraphics.setForegroundColor(GameController.isPlayer1SelectedUnit(unit) && unit != null ? TextColor.ANSI.CYAN_BRIGHT : TextColor.ANSI.WHITE);
+                    if (unit == null) {
+                        textGraphics.setForegroundColor(ANSI.WHITE);
+                    } else if (GameController.isPlayer1SelectedUnit(unit)) {
+                        textGraphics.setForegroundColor(ANSI.GREEN_BRIGHT);
+                    } else {
+                        switch (unit.getTeam()) {
+                            case RED -> textGraphics.setForegroundColor(ANSI.RED_BRIGHT);
+                            case BLUE -> textGraphics.setForegroundColor(ANSI.BLUE_BRIGHT);
+                            default -> textGraphics.setForegroundColor(ANSI.WHITE);
+                        }
+                    }
                     textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-                    textGraphics.putString(col * 2 + boardPositionX, row + boardPositionY, cols[col] + " ");
+                    textGraphics.putString(col * 2 + boardPositionX, row + boardPositionY,
+                      cols[col] + " ");
                 }
             }
 
@@ -81,11 +92,13 @@ public class CommandLineInterface implements GameViewInterface {
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             for (int i = 0; i < board.getBoardWidth(); i++) {
-                textGraphics.putString(boardPositionX + i * 2, boardPositionY - 2, String.valueOf(i % 10));
+                textGraphics.putString(boardPositionX + i * 2, boardPositionY - 2,
+                  String.valueOf(i % 10));
             }
             if (board.getBoardWidth() >= 10) {
                 for (int i = 10; i < board.getBoardWidth(); i++) {
-                    textGraphics.putString(boardPositionX + i * 2, boardPositionY - 3, String.valueOf(i / 10));
+                    textGraphics.putString(boardPositionX + i * 2, boardPositionY - 3,
+                      String.valueOf(i / 10));
                 }
             }
 
