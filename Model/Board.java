@@ -95,6 +95,10 @@ public class Board {
         return board[x][y].unit;
     }
 
+    public BaseUnit getUnit(int id) {
+        return globalUnits.get(id).getUnit();
+    }
+
     public int getBoardHeight() {
         return board.length;
     }

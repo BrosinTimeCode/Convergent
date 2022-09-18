@@ -163,7 +163,8 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(moveCommand.getArguments());
                 if (arguments.size() == 3) {
-                    return true;
+                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    return moveUnit(Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2)));
                 }
                 if (arguments.size() == 1) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
@@ -284,6 +285,7 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(selectCommand.getArguments());
                 if (arguments.size() == 1) {
+                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
                     return selectUnit(Integer.parseInt(arguments.get(0)),

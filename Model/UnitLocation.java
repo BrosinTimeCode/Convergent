@@ -6,7 +6,7 @@ public class UnitLocation {
 
     protected int row;
     protected int column;
-    private BaseUnit unit;
+    private final BaseUnit unit;
 
     public UnitLocation(int row, int column, BaseUnit unit) {
         this.row = row;
@@ -17,6 +17,10 @@ public class UnitLocation {
     public void setLocation(int row, int column) {
         this.row = row;
         this.column = column;
+    }
+
+    public BaseUnit getUnit() {
+        return unit;
     }
 
 }
