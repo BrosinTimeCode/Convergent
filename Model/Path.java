@@ -1,7 +1,5 @@
 package Model;
 
-import java.lang.reflect.Array;
-import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Objects;
@@ -15,33 +13,41 @@ public class Path {
         path = new ArrayList<>();
     }
 
+    /**
+     * Adds node to path.
+     * @param row An integer representing the row of the added node.
+     * @param column An integer representing the column of the added node.
+     */
     public void addNode(int row, int column) {
         path.add(new Node(row, column));
     }
 
+    /**
+     * Returns the node at the end of the Path.
+     * @return Last Node in the Path.
+     */
     public Node getLast() {
         return path.get(path.size() - 1);
     }
 
+    /**
+     * Returns the node at the start of the Path.
+     * @return First Node in the Path.
+     */
     public Node getFirst() {
         return path.get(0);
     }
 
+    /**
+     * Adds the path's nodes to the end of this instance's path.
+     * @param path Path to be added to path.
+     */
     public void appendPath(Path path) {
         this.path.addAll(path.path);
     }
 
     public int getLength() {
         return path.size();
-    }
-
-    public ArrayList<Node> getReversePath() {
-        ArrayList<Node> reversePath = new ArrayList<>();
-        ListIterator<Node> iterator = path.listIterator(path.size());
-        while (iterator.hasPrevious()) {
-            reversePath.add(iterator.previous());
-        }
-        return reversePath;
     }
 
     @Override
