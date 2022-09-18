@@ -103,7 +103,7 @@ public class GameController {
     }
 
     public void handleUserInput(String input) {
-        Command userCommand = CommandList.getCommandFromAlias(input);
+        Command userCommand = CommandList.getCommandFromInput(input);
         if (userCommand == null) {
             viewInterface.displayInvalidCommand();
         } else {
@@ -270,7 +270,8 @@ public class GameController {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
                 player1SelectedUnit = null;
-                UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
+                UserLog.add(
+                  new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
                 viewInterface.displayConsoleLog();
                 return true;
             }

@@ -22,7 +22,7 @@ public interface GameViewInterface {
     void displayInput(String input);
 
     void clearInput();
-    
+
     void setConsoleLogHeight(int height);
 
     int getConsoleLogHeight();

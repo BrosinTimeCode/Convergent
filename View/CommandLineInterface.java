@@ -33,6 +33,7 @@ public class CommandLineInterface implements GameViewInterface {
         terminal = null;
         boardPositionX = 5;
         boardPositionY = 4;
+        logHeight = 10;
         inputPositionX = 2;
         inputPositionY = board.getBoardHeight() + 17;
         logPositionX = 2;
@@ -198,13 +199,13 @@ public class CommandLineInterface implements GameViewInterface {
     public void clearInput() {
         try {
             textGraphics.drawLine(this.inputPositionX + 1, this.inputPositionY,
-                terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
+              terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
             terminal.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-        
+
     public void setConsoleLogHeight(int height) {
         this.logHeight = height;
     }
@@ -212,6 +213,6 @@ public class CommandLineInterface implements GameViewInterface {
     @Override
     public int getConsoleLogHeight() {
         return this.logHeight;
-       
+
     }
 }
