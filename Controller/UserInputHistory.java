@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * UserInputHistory is the class used to store and access a chronological history of Strings from
+ * The UserInputHistory class is used to store and access a chronological history of Strings from
  * user input. Strings are maintained in the order they were added, with duplicates moving to the
  * most recent position. Each object instantiated contains its own archive and a Browser, which is a
  * cursor that moves forward (method: next) and backward (method: previous) through the archive.

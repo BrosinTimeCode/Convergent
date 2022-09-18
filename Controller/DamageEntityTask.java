@@ -4,9 +4,9 @@ import Units.BaseUnit;
 import java.util.TimerTask;
 
 /**
- * DamageEntityTask is the class used to periodically damage entities that are under attack by other
+ * The DamageEntityTask class is used to periodically damage entities that are under attack by other
  * entities. This class extends TimerTask and the time set for running this task is the rate at
- * which entities will be damaged
+ * which entities will be damaged.
  */
 public class DamageEntityTask extends TimerTask {
 
@@ -17,7 +17,7 @@ public class DamageEntityTask extends TimerTask {
     }
 
     /**
-     * Runs a periodic call to the entities damage method to damage each entity under attack
+     * Runs a periodic call to the entities damage method to damage each entity under attack.
      */
     @Override
     public void run() {
