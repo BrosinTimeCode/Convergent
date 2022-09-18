@@ -212,10 +212,11 @@ public class GameController {
     }
 
     /**
-     * Moves currently selected unit to row and column in the board. If currently selected unit is attacking it will no longer be attacking.
+     * Moves currently selected unit to row and column in the board. If currently selected unit is
+     * attacking it will no longer be attacking.
      *
      * @param column An integer representing destination column.
-     * @param row An integer representing destination row.
+     * @param row    An integer representing destination row.
      * @return A boolean showing if the unit was successfully moved.
      */
     private boolean moveUnit(int column, int row) {
@@ -231,7 +232,8 @@ public class GameController {
     }
 
     /**
-     * Moves currently selected unit to the unit with the passed in id. If currently selected unit is attacking it will no longer be attacking.
+     * Moves currently selected unit to the unit with the passed in id. If currently selected unit
+     * is attacking it will no longer be attacking.
      *
      * @param id An integer representing the id of the unit currently selected unit is moving to.
      * @return A boolean showing if the unit was successfully moved.
@@ -246,8 +248,8 @@ public class GameController {
     }
 
     /**
-     * Executes passed in attack command. Depending on the state of the arguments it will return false
-     * if move command did not execute successfully.
+     * Executes passed in attack command. Depending on the state of the arguments it will return
+     * false if move command did not execute successfully.
      *
      * @param attackCommand An attack command to be executed.
      * @return A boolean showing if the attack command executed successfully.
@@ -294,6 +296,7 @@ public class GameController {
 
     /**
      * Attacks unit at row and column on board with currently selected unit.
+     *
      * @param column An integer representing the column of location to be attacked.
      * @param row An integer representing the row of location to be attacked.
      * @return A boolean showing if the unit successfully attacked the square on the board.
@@ -312,6 +315,7 @@ public class GameController {
 
     /**
      * Kills deadUnit and removes attacker from entities under attack.
+     *
      * @param attacker BaseUnit that is attacking deadUnit.
      * @param deadUnit BaseUnit to be killed.
      */
@@ -321,7 +325,10 @@ public class GameController {
     }
 
     /**
-     * Executes passed in select command. Depending on the state of the arguments it will return false if select command did not execute successfully. If no arguments are passed currently selected unit is deselected.
+     * Executes passed in select command. Depending on the state of the arguments it will return
+     * false if select command did not execute successfully. If no arguments are passed currently
+     * selected unit is deselected.
+     *
      * @param selectCommand An attack command to be executed.
      * @return A boolean showing if the select command executed successfully.
      */
@@ -418,9 +425,11 @@ public class GameController {
     }
 
     /**
-     * Selects visible unit at row and column on board. If row or column out of bounds select will fail.
+     * Selects visible unit at row and column on board. If row or column out of bounds select will
+     * fail.
+     *
      * @param column An integer representing the column for a unit to be selected.
-     * @param row An integer representing the row for a unit to be selected.
+     * @param row    An integer representing the row for a unit to be selected.
      * @return A boolean showing if unit was successfully selected.
      */
     private boolean selectUnit(int column, int row) {
@@ -433,7 +442,8 @@ public class GameController {
 
     /**
      * Checks if row and column are within the bounds of the board.
-     * @param row An integer representing the row to check bounds for.
+     *
+     * @param row    An integer representing the row to check bounds for.
      * @param column An integer representing the row to check bounds for.
      * @return Returns true if the row and column are in bounds.
      */
