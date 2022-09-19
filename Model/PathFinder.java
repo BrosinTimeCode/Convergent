@@ -4,6 +4,9 @@ import Units.BaseUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The PathFinder class determines a path between two points on the Board.
+ */
 public class PathFinder {
 
     public BoardCell[][] board;
@@ -33,15 +36,15 @@ public class PathFinder {
         Node pathNode = nextClosestNode(rowStart, columnStart, rowEnd, columnEnd);
         while (pathNode != null) {
             // The next location has a unit that is not on the same team
-            if (!checkTeam(board[pathNode.getRow()][pathNode.getColumn()], team)
+            if (!checkTeam(board[pathNode.row()][pathNode.column()], team)
                 || exploredNodes.containsKey(new Node(
-                pathNode.getRow(), pathNode.getColumn()))) {
+                pathNode.row(), pathNode.column()))) {
                 Path nonEnemyPath;
                 if (path.getLength() == 0) {
                     nonEnemyPath = nonEnemyPath(rowStart, columnStart,
                         rowEnd, columnEnd, team, exploredNodes);
                 } else {
-                    nonEnemyPath = nonEnemyPath(path.getLast().getRow(), path.getLast().getColumn(),
+                    nonEnemyPath = nonEnemyPath(path.getLast().row(), path.getLast().column(),
                         rowEnd, columnEnd, team, exploredNodes);
                 }
                 if (nonEnemyPath != null) {
@@ -51,8 +54,8 @@ public class PathFinder {
                 }
                 break;
             }
-            path.addNode(pathNode.getRow(), pathNode.getColumn());
-            pathNode = nextClosestNode(pathNode.getRow(), pathNode.getColumn(), rowEnd, columnEnd);
+            path.addNode(pathNode.row(), pathNode.column());
+            pathNode = nextClosestNode(pathNode.row(), pathNode.column(), rowEnd, columnEnd);
         }
         return path;
     }
@@ -147,8 +150,8 @@ public class PathFinder {
         ArrayList<Path> adjacentPaths = new ArrayList<>();
         for (Node node : adjacentNodes) {
             Path path = new Path();
-            path.addNode(node.getRow(), node.getColumn());
-            Path nextPath = pathFinder(node.getRow(), node.getColumn(), rowEnd, columnEnd, team,
+            path.addNode(node.row(), node.column());
+            Path nextPath = pathFinder(node.row(), node.column(), rowEnd, columnEnd, team,
                 exploredNodes);
             if (nextPath != null) {
                 path.appendPath(nextPath);
@@ -157,12 +160,12 @@ public class PathFinder {
         }
         Path shortestValidPath = null;
         for (Path path : adjacentPaths) {
-            if (shortestValidPath == null && path.getLast().getRow() == rowEnd
-                && path.getLast().getColumn() == columnEnd) {
+            if (shortestValidPath == null && path.getLast().row() == rowEnd
+                && path.getLast().column() == columnEnd) {
                 shortestValidPath = path;
             } else if (shortestValidPath != null && path.getLength() < shortestValidPath.getLength()
-                && path.getLast().getRow() == rowEnd
-                && path.getLast().getColumn() == columnEnd) {
+                && path.getLast().row() == rowEnd
+                && path.getLast().column() == columnEnd) {
                 shortestValidPath = path;
             }
         }
@@ -171,10 +174,10 @@ public class PathFinder {
             shortestValidPath = adjacentPaths.get(0);
             for (Path path : adjacentPaths) {
                 if (
-                    distanceBetweenNodes(path.getLast().getRow(), path.getLast().getColumn(),
+                    distanceBetweenNodes(path.getLast().row(), path.getLast().column(),
                         rowEnd,
-                        columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().getRow(),
-                        shortestValidPath.getLast().getColumn(), rowEnd, columnEnd)) {
+                        columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().row(),
+                        shortestValidPath.getLast().column(), rowEnd, columnEnd)) {
                     shortestValidPath = path;
                 }
             }
@@ -245,9 +248,9 @@ public class PathFinder {
         // Diagonal Down-Right
         nodes.add(new Node(rowCurrent + 1, columnCurrent + 1));
         for (Node node : nodes) {
-            if (node.getRow() >= 0 && node.getRow() < board.length && node.getColumn() >= 0 &&
-                node.getColumn() < board[0].length && checkTeam(
-                board[node.getRow()][node.getColumn()],
+            if (node.row() >= 0 && node.row() < board.length && node.column() >= 0 &&
+                node.column() < board[0].length && checkTeam(
+                board[node.row()][node.column()],
                 team)
                 && !exploredNodes.containsKey(node)) {
                 validNodes.add(node);

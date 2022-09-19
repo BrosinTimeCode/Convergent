@@ -1,10 +1,12 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.Objects;
 
-// A path contains nodes and goes from one location to another
+/**
+ * The Path class is a representation of a path from one location to another. The path contains
+ * nodes from one location to the other.
+ */
 public class Path {
 
     public ArrayList<Node> path;

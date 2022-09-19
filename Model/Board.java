@@ -79,20 +79,20 @@ public class Board {
         UnitLocation location = globalUnits.get(unit.getId());
         Path path = pathFinder(location.row, location.column, row, column);
         for (Node node : path.path) {
-            if (board[node.getRow()][node.getColumn()].unit != null) {
+            if (board[node.row()][node.column()].unit != null) {
                 // If an enemy node is blocking re-path
-                if (!board[node.getRow()][node.getColumn()].unit.isAlly(unit)) {
+                if (!board[node.row()][node.column()].unit.isAlly(unit)) {
                     moveUnit(unit, row, column);
                     break;
                 }
             }
             UnitLocation previousLocation = globalUnits.get(unit.getId());
-            board[node.getRow()][node.getColumn()].addUnit(unit);
+            board[node.row()][node.column()].addUnit(unit);
             // If current unit populated last location remove it
             if (board[previousLocation.row][previousLocation.column].containsUnit(unit.getId())) {
                 board[previousLocation.row][previousLocation.column].removeUnit(unit.getId());
             }
-            globalUnits.get(unit.getId()).setLocation(node.getRow(), node.getColumn());
+            globalUnits.get(unit.getId()).setLocation(node.row(), node.column());
         }
     }
 

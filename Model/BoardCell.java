@@ -3,6 +3,9 @@ package Model;
 import Units.*;
 import java.util.HashMap;
 
+/**
+ * The BoardCell class contains a visible unit along with multiple invisible units.
+ */
 public class BoardCell {
 
     public BaseUnit unit;
