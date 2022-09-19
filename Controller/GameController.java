@@ -298,7 +298,7 @@ public class GameController {
      * Attacks unit at row and column on board with currently selected unit.
      *
      * @param column An integer representing the column of location to be attacked.
-     * @param row An integer representing the row of location to be attacked.
+     * @param row    An integer representing the row of location to be attacked.
      * @return A boolean showing if the unit successfully attacked the square on the board.
      */
     private boolean attackUnit(int column, int row) {

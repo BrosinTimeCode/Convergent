@@ -15,7 +15,8 @@ public class Path {
 
     /**
      * Adds node to path.
-     * @param row An integer representing the row of the added node.
+     *
+     * @param row    An integer representing the row of the added node.
      * @param column An integer representing the column of the added node.
      */
     public void addNode(int row, int column) {
@@ -24,6 +25,7 @@ public class Path {
 
     /**
      * Returns the node at the end of the Path.
+     *
      * @return Last Node in the Path.
      */
     public Node getLast() {
@@ -32,6 +34,7 @@ public class Path {
 
     /**
      * Returns the node at the start of the Path.
+     *
      * @return First Node in the Path.
      */
     public Node getFirst() {
@@ -40,6 +43,7 @@ public class Path {
 
     /**
      * Adds the path's nodes to the end of this instance's path.
+     *
      * @param path Path to be added to path.
      */
     public void appendPath(Path path) {
