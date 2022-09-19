@@ -2,6 +2,9 @@ package Model;
 
 import Units.BaseUnit;
 
+/**
+ * The UnitLocation class contains the location of a BaseUnit.
+ */
 public class UnitLocation {
 
     protected int row;

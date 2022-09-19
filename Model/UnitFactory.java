@@ -4,6 +4,9 @@ import Units.BaseUnit;
 import Units.Civilian;
 import Units.Tradesman;
 
+/**
+ * The UnitFactory class follows the factory design pattern and creates units with unique ids.
+ */
 public class UnitFactory {
 
     private int identifier;
