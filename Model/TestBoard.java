@@ -3,12 +3,16 @@ package Model;
 import java.util.Random;
 import Units.*;
 
+/**
+ * The TestBoard class is a type of board that has different preset boards based on the passed in
+ * BoardType enum.
+ */
 public class TestBoard extends Board {
 
     // Random board generator for testing purposes
     public TestBoard(BoardType boardType, int rows, int columns) {
         super(rows, columns);
-        switch(boardType) {
+        switch (boardType) {
             case RANDOM:
                 randomBoard();
                 break;
@@ -28,6 +32,9 @@ public class TestBoard extends Board {
         }
     }
 
+    /**
+     * Creates a board that has random BLUE and RED units on each BoardCell.
+     */
     private void randomBoard() {
         Random randomGenerator = new Random();
         for (int row = 0; row < board.length; row++) {
@@ -52,11 +59,14 @@ public class TestBoard extends Board {
         }
     }
 
+    /**
+     * Creates a board completely covered with RED units with one BLUE unit in the corner.
+     */
     private void oneVSEveryone() {
         Random randomGenerator = new Random();
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
-                if(row == 0 && column == 0) {
+                if (row == 0 && column == 0) {
                     newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
                 }
                 int value = randomGenerator.nextInt(2);
@@ -72,14 +82,18 @@ public class TestBoard extends Board {
         }
     }
 
+    /**
+     * Creates a board with random RED units in a checkerboard pattern with a BLUE unit in the
+     * corner.
+     */
     private void oneVSCheckerboard() {
         Random randomGenerator = new Random();
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
-                if(row == 0 && column == 0) {
+                if (row == 0 && column == 0) {
                     newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
                 }
-                if((row % 2 == 0 && column % 2 == 1) || (row % 2 == 1 && column % 2 == 0)) {
+                if ((row % 2 == 0 && column % 2 == 1) || (row % 2 == 1 && column % 2 == 0)) {
                     int value = randomGenerator.nextInt(2);
                     switch (value) {
                         case 0:

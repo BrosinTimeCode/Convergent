@@ -1,24 +1,9 @@
 package Model;
 
-import java.util.Objects;
-
-public class Node {
-
-    private int row;
-    private int column;
-
-    public Node(int row, int column) {
-        this.row = row;
-        this.column = column;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public int getRow() {
-        return row;
-    }
+/**
+ * The Node class is composed of a row and column that identify where the node is on the Board.
+ */
+public record Node(int row, int column) {
 
     @Override
     public boolean equals(Object o) {
@@ -28,16 +13,10 @@ public class Node {
         if (o == null) {
             return false;
         }
-        if (!(o instanceof Node)) {
+        if (!(o instanceof Node n)) {
             return false;
         }
-        Node n = (Node) o;
         return this.row == n.row && this.column == n.column;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(row, column);
     }
 
     @Override
