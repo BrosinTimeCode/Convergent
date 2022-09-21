@@ -55,6 +55,9 @@ public class Board {
     public void moveUnit(BaseUnit unit, int row, int column) {
         UnitLocation location = globalUnits.get(unit.getId());
         Path path = pathFinder(location.row, location.column, row, column);
+        if(path == null) {
+            return;
+        }
         for (Node node : path.path) {
             if(board[node.getRow()][node.getColumn()].unit != null) {
                 // If an enemy node is blocking re-path
