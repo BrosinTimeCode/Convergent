@@ -1,5 +1,5 @@
 package View;
 
-public interface CLIRenderable {
+public interface CLRenderable {
     CommandLineCell toCommandLineCell();
 }
