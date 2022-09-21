@@ -1,6 +1,8 @@
 package Units;
 
-public abstract class BaseUnit {
+import View.CLIRenderable;
+
+public abstract class BaseUnit implements CLIRenderable {
 
     char name = 'X';
     int speed = 1;
