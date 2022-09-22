@@ -42,9 +42,6 @@ public class Node {
 
     @Override
     public String toString() {
-        String s = "";
-        s = s + row;
-        s = s + column;
-        return s;
+        return "(" + column + ", " + row + ")";
     }
 }
