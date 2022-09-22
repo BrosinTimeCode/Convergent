@@ -32,9 +32,17 @@ public class CommandLineCell {
         return this.character;
     }
 
+    public boolean isBlank() {
+        return this.foregroundColor == ANSI.DEFAULT && this.backgroundColor == ANSI.DEFAULT && this.character == ' ';
+    }
+
     @Override
     public String toString() {
-        return this.foregroundColor + " " + this.character + " on " + this.backgroundColor;
+        if (isBlank()) {
+            return "BLANKCELL";
+        } else {
+            return this.foregroundColor + " '" + this.character + "' on " + this.backgroundColor;
+        }
     }
 
     @Override
