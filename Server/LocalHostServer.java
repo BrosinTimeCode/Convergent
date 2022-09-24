@@ -40,6 +40,6 @@ public class LocalHostServer extends Thread {
 
     public static void main(String[] args) {
         LocalHostServer server = new LocalHostServer();
-        server.run();
+        server.start();
     }
 }
