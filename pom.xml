@@ -19,6 +19,8 @@
         </configuration>
       </plugin>
     </plugins>
+    <testSourceDirectory>${project.basedir}/Test</testSourceDirectory>
+    <sourceDirectory>${project.basedir}</sourceDirectory>
   </build>
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
@@ -30,6 +32,11 @@
       <artifactId>lanterna</artifactId>
       <version>3.1.1</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.0.0-M5</version>
     </dependency>
   </dependencies>
 </project>
