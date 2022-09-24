@@ -1,5 +1,6 @@
 import Controller.GameController;
 import Model.TestBoard.BoardType;
+import Server.Client;
 
 public class Main {
 
@@ -14,6 +15,8 @@ public class Main {
             height = 0;
         }
         GameController controller = new GameController(-1, BoardType.RANDOM, width, height);
+        Client client = new Client();
+        client.start();
         controller.initialize();
         while (true) {
             controller.getUserInput();
