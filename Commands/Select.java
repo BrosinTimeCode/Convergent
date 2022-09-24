@@ -15,7 +15,7 @@ public class Select extends Command {
 
     private Select() {
         usages.put(0, "");
-        usages.put(1, "(unit)");
+        usages.put(1, "(unit id)");
         usages.put(2, "(x) (y)");
         aliases.add("select");
         aliases.add("sel");

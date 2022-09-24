@@ -15,9 +15,9 @@ public class Attack extends Command {
 
     private Attack() {
         usages.put(0, "");
-        usages.put(1, "(target)");
+        usages.put(1, "(target id)");
         usages.put(2, "(x) (y)");
-        usages.put(3, "(unit) (x) (y)");
+        usages.put(3, "(unit id) (x) (y)");
         aliases.add("attack");
         aliases.add("atk");
         aliases.add("a");

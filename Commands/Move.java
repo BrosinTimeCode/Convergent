@@ -15,9 +15,9 @@ public class Move extends Command {
 
     private Move() {
         usages.put(0, "");
-        usages.put(1, "(target)");
+        usages.put(1, "(target id)");
         usages.put(2, "(x) (y)");
-        usages.put(3, "(unit) (x) (y)");
+        usages.put(3, "(unit id) (x) (y)");
         aliases.add("move");
         aliases.add("m");
         for (String alias : aliases) {

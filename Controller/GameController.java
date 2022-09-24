@@ -177,22 +177,36 @@ public class GameController {
             }
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(moveCommand.getArguments());
-                if (arguments.size() == 3) {
-                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
-                    return moveUnit(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(2)));
-                }
                 if (arguments.size() == 1) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                         "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(0)),
+                        Integer.parseInt(arguments.get(1)))) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Move coordinates are out of bounds.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                         "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
+                }
+                else if (arguments.size() == 3) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(2)))) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Move coordinates are out of bounds.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
+                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    return moveUnit(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(2)));
                 }
             }
             case TOOMANY -> { // too many arguments given
@@ -347,8 +361,10 @@ public class GameController {
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
-                    if(!checkBounds(Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1)))) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED, "Selection coordinates are out of bounds.", Type.INFO));
+                    if (!checkBounds(Integer.parseInt(arguments.get(0)),
+                        Integer.parseInt(arguments.get(1)))) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Selection coordinates are out of bounds.", Type.INFO));
                         viewInterface.displayConsoleLog();
                         return false;
                     }
