@@ -78,7 +78,7 @@ public class Board {
     public void moveUnit(BaseUnit unit, int row, int column) {
         UnitLocation location = globalUnits.get(unit.getId());
         Path path = pathFinder(location.row, location.column, row, column);
-        if(path == null) {
+        if (path == null) {
             return;
         }
         for (Node node : path.path) {
@@ -155,6 +155,9 @@ public class Board {
      * @return BaseUnit identified by id.
      */
     public BaseUnit getUnit(int id) {
+        if (globalUnits.get(id) == null) {
+            return null;
+        }
         return globalUnits.get(id).getUnit();
     }
 

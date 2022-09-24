@@ -21,9 +21,11 @@ public class DamageEntityTask extends TimerTask {
     @Override
     public void run() {
         controller.getEntitiesUnderAttack().forEach((k, v) -> {
-            boolean deadUnit = v.damageEntity(k);
-            if (deadUnit) {
-                controller.killUnit(k, v);
+            if (v != null) {
+                boolean deadUnit = v.damageEntity(k);
+                if (deadUnit) {
+                    controller.killUnit(k, v);
+                }
             }
         });
     }

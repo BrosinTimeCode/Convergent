@@ -35,6 +35,9 @@ public abstract class BaseUnit {
 
     public boolean damageEntity(BaseUnit unit) {
         // TODO: Add math for damaging units according to our theme
+        if (unit == null) {
+            return false;
+        }
         if (unit.attack - armor > 0) {
             health = health - (unit.attack - armor);
         }
