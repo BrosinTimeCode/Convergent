@@ -271,11 +271,14 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 // TODO: Replace the following "Executing attack command" info with actual command
                 List<String> arguments = new ArrayList<>(attackCommand.getArguments());
-                if (arguments.size() == 1 | arguments.size() == 3) {
+                if (arguments.size() == 1) {
                     return true;
-                } else {
+                }
+                else if (arguments.size() == 2){
                     return attackUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
+                } else if (arguments.size() == 3) {
+
                 }
             }
             case TOOMANY -> { // too many arguments given
@@ -311,6 +314,25 @@ public class GameController {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Attacks a unit with a specific id with currently selected unit.
+     * @param id An integer representing the id identifying a unit on the board.
+     * @return A boolean showing if the unit successfully attacked the unit.
+     */
+    private boolean attackUnitID(int id) {
+        // TODO: Fix for more than one player
+        if (player1SelectedUnit == null) {
+            return false;
+        }
+        else if(board.getUnit(id) == null) {
+            return false;
+        }
+        else {
+            entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(id));
+            return true;
+        }
     }
 
     /**
