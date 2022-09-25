@@ -15,6 +15,7 @@ public class BoardCell {
         units = new HashMap<>();
         if (unit != null) {
             units.put(unit.getId(), unit);
+            this.unit = unit;
         }
     }
 
