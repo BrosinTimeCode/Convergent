@@ -158,9 +158,9 @@ public class PageBookTests {
         PageBook pageBook3 = PageBook.fromUserLogList("Test", "command", 10, log1);
         Page pageC = pageBook3.get(0);
         assertFalse(pageA.getAllLines().containsAll(pageB.getAllLines()) && pageB.getAllLines()
-          .containsAll(pageA.getAllLines()));
+            .containsAll(pageA.getAllLines()));
         assertTrue(pageA.getAllLines().containsAll(pageC.getAllLines()) && pageC.getAllLines()
-          .containsAll(pageA.getAllLines()));
+            .containsAll(pageA.getAllLines()));
     }
 
     @Test

@@ -16,7 +16,7 @@ public class PageBook {
             this.header = header;
             if (this.header != null) {
                 this.list.add(
-                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, this.header, Type.INFO));
+                    new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, this.header, Type.INFO));
             }
             this.list.addAll(list);
         }
@@ -49,7 +49,7 @@ public class PageBook {
     }
 
     public static PageBook fromUserLogList(String title, String commandName, int linesPerPage,
-      List<UserLogItem> list) {
+        List<UserLogItem> list) {
 
         // IF the list fits on one page, return a Page without a header
         if (list.size() <= linesPerPage) {
@@ -70,14 +70,14 @@ public class PageBook {
             // Sets header to:
             // <title> - Page (<current>/<total>) - Type "command <page>"
             String header =
-              title + " - Page (" + (i + 1) + "/" + TOTAL_PAGES + ") - Type \"" + commandName
-                + " [page]\"";
+                title + " - Page (" + (i + 1) + "/" + TOTAL_PAGES + ") - Type \"" + commandName
+                    + " [page]\"";
 
             // Create a sublist for each page; flexes to account for potentially fewer lines on
             // the last page
             book.add(new Page(
-              header, list.subList((i - 1) * (linesPerPage),
-              i == TOTAL_PAGES ? list.size() : i * (linesPerPage))));
+                header, list.subList((i - 1) * (linesPerPage),
+                i == TOTAL_PAGES ? list.size() : i * (linesPerPage))));
         }
         return PageBook.fromPages(book);
     }
@@ -95,7 +95,7 @@ public class PageBook {
     }
 
     public static Page paginateAndGetPage(String title, String commandName, int linesPerPage,
-      List<UserLogItem> list, int pageNumber) {
+        List<UserLogItem> list, int pageNumber) {
 
         // IF the list fits on one page, return a Page without a header
         if (list.size() <= linesPerPage) {
@@ -116,13 +116,13 @@ public class PageBook {
         // Sets header to:
         // <title> - Page (<current>/<total>) - Type "command [page]"
         final String header =
-          title + " - Page (" + pageNumber + "/" + TOTAL_PAGES + ") - Type \"" + commandName
-            + " [page]\"";
+            title + " - Page (" + pageNumber + "/" + TOTAL_PAGES + ") - Type \"" + commandName
+                + " [page]\"";
 
         // Creates a sublist of <list> based on what lines would appear on <pageNumber>; flexes to
         // account for potentially fewer lines on the last page
         List<UserLogItem> newList = list.subList((pageNumber - 1) * (linesPerPage),
-          pageNumber == TOTAL_PAGES ? list.size() : pageNumber * (linesPerPage));
+            pageNumber == TOTAL_PAGES ? list.size() : pageNumber * (linesPerPage));
         return new Page(header, newList);
     }
 

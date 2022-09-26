@@ -64,7 +64,7 @@ public class CommandLineInterface implements GameViewInterface {
                     }
                     textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
                     textGraphics.putString(col * 2 + boardPositionX, row + boardPositionY,
-                      cols[col] + " ");
+                        cols[col] + " ");
                 }
             }
 
@@ -72,21 +72,21 @@ public class CommandLineInterface implements GameViewInterface {
             textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK_BRIGHT);
             textGraphics.putString(boardPositionX - 1, boardPositionY - 1,
-              " ".repeat(board.getBoardWidth() * 2 + 2));
+                " ".repeat(board.getBoardWidth() * 2 + 2));
             for (int i = 0; i < board.getBoardHeight(); i++) {
                 textGraphics.putString(boardPositionX - 1, boardPositionY + i, " ");
                 textGraphics.putString(boardPositionX + board.getBoardWidth() * 2,
-                  boardPositionY + i, " ");
+                    boardPositionY + i, " ");
             }
             textGraphics.putString(boardPositionX - 1, boardPositionY + board.getBoardHeight(),
-              " ".repeat(board.getBoardWidth() * 2 + 2));
+                " ".repeat(board.getBoardWidth() * 2 + 2));
 
             // coordinates - Y
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             for (int i = 0; i < board.getBoardHeight(); i++) {
                 textGraphics.putString(i >= 10 ? boardPositionX - 3 : boardPositionX - 2,
-                  boardPositionY + i, String.valueOf(i));
+                    boardPositionY + i, String.valueOf(i));
             }
 
             // coordinates - X
@@ -94,12 +94,12 @@ public class CommandLineInterface implements GameViewInterface {
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             for (int i = 0; i < board.getBoardWidth(); i++) {
                 textGraphics.putString(boardPositionX + i * 2, boardPositionY - 2,
-                  String.valueOf(i % 10));
+                    String.valueOf(i % 10));
             }
             if (board.getBoardWidth() >= 10) {
                 for (int i = 10; i < board.getBoardWidth(); i++) {
                     textGraphics.putString(boardPositionX + i * 2, boardPositionY - 3,
-                      String.valueOf(i / 10));
+                        String.valueOf(i / 10));
                 }
             }
 
@@ -112,14 +112,14 @@ public class CommandLineInterface implements GameViewInterface {
 
     public void displayHelp() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
-          "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
+            "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
         UserLog.add(log);
         displayConsoleLog();
     }
 
     public void displayInvalidCommand() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
-          "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
+            "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
         UserLog.add(log);
         displayConsoleLog();
     }
@@ -168,14 +168,14 @@ public class CommandLineInterface implements GameViewInterface {
             textGraphics.setBackgroundColor(ANSI.BLACK);
             for (int i = 0; i < 10; i++) {
                 textGraphics.drawLine(x, y + i,
-                  terminal.getTerminalSize().getColumns() - 1, y + i,
-                  ' ');
+                    terminal.getTerminalSize().getColumns() - 1, y + i,
+                    ' ');
             }
             for (int i = 0; i < 10 && i < UserLog.LOGS.size(); i++) {
                 textGraphics.setForegroundColor(
-                  UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor());
+                    UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor());
                 textGraphics.putString(x, y + 9 - i,
-                  UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo());
+                    UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo());
             }
             resetTextGraphicsColors();
             terminal.flush();
@@ -199,7 +199,7 @@ public class CommandLineInterface implements GameViewInterface {
     public void clearInput() {
         try {
             textGraphics.drawLine(this.inputPositionX + 1, this.inputPositionY,
-              terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
+                terminal.getTerminalSize().getColumns() - 1, this.inputPositionY, ' ');
             terminal.flush();
         } catch (IOException e) {
             e.printStackTrace();

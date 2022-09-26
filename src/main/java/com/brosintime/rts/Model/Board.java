@@ -65,7 +65,7 @@ public class Board {
      */
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
         return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd,
-          board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
+            board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
     }
 
     /**
@@ -120,7 +120,7 @@ public class Board {
      * @param unitType       The type of unit to be created.
      */
     public void newUnit(int locationRow, int locationColumn, BaseUnit.Team team,
-      String unitType) {
+        String unitType) {
         BaseUnit unit = unitFactory.createUnit(unitType, team);
         board[locationRow][locationColumn].addUnit(unit);
         globalUnits.put(unit.getId(), new UnitLocation(locationRow, locationColumn, unit));

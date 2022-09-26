@@ -170,12 +170,12 @@ public class GameController {
             case NOARGS -> { // with no arguments, general info is printed
                 Command command = CommandList.getCommandFromAlias(moveCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                  command.getName() + " - " + command.getDescription() + " Usages:",
-                  Type.INFO));
+                    command.getName() + " - " + command.getDescription() + " Usages:",
+                    Type.INFO));
                 HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
                 usages.forEach((key, value) -> UserLog.add(
-                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                    new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.getDefaultAlias() + " " + value, Type.INFO)));
                 viewInterface.displayConsoleLog();
                 return true;
             }
@@ -184,30 +184,30 @@ public class GameController {
                 if (arguments.size() == 3) {
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
                     return moveUnit(Integer.parseInt(arguments.get(1)),
-                      Integer.parseInt(arguments.get(2)));
+                        Integer.parseInt(arguments.get(2)));
                 }
                 if (arguments.size() == 1) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                      "Executing move command...", Type.INFO));
+                        "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                      "Executing move command...", Type.INFO));
+                        "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveUnit(Integer.parseInt(arguments.get(0)),
-                      Integer.parseInt(arguments.get(1)));
+                        Integer.parseInt(arguments.get(1)));
                 }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Too many arguments! Usage: " + moveCommand.getBasicUsage(), Type.INFO));
+                    "Too many arguments! Usage: " + moveCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
             case BAD -> { // arguments are not parsable as positive integers
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                    "Bad syntax! Make sure arguments are numbers", Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
@@ -263,12 +263,12 @@ public class GameController {
             case NOARGS -> { // with no arguments, general info is printed
                 Command command = CommandList.getCommandFromAlias(attackCommand.getDefaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                  command.getName() + " - " + command.getDescription() + " Usages:",
-                  Type.INFO));
+                    command.getName() + " - " + command.getDescription() + " Usages:",
+                    Type.INFO));
                 HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
                 usages.forEach((key, value) -> UserLog.add(
-                  new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.getDefaultAlias() + " " + value, Type.INFO)));
+                    new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.getDefaultAlias() + " " + value, Type.INFO)));
                 viewInterface.displayConsoleLog();
                 return true;
             }
@@ -279,18 +279,18 @@ public class GameController {
                     return true;
                 } else {
                     return attackUnit(Integer.parseInt(arguments.get(0)),
-                      Integer.parseInt(arguments.get(1)));
+                        Integer.parseInt(arguments.get(1)));
                 }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Too many arguments! Usage: " + attackCommand.getBasicUsage(), Type.INFO));
+                    "Too many arguments! Usage: " + attackCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
             case BAD -> { // arguments are not parsable as positive integers
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                    "Bad syntax! Make sure arguments are numbers", Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
@@ -341,7 +341,7 @@ public class GameController {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
                 player1SelectedUnit = null;
                 UserLog.add(
-                  new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
+                    new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
                 viewInterface.displayConsoleLog();
                 return true;
             }
@@ -352,18 +352,18 @@ public class GameController {
                     return true;
                 } else {
                     return selectUnit(Integer.parseInt(arguments.get(0)),
-                      Integer.parseInt(arguments.get(1)));
+                        Integer.parseInt(arguments.get(1)));
                 }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Too many arguments! Usage: " + selectCommand.getBasicUsage(), Type.INFO));
+                    "Too many arguments! Usage: " + selectCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
             case BAD -> { // arguments aren't parsable as positive integers
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Bad syntax! Make sure arguments are numbers", Type.INFO));
+                    "Bad syntax! Make sure arguments are numbers", Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
@@ -377,11 +377,11 @@ public class GameController {
                 List<UserLogItem> aliasesList = new ArrayList<>();
                 for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
                     aliasesList.add(
-                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
+                        new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
                 }
                 UserLog.add(
-                  PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
-                    viewInterface.getConsoleLogHeight(), aliasesList, 1));
+                    PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
+                        viewInterface.getConsoleLogHeight(), aliasesList, 1));
                 viewInterface.displayConsoleLog();
                 return true;
             }
@@ -389,38 +389,38 @@ public class GameController {
                 if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
                     Command command = CommandList.getCommandFromAlias(helpCommand.getArgument(0));
                     UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                      command.getName() + " - " + command.getDescription() + " Usages:",
-                      Type.INFO));
+                        command.getName() + " - " + command.getDescription() + " Usages:",
+                        Type.INFO));
                     HashMap<Integer, String> usages = new HashMap<>(command.getUsages());
                     usages.forEach((key, value) -> UserLog.add(
-                      new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.getDefaultAlias() + " " + value, Type.INFO)));
+                        new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                            command.getDefaultAlias() + " " + value, Type.INFO)));
                     viewInterface.displayConsoleLog();
                     return true;
                 } else {
                     List<UserLogItem> aliasesList = new ArrayList<>();
                     for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
                         aliasesList.add(
-                          new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(),
-                            Type.INFO));
+                            new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(),
+                                Type.INFO));
                     }
                     PageBook.paginateAndGetPage("List of commands", helpCommand.getDefaultAlias(),
-                      viewInterface.getConsoleLogHeight(),
-                      aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
+                        viewInterface.getConsoleLogHeight(),
+                        aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
                     viewInterface.displayConsoleLog();
                     return true;
                 }
             }
             case TOOMANY -> { // too many arguments given
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Too many arguments! Usage: " + helpCommand.getBasicUsage(), Type.INFO));
+                    "Too many arguments! Usage: " + helpCommand.getBasicUsage(), Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
             case BAD -> { // if the command alias was not found
                 UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                  "Command not found! Check spelling or type \"help\" for a list of commands",
-                  Type.INFO));
+                    "Command not found! Check spelling or type \"help\" for a list of commands",
+                    Type.INFO));
                 viewInterface.displayConsoleLog();
                 return false;
             }
@@ -453,7 +453,7 @@ public class GameController {
      */
     private boolean checkBounds(int row, int column) {
         return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth()
-          || column < 0);
+            || column < 0);
     }
 
     public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {

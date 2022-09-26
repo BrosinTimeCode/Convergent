@@ -28,7 +28,7 @@ public class PathFinder {
      * @return A Path from starting node and ending node. If no path found returns null.
      */
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd,
-      BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         Path path = new Path();
         if (!checkBounds(rowStart, columnStart, rowEnd, columnEnd)) {
             return null;
@@ -37,15 +37,15 @@ public class PathFinder {
         while (pathNode != null) {
             // The next location has a unit that is not on the same team
             if (!checkTeam(board[pathNode.row()][pathNode.column()], team)
-              || exploredNodes.containsKey(new Node(
-              pathNode.row(), pathNode.column()))) {
+                || exploredNodes.containsKey(new Node(
+                pathNode.row(), pathNode.column()))) {
                 Path nonEnemyPath;
                 if (path.getLength() == 0) {
                     nonEnemyPath = nonEnemyPath(rowStart, columnStart,
-                      rowEnd, columnEnd, team, exploredNodes);
+                        rowEnd, columnEnd, team, exploredNodes);
                 } else {
                     nonEnemyPath = nonEnemyPath(path.getLast().row(), path.getLast().column(),
-                      rowEnd, columnEnd, team, exploredNodes);
+                        rowEnd, columnEnd, team, exploredNodes);
                 }
                 if (nonEnemyPath != null) {
                     path.appendPath(nonEnemyPath);
@@ -72,9 +72,9 @@ public class PathFinder {
      */
     private boolean checkBounds(int rowStart, int columnStart, int rowEnd, int columnEnd) {
         return rowStart >= 0 && rowStart < board.length && columnStart >= 0
-          && columnStart < board[0].length
-          && rowEnd >= 0 && rowEnd < board.length && columnEnd >= 0
-          && columnEnd < board[0].length;
+            && columnStart < board[0].length
+            && rowEnd >= 0 && rowEnd < board.length && columnEnd >= 0
+            && columnEnd < board[0].length;
     }
 
     /**
@@ -143,16 +143,16 @@ public class PathFinder {
      * @return A Path from current node and ending node. If no path found returns null.
      */
     public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd,
-      BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         exploredNodes.put(new Node(rowCurrent, columnCurrent), true);
         ArrayList<Node> adjacentNodes = getValidAdjacentNodes(rowCurrent, columnCurrent, team,
-          exploredNodes);
+            exploredNodes);
         ArrayList<Path> adjacentPaths = new ArrayList<>();
         for (Node node : adjacentNodes) {
             Path path = new Path();
             path.addNode(node.row(), node.column());
             Path nextPath = pathFinder(node.row(), node.column(), rowEnd, columnEnd, team,
-              exploredNodes);
+                exploredNodes);
             if (nextPath != null) {
                 path.appendPath(nextPath);
             }
@@ -161,11 +161,11 @@ public class PathFinder {
         Path shortestValidPath = null;
         for (Path path : adjacentPaths) {
             if (shortestValidPath == null && path.getLast().row() == rowEnd
-              && path.getLast().column() == columnEnd) {
+                && path.getLast().column() == columnEnd) {
                 shortestValidPath = path;
             } else if (shortestValidPath != null && path.getLength() < shortestValidPath.getLength()
-              && path.getLast().row() == rowEnd
-              && path.getLast().column() == columnEnd) {
+                && path.getLast().row() == rowEnd
+                && path.getLast().column() == columnEnd) {
                 shortestValidPath = path;
             }
         }
@@ -174,10 +174,10 @@ public class PathFinder {
             shortestValidPath = adjacentPaths.get(0);
             for (Path path : adjacentPaths) {
                 if (
-                  distanceBetweenNodes(path.getLast().row(), path.getLast().column(),
-                    rowEnd,
-                    columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().row(),
-                    shortestValidPath.getLast().column(), rowEnd, columnEnd)) {
+                    distanceBetweenNodes(path.getLast().row(), path.getLast().column(),
+                        rowEnd,
+                        columnEnd) < distanceBetweenNodes(shortestValidPath.getLast().row(),
+                        shortestValidPath.getLast().column(), rowEnd, columnEnd)) {
                     shortestValidPath = path;
                 }
             }
@@ -228,7 +228,7 @@ public class PathFinder {
      * @return A List of adjacent Nodes that are valid.
      */
     public ArrayList<Node> getValidAdjacentNodes(int rowCurrent, int columnCurrent,
-      BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
         ArrayList<Node> nodes = new ArrayList<>();
         ArrayList<Node> validNodes = new ArrayList<>();
         // Diagonal Up-Left
@@ -249,10 +249,10 @@ public class PathFinder {
         nodes.add(new Node(rowCurrent + 1, columnCurrent + 1));
         for (Node node : nodes) {
             if (node.row() >= 0 && node.row() < board.length && node.column() >= 0 &&
-              node.column() < board[0].length && checkTeam(
-              board[node.row()][node.column()],
-              team)
-              && !exploredNodes.containsKey(node)) {
+                node.column() < board[0].length && checkTeam(
+                board[node.row()][node.column()],
+                team)
+                && !exploredNodes.containsKey(node)) {
                 validNodes.add(node);
                 exploredNodes.put(node, true);
             }
