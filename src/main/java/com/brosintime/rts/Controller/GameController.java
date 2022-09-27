@@ -81,6 +81,13 @@ public class GameController {
         timer.schedule(damageTask, 0, oneSecond);
     }
 
+    /**
+     * Interfaces with {@link GameViewInterface} by calling
+     * {@link GameViewInterface#getUserKeyStroke()} and processing the keystrokes. If the player
+     * submits a line, {@link #handleUserInput} is called to retrieve a command.
+     * <p>Player submissions are logged via {@link UserInputHistory} and accessible with the up and
+     * down arrow keys.
+     */
     public void getUserInput() {
         List<Character> input = new ArrayList<>();
         viewInterface.clearInput();
@@ -125,6 +132,12 @@ public class GameController {
         } while (!inputClosed);
     }
 
+    /**
+     * Processes player input and retrieves a {@link Command} if found. If a command is not found,
+     * an invalid command error is displayed.
+     *
+     * @param input by player
+     */
     public void handleUserInput(String input) {
         Command userCommand = CommandList.fromInput(input);
         if (userCommand instanceof NullCommand) {
@@ -134,6 +147,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Converts a {@link List} of {@link Character} to a {@link String}.
+     *
+     * @param list of {@link Character}
+     * @return string output
+     */
     private String charListToString(List<Character> list) {
         if (list.size() == 0) {
             return "";
@@ -141,6 +160,12 @@ public class GameController {
         return list.toString().substring(1, 3 * list.size() - 1).replaceAll(", ", "");
     }
 
+    /**
+     * Converts a {@link String} to a {@link List} of {@link Character}.
+     *
+     * @param string input
+     * @return {@link List} of {@link Character}
+     */
     private List<Character> stringToCharList(String string) {
         List<Character> list = new ArrayList<>();
         for (char c : string.toCharArray()) {
@@ -176,8 +201,7 @@ public class GameController {
             case NOARGS -> { // with no arguments, general info is printed
                 Command command = CommandList.fromAlias(moveCommand.defaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.name() + " - " + command.description() + " Usages:",
-                    Type.INFO));
+                    command.name() + " - " + command.description() + " Usages:", Type.INFO));
                 List<String> usages = new ArrayList<>(command.usages());
                 for (String usage : usages) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
@@ -194,13 +218,15 @@ public class GameController {
                         Integer.parseInt(arguments.get(2)));
                 }
                 if (arguments.size() == 1) {
-                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing move command...", Type.INFO));
+                    UserLog.add(
+                        new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
+                            Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
-                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing move command...", Type.INFO));
+                    UserLog.add(
+                        new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
+                            Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
@@ -270,8 +296,7 @@ public class GameController {
             case NOARGS -> { // with no arguments, general info is printed
                 Command command = CommandList.fromAlias(attackCommand.defaultAlias());
                 UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.name() + " - " + command.description() + " Usages:",
-                    Type.INFO));
+                    command.name() + " - " + command.description() + " Usages:", Type.INFO));
                 List<String> usages = new ArrayList<>(command.usages());
                 for (String usage : usages) {
                     UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
@@ -379,6 +404,16 @@ public class GameController {
         return false;
     }
 
+    /**
+     * Executes passed in {@link Help} command. Returns true only if command executes successfully.
+     * <p>If no arguments are provided, the console displays a paginated list of command aliases
+     * registered in {@link CommandList}. If a valid command alias is provided as the sole argument,
+     * help documentation for the appropriate command is displayed. Otherwise, an error is displayed
+     * in the console and this method returns false.
+     *
+     * @param helpCommand instance of {@link Help}
+     * @return true if provided valid arguments, otherwise false
+     */
     private boolean executeHelp(Help helpCommand) {
         switch (helpCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, a list of commands is printed
@@ -397,8 +432,7 @@ public class GameController {
                 if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
                     Command command = CommandList.fromAlias(helpCommand.getArgument(0));
                     UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.name() + " - " + command.description() + " Usages:",
-                        Type.INFO));
+                        command.name() + " - " + command.description() + " Usages:", Type.INFO));
                     List<String> usages = new ArrayList<>(command.usages());
                     for (String usage : usages) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
@@ -414,8 +448,8 @@ public class GameController {
                                 Type.INFO));
                     }
                     PageBook.paginateAndGetPage("List of commands", helpCommand.defaultAlias(),
-                        viewInterface.getConsoleLogHeight(),
-                        aliasesList, Integer.parseInt(helpCommand.getArgument(0)));
+                        viewInterface.getConsoleLogHeight(), aliasesList,
+                        Integer.parseInt(helpCommand.getArgument(0)));
                     viewInterface.displayConsoleLog();
                     return true;
                 }
