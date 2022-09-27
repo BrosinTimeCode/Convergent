@@ -1,32 +1,27 @@
 package com.brosintime.rts.Commands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Attack extends Command {
+public class Attack implements Command {
 
     private static Attack instance = null;
     private final static byte maxArguments = 3;
     private final static List<String> arguments = new ArrayList<>();
-    private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> usages = new ArrayList<>();
     private final static List<String> aliases = new ArrayList<>();
 
     private Attack() {
-        usages.put(0, "");
-        usages.put(1, "(target)");
-        usages.put(2, "(x) (y)");
-        usages.put(3, "(unit) (x) (y)");
+        usages.add("");
+        usages.add("(target)");
+        usages.add("(x) (y)");
+        usages.add("(unit) (x) (y)");
         aliases.add("attack");
         aliases.add("atk");
         aliases.add("a");
-        for (String alias : aliases) {
-            CommandList.registerAlias(alias, this);
-        }
     }
 
-    public static Attack getInstance() {
+    public static Attack instance() {
         if (instance == null) {
             instance = new Attack();
         }
@@ -45,27 +40,27 @@ public class Attack extends Command {
     }
 
     @Override
-    public Map<Integer, String> getUsages() {
+    public List<String> usages() {
         return usages;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "Attack";
     }
 
     @Override
-    public String getDefaultAlias() {
+    public String defaultAlias() {
         return "attack";
     }
 
     @Override
-    public String getBasicUsage() {
+    public String basicUsage() {
         return "attack (target)";
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return "Asks a (selected) unit to attack another.";
     }
 
@@ -97,16 +92,19 @@ public class Attack extends Command {
 
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
+        if (index < 0 || index > arguments.size()) {
+            throw new IndexOutOfBoundsException();
+        }
         return arguments.get(index);
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> aliases() {
         return aliases;
     }
 
     @Override
-    public byte getMaxArguments() {
+    public byte maxArguments() {
         return maxArguments;
     }
 

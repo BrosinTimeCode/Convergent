@@ -1,29 +1,24 @@
 package com.brosintime.rts.Commands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Exit extends Command {
+public class Exit implements Command {
 
     private static Exit instance = null;
     private final static byte maxArguments = 0;
     private final static List<String> arguments = new ArrayList<>();
-    private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> usages = new ArrayList<>();
     private final static List<String> aliases = new ArrayList<>();
 
-    public Exit() {
-        usages.put(0, "");
+    private Exit() {
+        usages.add("");
         aliases.add("exit");
         aliases.add("quit");
         aliases.add("stop");
-        for (String alias : aliases) {
-            CommandList.registerAlias(alias, this);
-        }
     }
 
-    public static Exit getInstance() {
+    public static Exit instance() {
         if (instance == null) {
             instance = new Exit();
         }
@@ -42,27 +37,27 @@ public class Exit extends Command {
     }
 
     @Override
-    public Map<Integer, String> getUsages() {
+    public List<String> usages() {
         return usages;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "Exit";
     }
 
     @Override
-    public String getDefaultAlias() {
+    public String defaultAlias() {
         return "exit";
     }
 
     @Override
-    public String getBasicUsage() {
+    public String basicUsage() {
         return "exit";
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return "Exits the game.";
     }
 
@@ -81,16 +76,20 @@ public class Exit extends Command {
 
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
+        if (index < 0 || index > arguments.size()) {
+            throw new IndexOutOfBoundsException();
+        }
         return arguments.get(index);
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> aliases() {
         return aliases;
     }
 
     @Override
-    public byte getMaxArguments() {
+    public byte maxArguments() {
         return maxArguments;
     }
+
 }

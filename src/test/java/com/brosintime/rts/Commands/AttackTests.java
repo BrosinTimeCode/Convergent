@@ -5,51 +5,51 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.brosintime.rts.Commands.CommandList.ArgStatus;
+import com.brosintime.rts.Commands.Command.ArgStatus;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class AttackTests {
 
-    @BeforeEach
-    void initAll() {
-        CommandList.initializeCommands();
+    @BeforeAll
+    static void initAll() {
+        CommandList.registerCommand(Attack.instance());
     }
 
     @Test
     void attackCommand_withNoArguments_returnsNOARGS() {
         List<String> arguments = new ArrayList<>();
-        Attack.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.NOARGS, Attack.getInstance().validateArguments());
+        Attack.instance().setArguments(arguments);
+        assertEquals(ArgStatus.NOARGS, Attack.instance().validateArguments());
     }
 
     @Test
     void attackCommand_withMoreThanMaxArguments_returnsTOOMANY() {
         List<String> arguments = new ArrayList<>();
-        for (int i = 0; i < Attack.getInstance().getMaxArguments() + 1; i++) {
-            arguments.add(Attack.getInstance().getDefaultAlias());
+        for (int i = 0; i < Attack.instance().maxArguments() + 1; i++) {
+            arguments.add(Attack.instance().defaultAlias());
         }
-        Attack.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.TOOMANY, Attack.getInstance().validateArguments());
+        Attack.instance().setArguments(arguments);
+        assertEquals(ArgStatus.TOOMANY, Attack.instance().validateArguments());
     }
 
     @Test
     void attackCommand_withNegativeIntAsArgument_returnsBAD() {
         List<String> arguments = new ArrayList<>();
         arguments.add("-1");
-        Attack.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.BAD, Attack.getInstance().validateArguments());
+        Attack.instance().setArguments(arguments);
+        assertEquals(ArgStatus.BAD, Attack.instance().validateArguments());
     }
 
     @Test
     void attackCommand_withPositiveIntAsArgument_returnsGOOD() {
         List<String> arguments = new ArrayList<>();
-        for (int i = 0; i < Attack.getInstance().getMaxArguments(); i++) {
+        for (int i = 0; i < Attack.instance().maxArguments(); i++) {
             arguments.add("1");
-            Attack.getInstance().setArguments(arguments);
-            assertEquals(ArgStatus.GOOD, Attack.getInstance().validateArguments());
+            Attack.instance().setArguments(arguments);
+            assertEquals(ArgStatus.GOOD, Attack.instance().validateArguments());
         }
     }
 
@@ -59,8 +59,8 @@ public class AttackTests {
         inputArguments.add("red");
         inputArguments.add("white");
         inputArguments.add("blue");
-        Attack.getInstance().setArguments(inputArguments);
-        List<String> outputArguments = new ArrayList<>(Attack.getInstance().getArguments());
+        Attack.instance().setArguments(inputArguments);
+        List<String> outputArguments = new ArrayList<>(Attack.instance().getArguments());
         assertEquals(inputArguments, outputArguments);
     }
 
@@ -70,12 +70,12 @@ public class AttackTests {
         argumentsSet1.add("red");
         argumentsSet1.add("white");
         argumentsSet1.add("blue");
-        Attack.getInstance().setArguments(argumentsSet1);
+        Attack.instance().setArguments(argumentsSet1);
         List<String> argumentsSet2 = new ArrayList<>();
         argumentsSet1.add("one");
         argumentsSet1.add("two");
-        Attack.getInstance().setArguments(argumentsSet2);
-        List<String> outputArguments = new ArrayList<>(Attack.getInstance().getArguments());
+        Attack.instance().setArguments(argumentsSet2);
+        List<String> outputArguments = new ArrayList<>(Attack.instance().getArguments());
         assertEquals(argumentsSet2, outputArguments);
         assertNotEquals(argumentsSet1, outputArguments);
         for (String arg : argumentsSet1) {
@@ -85,11 +85,11 @@ public class AttackTests {
 
     @Test
     void attackCommandDefaultAlias_isARegisteredAlias() {
-        assertTrue(CommandList.isAnAlias(Attack.getInstance().getDefaultAlias()));
+        assertTrue(CommandList.isAnAlias(Attack.instance().defaultAlias()));
     }
 
     @Test
     void attackCommandInstance_isInstanceOfAttack() {
-        assertTrue(Attack.getInstance() instanceof Attack);
+        assertTrue(Attack.instance() instanceof Attack);
     }
 }
