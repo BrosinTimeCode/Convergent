@@ -24,23 +24,24 @@ public class UserLogItem {
         this.type = type;
     }
 
+    @Override
     public String toString() {
         return this.timestamp + " [" + this.type + "] " + this.memo;
     }
 
-    public TextColor getColor() {
+    public TextColor color() {
         return color;
     }
 
-    public Timestamp getTimestamp() {
+    public Timestamp timestamp() {
         return timestamp;
     }
 
-    public String getMemo() {
+    public String memo() {
         return memo;
     }
 
-    public Type getType() {
+    public Type type() {
         return this.type;
     }
 }
