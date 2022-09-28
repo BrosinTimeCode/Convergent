@@ -1,21 +1,16 @@
 package Server;
 
-import Controller.GameController;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import Server.NetworkMessages.NetworkMessage;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client extends Thread {
 
     Socket clientSocket;
-    InputStreamReader inputStreamReader;
-    BufferedReader bufferedReader;
-    OutputStreamWriter outputStreamWriter;
-    BufferedWriter bufferedWriter;
+    DataInputStream inputStream;
+    DataOutputStream outputStream;
 
     public Client() {
     }
@@ -23,18 +18,20 @@ public class Client extends Thread {
     public void run() {
         try {
             clientSocket = new Socket("localhost", 1234);
-            inputStreamReader = new InputStreamReader(clientSocket.getInputStream());
-            outputStreamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
-            bufferedReader = new BufferedReader(inputStreamReader);
-            bufferedWriter = new BufferedWriter(outputStreamWriter);
-            while (true) {
-                bufferedWriter.write("hello world");
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-                break;
-            }
+            inputStream = new DataInputStream(clientSocket.getInputStream());
+            outputStream = new DataOutputStream(clientSocket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public boolean sendToServer(NetworkMessage message) {
+        try {
+            outputStream.write(message.getMessageString().getBytes());
+            outputStream.flush();
+            return true;
+        } catch(IOException e) {
+            return false;
         }
     }
 }

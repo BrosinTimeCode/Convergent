@@ -1,11 +1,8 @@
 package Server;
 
-import Model.Board;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,10 +10,8 @@ public class LocalHostServer extends Thread {
 
     ServerSocket serverSocket;
     Socket socket;
-    InputStreamReader inputStreamReader;
-    BufferedReader bufferedReader;
-    OutputStreamWriter outputStreamWriter;
-    BufferedWriter bufferedWriter;
+    DataInputStream inputStream;
+    DataOutputStream outputStream;
 
     private void setup() throws IOException {
         serverSocket = new ServerSocket(1234);
@@ -26,12 +21,13 @@ public class LocalHostServer extends Thread {
         try {
             setup();
             socket = serverSocket.accept();
-            inputStreamReader = new InputStreamReader(socket.getInputStream());
-            outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-            bufferedReader = new BufferedReader(inputStreamReader);
-            bufferedWriter = new BufferedWriter(outputStreamWriter);
+            inputStream = new DataInputStream(socket.getInputStream());
+            outputStream = new DataOutputStream(socket.getOutputStream());
             while (true) {
-                System.out.println(bufferedReader.readLine());
+                byte[] message = new byte[1000];
+                inputStream.read(message);
+                String stringMessage = new String(message).trim();
+                System.out.println(stringMessage);
             }
         } catch (IOException exception) {
             exception.printStackTrace();
