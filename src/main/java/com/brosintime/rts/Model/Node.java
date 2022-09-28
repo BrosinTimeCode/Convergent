@@ -21,9 +21,6 @@ public record Node(int row, int column) {
 
     @Override
     public String toString() {
-        String s = "";
-        s = s + row;
-        s = s + column;
-        return s;
+        return "(" + this.column + ", " + this.row + ")";
     }
 }

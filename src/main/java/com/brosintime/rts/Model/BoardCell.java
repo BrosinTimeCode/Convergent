@@ -1,6 +1,6 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Units.BaseUnit;
+import com.brosintime.rts.Units.Unit;
 import java.util.HashMap;
 
 /**
@@ -8,13 +8,13 @@ import java.util.HashMap;
  */
 public class BoardCell {
 
-    public BaseUnit unit;
-    private final HashMap<Integer, BaseUnit> units;
+    public Unit unit;
+    private final HashMap<Integer, Unit> units;
 
-    public BoardCell(BaseUnit unit) {
+    public BoardCell(Unit unit) {
         units = new HashMap<>();
         if (unit != null) {
-            units.put(unit.getId(), unit);
+            units.put(unit.id(), unit);
             this.unit = unit;
         }
     }
@@ -45,8 +45,8 @@ public class BoardCell {
      *
      * @param unit BaseUnit to be added to BoardCell.
      */
-    public void addUnit(BaseUnit unit) {
-        units.put(unit.getId(), unit);
+    public void addUnit(Unit unit) {
+        units.put(unit.id(), unit);
         this.unit = unit;
     }
 

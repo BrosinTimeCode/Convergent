@@ -21,6 +21,7 @@ public class LocalHostServer extends Thread {
         serverSocket = new ServerSocket(1234);
     }
 
+    @Override
     public void run() {
         try {
             setup();

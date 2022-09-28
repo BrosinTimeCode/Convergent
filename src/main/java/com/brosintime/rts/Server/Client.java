@@ -18,6 +18,7 @@ public class Client extends Thread {
     public Client() {
     }
 
+    @Override
     public void run() {
         try {
             clientSocket = new Socket("localhost", 1234);

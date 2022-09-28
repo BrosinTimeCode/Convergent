@@ -13,7 +13,7 @@ import com.brosintime.rts.Log.UserLogItem.Type;
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
-import com.brosintime.rts.Units.BaseUnit;
+import com.brosintime.rts.Units.Unit;
 import com.brosintime.rts.View.CommandLineInterface;
 import com.brosintime.rts.View.GameViewInterface;
 import com.googlecode.lanterna.TextColor;
@@ -33,8 +33,8 @@ public class GameController {
 
     GameViewInterface viewInterface;
     Board board;
-    private static BaseUnit player1SelectedUnit;
-    private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
+    private static Unit player1SelectedUnit;
+    private final HashMap<Unit, Unit> entitiesUnderAttack;
     private final UserInputHistory inputHistory;
 
     public GameController(int viewType, BoardType boardType, int width, int height) {
@@ -54,12 +54,12 @@ public class GameController {
         switch (viewType) {
             default -> {
                 viewInterface = new CommandLineInterface(board);
-                viewInterface.initialize();
             }
         }
         CommandList.initializeCommands();
         entitiesUnderAttack = new HashMap<>();
         inputHistory = new UserInputHistory();
+        viewInterface.displayBoard();
         viewInterface.displayHelp();
     }
 
@@ -323,8 +323,8 @@ public class GameController {
      * @param attacker BaseUnit that is attacking deadUnit.
      * @param deadUnit BaseUnit to be killed.
      */
-    public void killUnit(BaseUnit attacker, BaseUnit deadUnit) {
-        board.killUnit(deadUnit.getId());
+    public void killUnit(Unit attacker, Unit deadUnit) {
+        board.killUnit(deadUnit.id());
         entitiesUnderAttack.remove(attacker);
     }
 
@@ -452,15 +452,15 @@ public class GameController {
      * @return Returns true if the row and column are in bounds.
      */
     private boolean checkBounds(int row, int column) {
-        return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth()
+        return !(row > board.height() || row < 0 || column > board.width()
             || column < 0);
     }
 
-    public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {
+    public HashMap<Unit, Unit> getEntitiesUnderAttack() {
         return entitiesUnderAttack;
     }
 
-    public static boolean isPlayer1SelectedUnit(BaseUnit unit) {
+    public static boolean isPlayer1SelectedUnit(Unit unit) {
         return player1SelectedUnit == unit;
     }
 }

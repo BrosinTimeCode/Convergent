@@ -214,7 +214,7 @@ public class PathFinder {
         if (cell1.unit == null) {
             return true;
         } else {
-            return cell1.unit.getTeam() == team;
+            return cell1.unit.team() == team;
         }
     }
 
