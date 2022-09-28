@@ -24,6 +24,6 @@ public class RefreshMapTask extends TimerTask {
      */
     @Override
     public void run() {
-        viewInterface.displayBoard(board);
+        viewInterface.displayBoard();
     }
 }

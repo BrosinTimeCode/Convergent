@@ -1,6 +1,5 @@
 package com.brosintime.rts.View;
 
-import com.brosintime.rts.Model.Board;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
@@ -10,14 +9,12 @@ import com.googlecode.lanterna.input.KeyStroke;
 public interface GameViewInterface {
 
     // Method to display the current state of the board
-    void displayBoard(Board board);
+    void displayBoard();
 
     // Displays help prompt
     void displayHelp();
 
     void displayInvalidCommand();
-
-    void initialize();
 
     KeyStroke getUserKeyStroke();
 
