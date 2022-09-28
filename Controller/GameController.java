@@ -183,8 +183,8 @@ public class GameController {
                     viewInterface.displayConsoleLog();
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(0)),
-                        Integer.parseInt(arguments.get(1)))) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(0)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                             "Move coordinates are out of bounds.", Type.INFO));
                         viewInterface.displayConsoleLog();
@@ -197,8 +197,8 @@ public class GameController {
                         Integer.parseInt(arguments.get(1)));
                 }
                 else if (arguments.size() == 3) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(2)))) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(2)),
+                        Integer.parseInt(arguments.get(1)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                             "Move coordinates are out of bounds.", Type.INFO));
                         viewInterface.displayConsoleLog();
@@ -361,8 +361,8 @@ public class GameController {
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
-                    if (!checkBounds(Integer.parseInt(arguments.get(0)),
-                        Integer.parseInt(arguments.get(1)))) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(0)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                             "Selection coordinates are out of bounds.", Type.INFO));
                         viewInterface.displayConsoleLog();
