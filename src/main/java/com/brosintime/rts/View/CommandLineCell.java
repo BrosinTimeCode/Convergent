@@ -1,39 +1,22 @@
-package View;
+package com.brosintime.rts.View;
 
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
-import java.util.Objects;
 
-public class CommandLineCell {
+/**
+ * The CommandLineCell class is the object used
+ *
+ * @param foregroundColor
+ * @param backgroundColor
+ * @param character
+ */
+public record CommandLineCell(TextColor foregroundColor, TextColor backgroundColor,
+                              char character) implements Cell {
 
-    private final TextColor foregroundColor;
-    private final TextColor backgroundColor;
-    private final char character;
-
-    public CommandLineCell(TextColor foregroundColor, TextColor backgroundColor, char character) {
-        this.foregroundColor = foregroundColor;
-        this.backgroundColor = backgroundColor;
-        this.character = character;
-    }
-
-    public static CommandLineCell newBlank() {
-        return new CommandLineCell(ANSI.DEFAULT, ANSI.DEFAULT, ' ');
-    }
-
-    public TextColor getForegroundColor() {
-        return this.foregroundColor;
-    }
-
-    public TextColor getBackgroundColor() {
-        return this.backgroundColor;
-    }
-
-    public char getCharacter() {
-        return this.character;
-    }
-
+    @Override
     public boolean isBlank() {
-        return this.foregroundColor == ANSI.DEFAULT && this.backgroundColor == ANSI.DEFAULT && this.character == ' ';
+        return this.foregroundColor == ANSI.DEFAULT && this.backgroundColor == ANSI.DEFAULT
+            && this.character == ' ';
     }
 
     @Override
@@ -41,7 +24,8 @@ public class CommandLineCell {
         if (isBlank()) {
             return "BLANKCELL";
         } else {
-            return this.foregroundColor + " '" + this.character + "' on " + this.backgroundColor;
+            return this.foregroundColor + " '" + this.character + "' on "
+                + this.backgroundColor;
         }
     }
 
@@ -55,11 +39,11 @@ public class CommandLineCell {
         }
         CommandLineCell that = (CommandLineCell) o;
         return character == that.character && foregroundColor.equals(that.foregroundColor)
-          && backgroundColor.equals(that.backgroundColor);
+            && backgroundColor.equals(that.backgroundColor);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(foregroundColor, backgroundColor, character);
+    public Cell toCell() {
+        return this;
     }
 }
