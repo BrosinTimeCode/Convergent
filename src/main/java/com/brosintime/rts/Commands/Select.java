@@ -1,31 +1,26 @@
 package com.brosintime.rts.Commands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Select extends Command {
+public class Select implements Command {
 
     private static Select instance = null;
     private final static byte maxArguments = 2;
     private final static List<String> arguments = new ArrayList<>();
-    private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> usages = new ArrayList<>();
     private final static List<String> aliases = new ArrayList<>();
 
     private Select() {
-        usages.put(0, "");
-        usages.put(1, "(unit)");
-        usages.put(2, "(x) (y)");
+        usages.add("");
+        usages.add("(unit)");
+        usages.add("(x) (y)");
         aliases.add("select");
         aliases.add("sel");
         aliases.add("s");
-        for (String alias : aliases) {
-            CommandList.registerAlias(alias, this);
-        }
     }
 
-    public static Select getInstance() {
+    public static Select instance() {
         if (instance == null) {
             instance = new Select();
         }
@@ -44,27 +39,27 @@ public class Select extends Command {
     }
 
     @Override
-    public Map<Integer, String> getUsages() {
+    public List<String> usages() {
         return usages;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "Select";
     }
 
     @Override
-    public String getDefaultAlias() {
+    public String defaultAlias() {
         return "select";
     }
 
     @Override
-    public String getBasicUsage() {
+    public String basicUsage() {
         return "select (unit)";
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return "Selects or deselects a unit.";
     }
 
@@ -96,16 +91,19 @@ public class Select extends Command {
 
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
+        if (index < 0 || index > arguments.size()) {
+            throw new IndexOutOfBoundsException();
+        }
         return arguments.get(index);
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> aliases() {
         return aliases;
     }
 
     @Override
-    public byte getMaxArguments() {
+    public byte maxArguments() {
         return maxArguments;
     }
 

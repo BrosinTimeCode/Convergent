@@ -5,50 +5,50 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.brosintime.rts.Commands.CommandList.ArgStatus;
+import com.brosintime.rts.Commands.Command.ArgStatus;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class MoveTests {
 
-    @BeforeEach
-    void initAll() {
-        CommandList.initializeCommands();
+    @BeforeAll
+    static void initAll() {
+        CommandList.registerCommand(Move.instance());
     }
 
     @Test
     void moveCommand_withNoArguments_returnsNOARGS() {
         List<String> arguments = new ArrayList<>();
-        Move.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.NOARGS, Move.getInstance().validateArguments());
+        Move.instance().setArguments(arguments);
+        assertEquals(ArgStatus.NOARGS, Move.instance().validateArguments());
     }
 
     @Test
     void moveCommand_withMoreThanMaxArguments_returnsTOOMANY() {
         List<String> arguments = new ArrayList<>();
-        for (int i = 0; i < Move.getInstance().getMaxArguments() + 1; i++) {
-            arguments.add(Move.getInstance().getDefaultAlias());
+        for (int i = 0; i < Move.instance().maxArguments() + 1; i++) {
+            arguments.add(Move.instance().defaultAlias());
         }
-        Move.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.TOOMANY, Move.getInstance().validateArguments());
+        Move.instance().setArguments(arguments);
+        assertEquals(ArgStatus.TOOMANY, Move.instance().validateArguments());
     }
 
     @Test
     void moveCommand_withNegativeIntAsArgument_returnsBAD() {
         List<String> arguments = new ArrayList<>();
         arguments.add("-1");
-        Move.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.BAD, Move.getInstance().validateArguments());
+        Move.instance().setArguments(arguments);
+        assertEquals(ArgStatus.BAD, Move.instance().validateArguments());
     }
 
     @Test
     void moveCommand_withPositiveIntAsArgument_returnsGOOD() {
         List<String> arguments = new ArrayList<>();
         arguments.add("1");
-        Move.getInstance().setArguments(arguments);
-        assertEquals(ArgStatus.GOOD, Move.getInstance().validateArguments());
+        Move.instance().setArguments(arguments);
+        assertEquals(ArgStatus.GOOD, Move.instance().validateArguments());
     }
 
     @Test
@@ -57,8 +57,8 @@ public class MoveTests {
         inputArguments.add("red");
         inputArguments.add("white");
         inputArguments.add("blue");
-        Move.getInstance().setArguments(inputArguments);
-        List<String> outputArguments = new ArrayList<>(Move.getInstance().getArguments());
+        Move.instance().setArguments(inputArguments);
+        List<String> outputArguments = new ArrayList<>(Move.instance().getArguments());
         assertEquals(inputArguments, outputArguments);
     }
 
@@ -68,12 +68,12 @@ public class MoveTests {
         argumentsSet1.add("red");
         argumentsSet1.add("white");
         argumentsSet1.add("blue");
-        Move.getInstance().setArguments(argumentsSet1);
+        Move.instance().setArguments(argumentsSet1);
         List<String> argumentsSet2 = new ArrayList<>();
         argumentsSet1.add("one");
         argumentsSet1.add("two");
-        Move.getInstance().setArguments(argumentsSet2);
-        List<String> outputArguments = new ArrayList<>(Move.getInstance().getArguments());
+        Move.instance().setArguments(argumentsSet2);
+        List<String> outputArguments = new ArrayList<>(Move.instance().getArguments());
         assertEquals(argumentsSet2, outputArguments);
         assertNotEquals(argumentsSet1, outputArguments);
         for (String arg : argumentsSet1) {
@@ -83,11 +83,11 @@ public class MoveTests {
 
     @Test
     void moveCommandDefaultAlias_isARegisteredAlias() {
-        assertTrue(CommandList.isAnAlias(Move.getInstance().getDefaultAlias()));
+        assertTrue(CommandList.isAnAlias(Move.instance().defaultAlias()));
     }
 
     @Test
     void moveCommandInstance_isInstanceOfMove() {
-        assertTrue(Move.getInstance() instanceof Move);
+        assertTrue(Move.instance() instanceof Move);
     }
 }

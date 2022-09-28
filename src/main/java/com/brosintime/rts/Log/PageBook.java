@@ -5,8 +5,19 @@ import com.googlecode.lanterna.TextColor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The PageBook class is both an object and a utility class. Instantiated as an object, a PageBook
+ * is an ordered list of {@link Page}s. As a utility class, it provides static methods to paginate a
+ * list of {@link UserLogItem}s and either generate a full PageBook, or a single Page as if it was
+ * torn from an abstract PageBook.
+ */
 public class PageBook {
 
+    /**
+     * The Page class is a list of {@link UserLogItem}s and can be stored in a {@link PageBook}. In
+     * addition to UserLogItems, a page may have a header, which is a single UserLogItem at index
+     * 0.
+     */
     public static class Page {
 
         private final List<UserLogItem> list = new ArrayList<>();
@@ -21,22 +32,49 @@ public class PageBook {
             this.list.addAll(list);
         }
 
+        /**
+         * Retrieves the line count of this page.
+         *
+         * @return line count
+         */
         public int size() {
             return list.size();
         }
 
+        /**
+         * Retrieves a specific line of this page by index.
+         *
+         * @param lineNumber index
+         * @return {@link UserLogItem} at index
+         */
         public UserLogItem get(int lineNumber) {
             return this.list.get(lineNumber);
         }
 
+        /**
+         * Retrieves all lines of this page as a {@link List} of {@link UserLogItem}s.
+         *
+         * @return list of logs
+         */
         public List<UserLogItem> getAllLines() {
             return list;
         }
 
+        /**
+         * Determines if this page has a header.
+         *
+         * @return true if header exists, false if not
+         */
         public boolean hasHeader() {
             return header != null;
         }
 
+        /**
+         * Determines if a specific line occurs in this page.
+         *
+         * @param item line to find
+         * @return true if line occurs, false if not
+         */
         public boolean contains(UserLogItem item) {
             return this.list.contains(item);
         }
@@ -48,33 +86,36 @@ public class PageBook {
         this.pages = new ArrayList<>(pages);
     }
 
+    /**
+     * Generates a {@link PageBook} object from a list of {@link UserLogItem}s. If the book has more
+     * than one page, a title is added as a header to each page that reads:
+     * <p><i>title</i> - Page (<i>current</i>/<i>total</i>) - Type “<i>commandName</i> [page]”
+     *
+     * @param title        the title at the top of each page
+     * @param commandName  the alias of the command used to guide the player to specific pages
+     * @param linesPerPage to split each page
+     * @param list         of {@link UserLogItem}s
+     * @return a {@link PageBook} object containing a paginated list of {@link UserLogItem}s
+     */
     public static PageBook fromUserLogList(String title, String commandName, int linesPerPage,
         List<UserLogItem> list) {
 
-        // IF the list fits on one page, return a Page without a header
         if (list.size() <= linesPerPage) {
             List<Page> book = new ArrayList<>();
             book.add(new Page(null, list));
             return PageBook.fromPages(book);
         }
 
-        // ELSE linesPerPage is decremented by 1 to make room for a header
         linesPerPage--;
 
-        // Rounds up the quotient of (total lines) / (lines per page)
-        // linesPerPage is decremented to make room for the header
         final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage));
 
         List<Page> book = new ArrayList<>();
         for (int i = 1; i < TOTAL_PAGES + 1; i++) {
-            // Sets header to:
-            // <title> - Page (<current>/<total>) - Type "command <page>"
             String header =
                 title + " - Page (" + (i + 1) + "/" + TOTAL_PAGES + ") - Type \"" + commandName
                     + " [page]\"";
 
-            // Create a sublist for each page; flexes to account for potentially fewer lines on
-            // the last page
             book.add(new Page(
                 header, list.subList((i - 1) * (linesPerPage),
                 i == TOTAL_PAGES ? list.size() : i * (linesPerPage))));
@@ -86,50 +127,77 @@ public class PageBook {
         return new PageBook(book);
     }
 
+    /**
+     * Retrieves the page count of this book.
+     *
+     * @return number of pages
+     */
     public int size() {
         return this.pages.size();
     }
 
+    /**
+     * Retrieves a {@link Page} object by the index provided.
+     *
+     * @param pageNumber to retrieve
+     * @return {@link Page} object
+     */
     public Page get(int pageNumber) {
         return pages.get(pageNumber);
     }
 
+    /**
+     * Static method that combines {@link #fromUserLogList} and {@link #get} to retrieve a specific
+     * page without instantiating a {@link PageBook} object. The provided list is split by the
+     * requested line count and if there should be more than one page, a header is added to the top
+     * of the page that reads:
+     * <p><i>title</i> - Page (<i>current</i>/<i>total</i>) - Type “<i>commandName</i> [page]”
+     * <p>If requesting a higher page number than the actual page count, the last page is returned.
+     * If requesting a negative page, the first page is returned.
+     *
+     * @param title        the title at the top of each page
+     * @param commandName  the alias of the command used to guide the player to specific pages
+     * @param linesPerPage to split each page
+     * @param list         of {@link UserLogItem}s
+     * @param pageNumber   to retrieve
+     * @return a {@link Page} by requested page number
+     */
     public static Page paginateAndGetPage(String title, String commandName, int linesPerPage,
         List<UserLogItem> list, int pageNumber) {
 
-        // IF the list fits on one page, return a Page without a header
         if (list.size() <= linesPerPage) {
             return new Page(null, list);
         }
 
-        // ELSE linesPerPage is decremented by 1 to make room for a header
         linesPerPage--;
 
-        // Rounds up the quotient of (total lines) / (lines per page)
-        // linesPerPage is decremented to make room for the header
         final int TOTAL_PAGES = (int) Math.ceil((double) list.size() / (linesPerPage));
 
-        // If the user requested a page greater than actual page count, set to last page
         if (pageNumber > TOTAL_PAGES) {
             pageNumber = TOTAL_PAGES;
         }
-        // Sets header to:
-        // <title> - Page (<current>/<total>) - Type "command [page]"
         final String header =
             title + " - Page (" + pageNumber + "/" + TOTAL_PAGES + ") - Type \"" + commandName
                 + " [page]\"";
 
-        // Creates a sublist of <list> based on what lines would appear on <pageNumber>; flexes to
-        // account for potentially fewer lines on the last page
         List<UserLogItem> newList = list.subList((pageNumber - 1) * (linesPerPage),
             pageNumber == TOTAL_PAGES ? list.size() : pageNumber * (linesPerPage));
         return new Page(header, newList);
     }
 
+    /**
+     * Retrieves a list of all pages in this book.
+     * @return all {@link Page}s
+     */
     public List<Page> getAll() {
         return this.pages;
     }
 
+    /**
+     * Determines if a specific line occurs anywhere inside this book.
+     * @param item to look for
+     * @return true if line occurs, false if not
+     */
     public boolean contains(UserLogItem item) {
         for (Page page : this.pages) {
             if (page.contains(item)) {
