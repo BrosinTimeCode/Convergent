@@ -248,6 +248,8 @@ public class CommandLineRenderer {
                 Unit unit = board.getUnit(row, column);
                 if (unit != null) {
                     putCell(unit.toCell(), column * 2 + x, row + y);
+                } else {
+                    putCell(Cell.blank(), column * 2 + x, row + y);
                 }
             }
         }

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
 
 /**
  * The GameController class follows the controller design in the MVC design pattern. This class
@@ -31,6 +30,13 @@ import java.util.Timer;
  */
 public class GameController {
 
+    private final double UPDATES_PER_SECOND = 30;
+    private final double FRAMES_PER_SECOND = 60;
+    private final Map<String, Integer> debugInfo;
+    private boolean isRunning = false;
+    private boolean debugScreenIsOn = false;
+    private boolean toggleDebugScreen = false;
+    private final List<Character> userInput = new ArrayList<>();
     GameViewInterface viewInterface;
     Board board;
     private static Unit player1SelectedUnit;
@@ -38,6 +44,9 @@ public class GameController {
     private final UserInputHistory inputHistory;
 
     public GameController(int viewType, BoardType boardType, int width, int height) {
+        this.debugInfo = new HashMap<>();
+        this.debugInfo.put("tps", 0);
+        this.debugInfo.put("fps", 0);
         int rows = height;
         int columns = width;
         // Command line arguments give size of board. No arguments results in height and width of board being random from 0 to 30
@@ -59,64 +68,123 @@ public class GameController {
         CommandList.initializeCommands();
         entitiesUnderAttack = new HashMap<>();
         inputHistory = new UserInputHistory();
-        viewInterface.displayBoard();
-        viewInterface.displayHelp();
+
+        this.viewInterface.displayHelp();
+        run();
     }
 
-    /**
-     * Initializes the RefreshMapTask and DamageEntityTask to run every one second.
-     */
-    public void initialize() {
-        Timer timer = new Timer();
-        long oneSecond = 1000;
-        RefreshMapTask task = new RefreshMapTask(viewInterface, board);
-        timer.schedule(task, 0, oneSecond);
-        DamageEntityTask damageTask = new DamageEntityTask(this);
-        timer.schedule(damageTask, 0, oneSecond);
+    public void run() {
+        this.isRunning = true;
+        long initialTime = System.nanoTime();
+        final double updateTime = 1000000000 / this.UPDATES_PER_SECOND;
+        final double renderTime = 1000000000 / this.FRAMES_PER_SECOND;
+        double updateDelta = 0;
+        double renderDelta = 0;
+        long timer = System.currentTimeMillis();
+
+        while (this.isRunning) {
+            long currentTime = System.nanoTime();
+            updateDelta += (currentTime - initialTime) / updateTime;
+            renderDelta += (currentTime - initialTime) / renderTime;
+            initialTime = currentTime;
+
+            if (updateDelta >= 1) {
+                getUserInput();
+                update();
+                this.debugInfo.put("tps", this.debugInfo.get("tps") + 1);
+                updateDelta--;
+            }
+
+            if (renderDelta >= 1) {
+                render();
+                this.debugInfo.put("fps", this.debugInfo.get("fps") + 1);
+                renderDelta--;
+            }
+
+            if (System.currentTimeMillis() - timer > 1000) {
+                if (this.debugScreenIsOn) {
+                    this.viewInterface.renderDebugScreen(this.debugInfo);
+                }
+                this.debugInfo.put("fps", 0);
+                this.debugInfo.put("tps", 0);
+                timer += 1000;
+            }
+        }
+    }
+
+    private void update() {
+
+        getEntitiesUnderAttack().forEach((k, v) -> {
+            boolean deadUnit = v.damageEntity(k);
+            if (deadUnit) {
+                killUnit(k, v);
+            }
+        });
+
+    }
+
+    private void render() {
+
+        if (this.toggleDebugScreen) {
+            this.toggleDebugScreen = false;
+            this.debugScreenIsOn = !this.debugScreenIsOn;
+            this.viewInterface.clear();
+        }
+
+        this.viewInterface.displayBoard();
+        this.viewInterface.displayConsoleLog();
+        this.viewInterface.clearInput();
+        this.viewInterface.displayInput(charListToString(this.userInput));
+        this.viewInterface.flush();
+
+    }
+
+    public boolean isRunning() {
+        return this.isRunning;
     }
 
     public void getUserInput() {
-        List<Character> input = new ArrayList<>();
-        viewInterface.clearInput();
-        boolean inputClosed = false;
-        do {
-            viewInterface.displayInput(charListToString(input));
-            KeyStroke keyStroke = viewInterface.getUserKeyStroke();
-            switch (keyStroke.getKeyType()) {
-                case Escape -> {
-                    input.clear();
-                    viewInterface.clearInput();
-                    inputClosed = true;
-                }
-                case Character -> {
-                    if (input.size() < 80) {
-                        input.add(keyStroke.getCharacter());
-                    }
-                }
-                case Enter -> {
-                    this.inputHistory.add(charListToString(input));
-                    handleUserInput(charListToString(input));
-                    input.clear();
-                    inputClosed = true;
-                }
-                case Backspace -> {
-                    if (input.size() >= 1) {
-                        input.remove(input.size() - 1);
-                    }
-                    viewInterface.clearInput();
-                }
-                case ArrowDown -> {
-                    input.clear();
-                    viewInterface.clearInput();
-                    input.addAll(stringToCharList(this.inputHistory.next()));
-                }
-                case ArrowUp -> {
-                    input.clear();
-                    viewInterface.clearInput();
-                    input.addAll(stringToCharList(this.inputHistory.previous()));
+        this.viewInterface.clearInput();
+        this.viewInterface.displayInput(charListToString(this.userInput));
+        KeyStroke keyStroke = this.viewInterface.getUserKeyStroke();
+        if (keyStroke == null) {
+            return;
+        }
+        switch (keyStroke.getKeyType()) {
+            case Escape -> {
+                this.userInput.clear();
+                this.viewInterface.clearInput();
+            }
+            case Character -> {
+                if (this.userInput.size() < 80) {
+                    this.userInput.add(keyStroke.getCharacter());
                 }
             }
-        } while (!inputClosed);
+            case Enter -> {
+                this.inputHistory.add(charListToString(this.userInput));
+                handleUserInput(charListToString(this.userInput));
+                this.userInput.clear();
+            }
+            case Backspace -> {
+                if (this.userInput.size() >= 1) {
+                    this.userInput.remove(this.userInput.size() - 1);
+                }
+                this.viewInterface.clearInput();
+            }
+            case ArrowDown -> {
+                this.userInput.clear();
+                this.viewInterface.clearInput();
+                this.userInput.addAll(stringToCharList(this.inputHistory.next()));
+            }
+            case ArrowUp -> {
+                this.userInput.clear();
+                this.viewInterface.clearInput();
+                this.userInput.addAll(stringToCharList(this.inputHistory.previous()));
+            }
+            case F3 -> {
+                this.toggleDebugScreen = true;
+            }
+        }
     }
 
     public void handleUserInput(String input) {
@@ -439,6 +507,7 @@ public class GameController {
     private boolean selectUnit(int column, int row) {
         if (checkBounds(row, column)) {
             player1SelectedUnit = board.getUnit(row, column);
+            player1SelectedUnit.select();
             return true;
         }
         return false;

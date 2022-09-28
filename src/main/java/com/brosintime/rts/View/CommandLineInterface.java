@@ -10,6 +10,7 @@ import com.googlecode.lanterna.TextColor.ANSI;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
+import java.util.Map;
 
 public class CommandLineInterface implements GameViewInterface {
 
@@ -20,6 +21,7 @@ public class CommandLineInterface implements GameViewInterface {
     private final Node inputPosition;
     private final Node borderFrom;
     private final Node borderTo;
+    private final Node debugInfoPosition;
     private final CommandLineRenderer renderer;
 
     public CommandLineInterface(Board board) {
@@ -32,9 +34,10 @@ public class CommandLineInterface implements GameViewInterface {
         this.borderFrom = new Node(boardPosition.row() - 1, boardPosition.column() - 1);
         this.borderTo = new Node(borderFrom.row() + board.height() + 2,
             borderFrom.column() + board.width() * 2 + 1);
+        this.debugInfoPosition = new Node(inputPosition.row() + 2, 0);
 
         this.renderer = new CommandLineRenderer(this.inputPosition.column() + 83,
-            this.inputPosition.row() + 2);
+            this.debugInfoPosition.row() + 1);
 
     }
 
@@ -59,31 +62,14 @@ public class CommandLineInterface implements GameViewInterface {
         for (int xCoordinate = 0; xCoordinate < board.width(); xCoordinate++) {
             int digits = Integer.toString(xCoordinate).length();
             for (int digit = 1; digit <= digits; digit++) {
+                char c = (char) (xCoordinate / Math.pow(10, digit - 1) % 10 + '0');
                 this.renderer.putCell(
-                    new CommandLineCell(
-                        ANSI.DEFAULT, ANSI.DEFAULT,
-                        (char) (xCoordinate / Math.pow(10, digit - 1) % 10 + '0')),
+                    new CommandLineCell(ANSI.DEFAULT, ANSI.DEFAULT, c),
                     boardPosition.column() + xCoordinate * 2,
                     boardPosition.row() - digit - 1
                 );
             }
         }
-
-        for (int digit = 0; digit < this.board.width() / 10; digit++) {
-            for (int x = 0; x < this.board.width(); x++) {
-                int single = (int) (x % Math.pow(10, digit + 1));
-                if (single != 0) {
-                    this.renderer.putString(
-                        String.valueOf(single),
-                        ANSI.WHITE, ANSI.BLACK,
-                        this.boardPosition.column() + x * 2,
-                        this.boardPosition.row() - 2 - digit
-                    );
-                }
-            }
-        }
-
-        this.renderer.flush();
 
     }
 
@@ -104,7 +90,7 @@ public class CommandLineInterface implements GameViewInterface {
     @Override
     public KeyStroke getUserKeyStroke() {
         try {
-            return this.renderer.readInput();
+            return this.renderer.pollInput();
         } catch (IOException e) {
             e.printStackTrace();
             return new KeyStroke(KeyType.Unknown);
@@ -127,7 +113,6 @@ public class CommandLineInterface implements GameViewInterface {
                 x, y + 9 - i
             );
         }
-        this.renderer.flush();
     }
 
     @Override
@@ -137,13 +122,11 @@ public class CommandLineInterface implements GameViewInterface {
             ANSI.DEFAULT, ANSI.DEFAULT,
             this.inputPosition.column(), this.inputPosition.row()
         );
-        this.renderer.flush();
     }
 
     @Override
     public void clearInput() {
         this.renderer.blankLine(this.inputPosition.row());
-        this.renderer.flush();
     }
 
     public void setConsoleLogHeight(int height) {
@@ -154,5 +137,25 @@ public class CommandLineInterface implements GameViewInterface {
     public int getConsoleLogHeight() {
         return this.logHeight;
 
+    }
+
+    @Override
+    public void flush() {
+        this.renderer.flush();
+    }
+
+    @Override
+    public void clear() {
+        this.renderer.clear();
+    }
+
+    @Override
+    public void renderDebugScreen(Map<String, Integer> debugInfo) {
+        this.renderer.blankLine(this.debugInfoPosition.row());
+        this.renderer.putString(
+            "FPS: " + debugInfo.get("fps") + " TPS: " + debugInfo.get("tps"),
+            ANSI.DEFAULT, ANSI.DEFAULT,
+            this.debugInfoPosition.column(), this.debugInfoPosition.row()
+        );
     }
 }

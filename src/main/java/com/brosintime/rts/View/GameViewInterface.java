@@ -1,6 +1,7 @@
 package com.brosintime.rts.View;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import java.util.Map;
 
 /**
  * The GameViewInterface interface follows the view design in the MVC design pattern. This class
@@ -27,4 +28,10 @@ public interface GameViewInterface {
     void setConsoleLogHeight(int height);
 
     int getConsoleLogHeight();
+
+    void flush();
+
+    void clear();
+
+    void renderDebugScreen(Map<String, Integer> debugInfo);
 }
