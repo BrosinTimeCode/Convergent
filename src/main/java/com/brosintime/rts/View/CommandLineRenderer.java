@@ -104,13 +104,18 @@ public class CommandLineRenderer {
                     .replace(node.column(), node.column() + 1,
                         Character.toString(commandLineCell.character()));
             }
-            this.terminal.flush();
+            if (this.terminal != null) {
+                this.terminal.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void placeInTerminal(Node node, Cell cell) throws IOException {
+        if (this.terminal == null) {
+            return;
+        }
         this.terminal.setCursorPosition(node.column(), node.row());
         this.terminal.setBackgroundColor(cell.backgroundColor());
         this.terminal.setForegroundColor(cell.foregroundColor());
