@@ -289,8 +289,8 @@ public class GameController {
                     return attackUnitID(Integer.parseInt(arguments.get(0)));
                 }
                 else if (arguments.size() == 2){
-                    if (!checkBounds(Integer.parseInt(arguments.get(0)),
-                        Integer.parseInt(arguments.get(1)))) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(0)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                             "Attacking an area that is out of bounds.", Type.INFO));
                         viewInterface.displayConsoleLog();
@@ -302,8 +302,8 @@ public class GameController {
                     return attackUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
                 } else if (arguments.size() == 3) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(2)))) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(2)),
+                        Integer.parseInt(arguments.get(1)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                             "Attacking an area that is out of bounds.", Type.INFO));
                         viewInterface.displayConsoleLog();
