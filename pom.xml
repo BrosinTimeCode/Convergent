@@ -39,8 +39,6 @@
         </dependencies>
       </plugin>
     </plugins>
-    <testSourceDirectory>${project.basedir}/Test</testSourceDirectory>
-    <sourceDirectory>${project.basedir}</sourceDirectory>
   </build>
 
   <properties>
