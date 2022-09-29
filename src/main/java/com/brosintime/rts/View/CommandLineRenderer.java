@@ -111,6 +111,9 @@ public class CommandLineRenderer {
     }
 
     private void placeInTerminal(Node node, Cell cell) throws IOException {
+        if (this.terminal == null) {
+            return;
+        }
         this.terminal.setCursorPosition(node.column(), node.row());
         this.terminal.setBackgroundColor(cell.backgroundColor());
         this.terminal.setForegroundColor(cell.foregroundColor());
