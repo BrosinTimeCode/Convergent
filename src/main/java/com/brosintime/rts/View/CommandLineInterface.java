@@ -73,6 +73,7 @@ public class CommandLineInterface implements GameViewInterface {
 
     }
 
+    @Override
     public void displayHelp() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
             "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
@@ -80,6 +81,7 @@ public class CommandLineInterface implements GameViewInterface {
         displayConsoleLog();
     }
 
+    @Override
     public void displayInvalidCommand() {
         UserLogItem log = new UserLogItem(TextColor.ANSI.RED,
             "Invalid command! Type \"h\" for a list of commands.", Type.INFO);
@@ -107,8 +109,8 @@ public class CommandLineInterface implements GameViewInterface {
         }
         for (int i = 0; i < 10 && i < UserLog.LOGS.size(); i++) {
             this.renderer.putString(
-                UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getMemo(),
-                UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).getColor(),
+                UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).memo(),
+                UserLog.LOGS.get(UserLog.LOGS.size() - i - 1).color(),
                 ANSI.DEFAULT,
                 x, y + 9 - i
             );

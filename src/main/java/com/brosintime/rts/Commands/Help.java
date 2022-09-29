@@ -1,29 +1,24 @@
 package com.brosintime.rts.Commands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Help extends Command {
+public class Help implements Command {
 
     private static Help instance = null;
     private final static byte maxArguments = 1;
     private final static List<String> arguments = new ArrayList<>();
-    private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> usages = new ArrayList<>();
     private final static List<String> aliases = new ArrayList<>();
 
     private Help() {
-        usages.put(0, "");
-        usages.put(1, "(command)");
+        usages.add("");
+        usages.add("(command)");
         aliases.add("help");
         aliases.add("h");
-        for (String alias : aliases) {
-            CommandList.registerAlias(alias, this);
-        }
     }
 
-    public static Command getInstance() {
+    public static Help instance() {
         if (instance == null) {
             instance = new Help();
         }
@@ -42,27 +37,27 @@ public class Help extends Command {
     }
 
     @Override
-    public Map<Integer, String> getUsages() {
+    public List<String> usages() {
         return usages;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "Help";
     }
 
     @Override
-    public String getDefaultAlias() {
+    public String defaultAlias() {
         return "help";
     }
 
     @Override
-    public String getBasicUsage() {
+    public String basicUsage() {
         return "help [command]";
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return "Get a list of commands or help on a specific one.";
     }
 
@@ -96,16 +91,19 @@ public class Help extends Command {
 
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
+        if (index < 0 || index > arguments.size()) {
+            throw new IndexOutOfBoundsException();
+        }
         return arguments.get(index);
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> aliases() {
         return aliases;
     }
 
     @Override
-    public byte getMaxArguments() {
+    public byte maxArguments() {
         return maxArguments;
     }
 

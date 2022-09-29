@@ -10,11 +10,10 @@ public class CommandListTests {
 
     @Test
     void commandsInCommandList_aliasesGetAppropriateCommand() {
-        CommandList.initializeCommands();
         for (Command command : CommandList.COMMANDS) {
-            List<String> aliases = command.getAliases();
+            List<String> aliases = command.aliases();
             for (String alias : aliases) {
-                assertEquals(command, CommandList.getCommandFromAlias(alias));
+                assertEquals(command, CommandList.fromAlias(alias));
             }
         }
     }
@@ -22,7 +21,7 @@ public class CommandListTests {
     @Test
     void commandAliasesAsUserInput_returnsCommand() {
         for (String aliasAsInput : CommandList.ALIASES.keySet()) {
-            Command command = CommandList.getCommandFromInput(aliasAsInput);
+            Command command = CommandList.fromInput(aliasAsInput);
             assertNotNull(command);
         }
     }

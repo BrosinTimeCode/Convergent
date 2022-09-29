@@ -155,6 +155,9 @@ public class Board {
      * @return BaseUnit identified by id.
      */
     public Unit getUnit(int id) {
+        if (globalUnits.get(id) == null) {
+            return null;
+        }
         return globalUnits.get(id).getUnit();
     }
 

@@ -1,31 +1,26 @@
 package com.brosintime.rts.Commands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Move extends Command {
+public class Move implements Command {
 
     private static Move instance = null;
     private final static byte maxArguments = 3;
     private final static List<String> arguments = new ArrayList<>();
-    private final static Map<Integer, String> usages = new HashMap<>();
+    private final static List<String> usages = new ArrayList<>();
     private final static List<String> aliases = new ArrayList<>();
 
     private Move() {
-        usages.put(0, "");
-        usages.put(1, "(target)");
-        usages.put(2, "(x) (y)");
-        usages.put(3, "(unit) (x) (y)");
+        usages.add("");
+        usages.add("(target ID)");
+        usages.add("(x) (y)");
+        usages.add("(unit ID) (x) (y)");
         aliases.add("move");
         aliases.add("m");
-        for (String alias : aliases) {
-            CommandList.registerAlias(alias, this);
-        }
     }
 
-    public static Move getInstance() {
+    public static Move instance() {
         if (instance == null) {
             instance = new Move();
         }
@@ -44,27 +39,27 @@ public class Move extends Command {
     }
 
     @Override
-    public Map<Integer, String> getUsages() {
+    public List<String> usages() {
         return usages;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "Move";
     }
 
     @Override
-    public String getDefaultAlias() {
+    public String defaultAlias() {
         return "move";
     }
 
     @Override
-    public String getBasicUsage() {
+    public String basicUsage() {
         return "move (x) (y)";
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return "Asks a (selected) unit to move to another or a square.";
     }
 
@@ -96,16 +91,19 @@ public class Move extends Command {
 
     @Override
     public String getArgument(int index) throws IndexOutOfBoundsException {
+        if (index < 0 || index > arguments.size()) {
+            throw new IndexOutOfBoundsException();
+        }
         return arguments.get(index);
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> aliases() {
         return aliases;
     }
 
     @Override
-    public byte getMaxArguments() {
+    public byte maxArguments() {
         return maxArguments;
     }
 
