@@ -146,7 +146,9 @@ public class CommandLineRenderer {
      */
     public void clear() {
         try {
-            this.terminal.clearScreen();
+            if (this.terminal != null) {
+                this.terminal.clearScreen();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
