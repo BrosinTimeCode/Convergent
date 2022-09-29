@@ -18,6 +18,7 @@ import com.brosintime.rts.Units.BaseUnit;
 import com.brosintime.rts.View.CommandLineInterface;
 import com.brosintime.rts.View.GameViewInterface;
 import com.googlecode.lanterna.TextColor;
+
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -196,7 +197,6 @@ public class GameController {
      * @return A boolean showing if the move command executed successfully.
      */
     private boolean executeMove(Move moveCommand) {
-        // TODO: make move remove attacked entity in damaged entities hash map
         switch (moveCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, general info is printed
                 Command command = CommandList.fromAlias(moveCommand.defaultAlias());
@@ -212,11 +212,6 @@ public class GameController {
             }
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(moveCommand.getArguments());
-                if (arguments.size() == 3) {
-                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
-                    return moveUnit(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(2)));
-                }
                 if (arguments.size() == 1) {
                     UserLog.add(
                         new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
@@ -224,12 +219,30 @@ public class GameController {
                     viewInterface.displayConsoleLog();
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
-                    UserLog.add(
-                        new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
-                            Type.INFO));
+                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(0)))) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Move coordinates are out of bounds.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
+                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
+                        "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
+                }
+                else if (arguments.size() == 3) {
+                    if (!checkBounds(Integer.parseInt(arguments.get(2)),
+                        Integer.parseInt(arguments.get(1)))) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Move coordinates are out of bounds.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
+                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    return moveUnit(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(2)));
                 }
             }
             case TOOMANY -> { // too many arguments given
@@ -447,6 +460,13 @@ public class GameController {
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
+                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(0)))) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Selection coordinates are out of bounds.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
                     return selectUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
                 }
@@ -558,7 +578,7 @@ public class GameController {
      * @return Returns true if the row and column are in bounds.
      */
     private boolean checkBounds(int row, int column) {
-        return !(row > board.getBoardHeight() || row < 0 || column > board.getBoardWidth()
+        return !(row > board.getBoardHeight() - 1 || row < 0 || column > board.getBoardWidth() - 1
             || column < 0);
     }
 

@@ -13,9 +13,9 @@ public class Attack implements Command {
 
     private Attack() {
         usages.add("");
-        usages.add("(target)");
+        usages.add("(target ID)");
         usages.add("(x) (y)");
-        usages.add("(unit) (x) (y)");
+        usages.add("(unit ID) (x) (y)");
         aliases.add("attack");
         aliases.add("atk");
         aliases.add("a");

@@ -13,9 +13,9 @@ public class Move implements Command {
 
     private Move() {
         usages.add("");
-        usages.add("(target)");
+        usages.add("(target ID)");
         usages.add("(x) (y)");
-        usages.add("(unit) (x) (y)");
+        usages.add("(unit ID) (x) (y)");
         aliases.add("move");
         aliases.add("m");
     }

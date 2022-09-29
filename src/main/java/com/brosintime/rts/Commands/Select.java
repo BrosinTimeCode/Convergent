@@ -13,7 +13,7 @@ public class Select implements Command {
 
     private Select() {
         usages.add("");
-        usages.add("(unit)");
+        usages.add("(unit ID)");
         usages.add("(x) (y)");
         aliases.add("select");
         aliases.add("sel");
