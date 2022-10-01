@@ -13,7 +13,7 @@ public enum NETWORK_MESSAGE_TYPE {
     }
 
     public static NETWORK_MESSAGE_TYPE fromValue(int value) {
-        switch(value) {
+        switch (value) {
             case 1:
                 return NETWORK_MESSAGE_TYPE.MOVE;
         }

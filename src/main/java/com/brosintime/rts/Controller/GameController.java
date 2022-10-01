@@ -286,7 +286,8 @@ public class GameController {
                         new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
                             Type.INFO));
                     viewInterface.displayConsoleLog();
-                    sendMessage(new MoveMessage(player1SelectedUnit.id(), Integer.parseInt(arguments.get(0)), -1, -1));
+                    sendMessage(new MoveMessage(player1SelectedUnit.id(),
+                        Integer.parseInt(arguments.get(0)), -1, -1));
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
@@ -299,7 +300,8 @@ public class GameController {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                         "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
-                    sendMessage(new MoveMessage(player1SelectedUnit.id(), -1, Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1))));
+                    sendMessage(new MoveMessage(player1SelectedUnit.id(), -1,
+                        Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1))));
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
                 } else if (arguments.size() == 3) {
@@ -311,7 +313,8 @@ public class GameController {
                         return false;
                     }
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
-                    sendMessage(new MoveMessage(Integer.parseInt(arguments.get(0)), -1, Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2))));
+                    sendMessage(new MoveMessage(Integer.parseInt(arguments.get(0)), -1,
+                        Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2))));
                     return moveUnit(Integer.parseInt(arguments.get(1)),
                         Integer.parseInt(arguments.get(2)));
                 }
@@ -369,7 +372,7 @@ public class GameController {
     }
 
     public void receiveMove(int unitID, int targetID, int x, int y) {
-        if(x == -1 && y == -1) {
+        if (x == -1 && y == -1) {
             board.moveToUnit(board.getUnit(unitID), targetID);
         } else {
             board.moveUnit(board.getUnit(unitID), x, y);
@@ -669,7 +672,7 @@ public class GameController {
     }
 
     private void sendMessage(NetworkMessage message) {
-        if(client != null) {
+        if (client != null) {
             client.sendMessage(message);
         }
     }

@@ -20,23 +20,25 @@ public abstract class Client extends Thread {
             outputStream.write(message.getMessageString().getBytes());
             outputStream.flush();
             return true;
-        } catch(IOException e) {
+        } catch (IOException e) {
             return false;
         }
     }
 
     protected void parseMessage(String message) {
-        NETWORK_MESSAGE_TYPE messageType = NETWORK_MESSAGE_TYPE.fromValue(Integer.parseInt(message.split(":")[0]));
+        NETWORK_MESSAGE_TYPE messageType = NETWORK_MESSAGE_TYPE.fromValue(
+            Integer.parseInt(message.split(":")[0]));
         switch (messageType) {
             case MOVE -> {
                 MoveMessage moveMessage = new MoveMessage(message);
-                controller.receiveMove(moveMessage.unitID, moveMessage.targetID, moveMessage.xCoordinate, moveMessage.yCoordinate);
+                controller.receiveMove(moveMessage.unitID, moveMessage.targetID,
+                    moveMessage.xCoordinate, moveMessage.yCoordinate);
 
             }
         }
     }
 
-    protected void receiveMessage(){
+    protected void receiveMessage() {
         while (true) {
             byte[] message = new byte[1000];
             try {

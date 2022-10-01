@@ -19,14 +19,15 @@ public class Main {
             height = 0;
         }
         Client client = null;
-        if(args.length >= 3 && args[2].equals("server")) {
+        if (args.length >= 3 && args[2].equals("server")) {
             client = new ClientServer();
             client.start();
-        } else if(args.length >= 3 && args[2].equals("client")) {
+        } else if (args.length >= 3 && args[2].equals("client")) {
             client = new ClientClient();
             client.start();
         }
-        GameController controller = new GameController(client, -1, BoardType.SEEDEDRANDOM, width, height);
+        GameController controller = new GameController(client, -1, BoardType.SEEDEDRANDOM, width,
+            height);
         controller.run();
     }
 }

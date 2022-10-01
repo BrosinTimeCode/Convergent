@@ -30,7 +30,7 @@ public class TestBoard extends Board {
      */
     private void randomBoard(int seed) {
         Random randomGenerator = new Random();
-        if(seed != 0) {
+        if (seed != 0) {
             randomGenerator = new Random(seed);
         }
         for (int row = 0; row < board.length; row++) {
