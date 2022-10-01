@@ -1,4 +1,4 @@
-package Server;
+package com.brosintime.rts.Server;
 
 import Server.NetworkMessages.NetworkMessage;
 import java.io.DataInputStream;
