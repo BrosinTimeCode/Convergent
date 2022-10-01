@@ -375,7 +375,7 @@ public class GameController {
         if (x == -1 && y == -1) {
             board.moveToUnit(board.getUnit(unitID), targetID);
         } else {
-            board.moveUnit(board.getUnit(unitID), x, y);
+            board.moveUnit(board.getUnit(unitID), y, x);
         }
     }
 
