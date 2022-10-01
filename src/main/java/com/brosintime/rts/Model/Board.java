@@ -26,8 +26,8 @@ public class Board {
         globalUnits = new HashMap<>();
     }
 
-    public Board() {
-
+    public Board(String string) {
+        String[] rows = string.split("\n");
     }
 
     /**
