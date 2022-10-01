@@ -27,6 +27,8 @@ public class TestBoard extends Board {
 
     /**
      * Creates a board that has random BLUE and RED units on each BoardCell.
+     *
+     * @param seed a seed for the random generator.
      */
     private void randomBoard(int seed) {
         Random randomGenerator = new Random();

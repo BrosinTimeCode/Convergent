@@ -35,12 +35,12 @@ public class MoveMessage extends NetworkMessage {
         this.targetID = targetID;
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
-        length = this.getMessageString().getBytes().length;
+        length = this.messageString().getBytes().length;
     }
 
 
     @Override
-    public String getMessageString() {
+    public String messageString() {
         return message_type.type() + ":" + unitID + ":" + targetID + ":" + xCoordinate + ":"
             + yCoordinate;
     }

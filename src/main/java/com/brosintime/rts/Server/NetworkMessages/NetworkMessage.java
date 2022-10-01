@@ -8,7 +8,7 @@ public abstract class NetworkMessage {
     /**
      * Returns string representation of message to send to server/client
      */
-    public abstract String getMessageString();
+    public abstract String messageString();
 
     public NetworkMessage(NETWORK_MESSAGE_TYPE type) {
         message_type = type;

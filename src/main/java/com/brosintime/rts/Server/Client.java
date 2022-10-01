@@ -15,9 +15,15 @@ public abstract class Client extends Thread {
 
     GameController controller;
 
+    /**
+     * Sends a message on the network attached to the outputstream.
+     *
+     * @param message Message to be sent out.
+     * @return A boolean indicating success of sending message.
+     */
     public boolean sendMessage(NetworkMessage message) {
         try {
-            outputStream.write(message.getMessageString().getBytes());
+            outputStream.write(message.messageString().getBytes());
             outputStream.flush();
             return true;
         } catch (IOException e) {
@@ -25,6 +31,11 @@ public abstract class Client extends Thread {
         }
     }
 
+    /**
+     * Parses incoming messages and has the gamecontroller update the board.
+     *
+     * @param message Message to be parsed.
+     */
     protected void parseMessage(String message) {
         NETWORK_MESSAGE_TYPE messageType = NETWORK_MESSAGE_TYPE.fromValue(
             Integer.parseInt(message.split(":")[0]));
@@ -38,6 +49,9 @@ public abstract class Client extends Thread {
         }
     }
 
+    /**
+     * Receives messages coming in on inputstream. Parses message passed in.
+     */
     protected void receiveMessage() {
         while (true) {
             byte[] message = new byte[1000];

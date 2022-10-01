@@ -371,6 +371,14 @@ public class GameController {
         return true;
     }
 
+    /**
+     * Executes a move from the network.
+     *
+     * @param unitID   an integer representing the ID of the unit to be moved.
+     * @param targetID an integer representing the ID of the unit move to.
+     * @param x        an integer representing the x coordinate to move to.
+     * @param y        an integer representing the y coordinate to move to.
+     */
     public void receiveMove(int unitID, int targetID, int x, int y) {
         if (x == -1 && y == -1) {
             board.moveToUnit(board.getUnit(unitID), targetID);
@@ -671,6 +679,11 @@ public class GameController {
         return player1SelectedUnit == unit;
     }
 
+    /**
+     * Sends a message to the network. If client is null does nothing.
+     *
+     * @param message Message to send over the network.
+     */
     private void sendMessage(NetworkMessage message) {
         if (client != null) {
             client.sendMessage(message);
