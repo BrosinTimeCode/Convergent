@@ -16,9 +16,9 @@ public class Main {
             width = 0;
             height = 0;
         }
-        GameController controller = new GameController(-1, BoardType.RANDOM, width, height);
         Client client = new Client();
         client.start();
+        GameController controller = new GameController(client, -1, BoardType.RANDOM, width, height);
         controller.run();
     }
 }

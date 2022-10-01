@@ -1,4 +1,4 @@
-package Server.NetworkMessages;
+package com.brosintime.rts.Server.NetworkMessages;
 
 public class MoveMessage extends NetworkMessage {
 

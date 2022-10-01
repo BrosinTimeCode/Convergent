@@ -1,11 +1,9 @@
 package com.brosintime.rts.Server;
 
-import Server.NetworkMessages.NetworkMessage;
+import com.brosintime.rts.Server.NetworkMessages.NetworkMessage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 public class Client extends Thread {
@@ -37,4 +35,5 @@ public class Client extends Thread {
             return false;
         }
     }
+
 }

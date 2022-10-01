@@ -14,6 +14,8 @@ import com.brosintime.rts.Log.UserLogItem.Type;
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
+import com.brosintime.rts.Server.Client;
+import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
 import com.brosintime.rts.Units.Unit;
 import com.brosintime.rts.View.CommandLineInterface;
 import com.brosintime.rts.View.GameViewInterface;
@@ -43,8 +45,9 @@ public class GameController {
     private static Unit player1SelectedUnit;
     private final HashMap<Unit, Unit> entitiesUnderAttack;
     private final UserInputHistory inputHistory;
+    private final Client client;
 
-    public GameController(int viewType, BoardType boardType, int width, int height) {
+    public GameController(Client client, int viewType, BoardType boardType, int width, int height) {
         this.debugInfo = new HashMap<>();
         this.debugInfo.put("tps", 0);
         this.debugInfo.put("fps", 0);
@@ -67,6 +70,7 @@ public class GameController {
             }
         }
         entitiesUnderAttack = new HashMap<>();
+        this.client = client;
 
         CommandList.registerCommand(Attack.instance());
         CommandList.registerCommand(Help.instance());
@@ -284,6 +288,7 @@ public class GameController {
                         new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
                             Type.INFO));
                     viewInterface.displayConsoleLog();
+                    client.sendToServer(new MoveMessage(-1, Integer.parseInt(arguments.get(0)), -1, -1));
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
