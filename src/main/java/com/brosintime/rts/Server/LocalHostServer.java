@@ -3,7 +3,6 @@ package com.brosintime.rts.Server;
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
-import com.brosintime.rts.Server.NetworkMessages.BoardMessage;
 import com.brosintime.rts.Server.NetworkMessages.NETWORK_MESSAGE_TYPE;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -48,11 +47,6 @@ public class LocalHostServer extends Thread {
         switch (messageType) {
             case MOVE -> {
 
-            }
-            case BOARD -> {
-                //TODO: Change remove from server. Currently here for test purposes to allow client to send initial board.
-                BoardMessage boardMessage = new BoardMessage(message);
-                this.board = boardMessage.board;
             }
         }
     }

@@ -15,7 +15,6 @@ import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
 import com.brosintime.rts.Server.Client;
-import com.brosintime.rts.Server.NetworkMessages.BoardMessage;
 import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
 import com.brosintime.rts.Units.Unit;
 import com.brosintime.rts.View.CommandLineInterface;
@@ -72,7 +71,6 @@ public class GameController {
         }
         entitiesUnderAttack = new HashMap<>();
         this.client = client;
-        client.sendToServer(new BoardMessage(this.board));
 
         CommandList.registerCommand(Attack.instance());
         CommandList.registerCommand(Help.instance());

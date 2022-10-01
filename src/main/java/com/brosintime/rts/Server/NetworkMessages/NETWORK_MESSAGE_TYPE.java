@@ -1,8 +1,7 @@
 package com.brosintime.rts.Server.NetworkMessages;
 
 public enum NETWORK_MESSAGE_TYPE {
-    MOVE(1),
-    BOARD(2);
+    MOVE(1);
 
     /**
      * Integer representation of the networkMessageType
@@ -17,8 +16,6 @@ public enum NETWORK_MESSAGE_TYPE {
         switch(value) {
             case 1:
                 return NETWORK_MESSAGE_TYPE.MOVE;
-            case 2:
-                return NETWORK_MESSAGE_TYPE.BOARD;
         }
         return null;
     }
