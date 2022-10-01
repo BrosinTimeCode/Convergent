@@ -16,6 +16,7 @@ import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
 import com.brosintime.rts.Server.Client;
 import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
+import com.brosintime.rts.Server.NetworkMessages.NetworkMessage;
 import com.brosintime.rts.Units.Unit;
 import com.brosintime.rts.View.CommandLineInterface;
 import com.brosintime.rts.View.GameViewInterface;
@@ -65,12 +66,11 @@ public class GameController {
             board = new Board(rows, columns);
         }
         switch (viewType) {
-            default -> {
-                viewInterface = new CommandLineInterface(board);
-            }
+            default -> viewInterface = new CommandLineInterface(board);
         }
         entitiesUnderAttack = new HashMap<>();
         this.client = client;
+        client.setController(this);
 
         CommandList.registerCommand(Attack.instance());
         CommandList.registerCommand(Help.instance());
@@ -198,9 +198,7 @@ public class GameController {
                 this.viewInterface.clearInput();
                 this.userInput.addAll(stringToCharList(this.inputHistory.previous()));
             }
-            case F3 -> {
-                this.toggleDebugScreen = true;
-            }
+            case F3 -> this.toggleDebugScreen = true;
         }
     }
 
@@ -288,7 +286,7 @@ public class GameController {
                         new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
                             Type.INFO));
                     viewInterface.displayConsoleLog();
-                    client.sendToServer(new MoveMessage(player1SelectedUnit.id(), Integer.parseInt(arguments.get(0)), -1, -1));
+                    sendMessage(new MoveMessage(player1SelectedUnit.id(), Integer.parseInt(arguments.get(0)), -1, -1));
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
@@ -301,6 +299,7 @@ public class GameController {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                         "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
+                    sendMessage(new MoveMessage(player1SelectedUnit.id(), -1, Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1))));
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
                 } else if (arguments.size() == 3) {
@@ -312,6 +311,7 @@ public class GameController {
                         return false;
                     }
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    sendMessage(new MoveMessage(Integer.parseInt(arguments.get(0)), -1, Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2))));
                     return moveUnit(Integer.parseInt(arguments.get(1)),
                         Integer.parseInt(arguments.get(2)));
                 }
@@ -366,6 +366,14 @@ public class GameController {
         entitiesUnderAttack.remove(player1SelectedUnit);
         board.moveToUnit(player1SelectedUnit, id);
         return true;
+    }
+
+    public void receiveMove(int unitID, int targetID, int x, int y) {
+        if(x == -1 && y == -1) {
+            board.moveToUnit(board.getUnit(unitID), targetID);
+        } else {
+            board.moveUnit(board.getUnit(unitID), x, y);
+        }
     }
 
     /**
@@ -658,5 +666,11 @@ public class GameController {
 
     public static boolean isPlayer1SelectedUnit(Unit unit) {
         return player1SelectedUnit == unit;
+    }
+
+    private void sendMessage(NetworkMessage message) {
+        if(client != null) {
+            client.sendMessage(message);
+        }
     }
 }

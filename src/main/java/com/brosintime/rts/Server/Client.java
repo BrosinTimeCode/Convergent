@@ -1,32 +1,21 @@
 package com.brosintime.rts.Server;
 
+import com.brosintime.rts.Controller.GameController;
+import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
+import com.brosintime.rts.Server.NetworkMessages.NETWORK_MESSAGE_TYPE;
 import com.brosintime.rts.Server.NetworkMessages.NetworkMessage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
-public class Client extends Thread {
+public abstract class Client extends Thread {
 
-    Socket clientSocket;
     DataInputStream inputStream;
     DataOutputStream outputStream;
 
-    public Client() {
-    }
+    GameController controller;
 
-    @Override
-    public void run() {
-        try {
-            clientSocket = new Socket("localhost", 1234);
-            inputStream = new DataInputStream(clientSocket.getInputStream());
-            outputStream = new DataOutputStream(clientSocket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean sendToServer(NetworkMessage message) {
+    public boolean sendMessage(NetworkMessage message) {
         try {
             outputStream.write(message.getMessageString().getBytes());
             outputStream.flush();
@@ -36,4 +25,32 @@ public class Client extends Thread {
         }
     }
 
+    protected void parseMessage(String message) {
+        NETWORK_MESSAGE_TYPE messageType = NETWORK_MESSAGE_TYPE.fromValue(Integer.parseInt(message.split(":")[0]));
+        switch (messageType) {
+            case MOVE -> {
+                MoveMessage moveMessage = new MoveMessage(message);
+                controller.receiveMove(moveMessage.unitID, moveMessage.targetID, moveMessage.xCoordinate, moveMessage.yCoordinate);
+
+            }
+        }
+    }
+
+    protected void receiveMessage(){
+        while (true) {
+            byte[] message = new byte[1000];
+            try {
+                inputStream.read(message);
+                String stringMessage = new String(message).trim();
+                System.out.println(stringMessage);
+                parseMessage(stringMessage);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    public void setController(GameController controller) {
+        this.controller = controller;
+    }
 }

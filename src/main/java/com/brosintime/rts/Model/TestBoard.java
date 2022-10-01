@@ -13,24 +13,15 @@ public class TestBoard extends Board {
     public TestBoard(BoardType boardType, int rows, int columns) {
         super(rows, columns);
         switch (boardType) {
-            case SEEDEDRANDOM:
-                randomBoard(15);
-            case RANDOM:
-                randomBoard(0);
-                break;
-            case MONOVSMONO:
+            case SEEDEDRANDOM -> randomBoard(15);
+            case RANDOM -> randomBoard(0);
+            case MONOVSMONO -> {
                 newUnit(0, 0, BaseUnit.Team.RED, "Civilian");
                 newUnit(rows - 1, columns - 1, BaseUnit.Team.BLUE, "Civilian");
-                break;
-            case LONESURVIVOR:
-                newUnit(0, 0, BaseUnit.Team.RED, "Civilian");
-                break;
-            case ONEVSEVERYONE:
-                oneVSEveryone();
-                break;
-            case ONEVSCHECKERBOARD:
-                oneVSCheckerboard();
-                break;
+            }
+            case LONESURVIVOR -> newUnit(0, 0, BaseUnit.Team.RED, "Civilian");
+            case ONEVSEVERYONE -> oneVSEveryone();
+            case ONEVSCHECKERBOARD -> oneVSCheckerboard();
         }
     }
 
@@ -46,19 +37,12 @@ public class TestBoard extends Board {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(5);
                 switch (value) {
-                    case 0:
-                        newUnit(row, column, BaseUnit.Team.RED, "Civilian");
-                        break;
-                    case 1:
-                        newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
-                        break;
-                    case 3:
-                        newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
-                        break;
-                    case 4:
-                        newUnit(row, column, BaseUnit.Team.BLUE, "Tradesman");
-                        break;
-                    default:
+                    case 0 -> newUnit(row, column, BaseUnit.Team.RED, "Civilian");
+                    case 1 -> newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
+                    case 3 -> newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
+                    case 4 -> newUnit(row, column, BaseUnit.Team.BLUE, "Tradesman");
+                    default -> {
+                    }
                 }
             }
         }
@@ -76,12 +60,8 @@ public class TestBoard extends Board {
                 }
                 int value = randomGenerator.nextInt(2);
                 switch (value) {
-                    case 0:
-                        newUnit(row, column, BaseUnit.Team.RED, "Civilian");
-                        break;
-                    case 1:
-                        newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
-                        break;
+                    case 0 -> newUnit(row, column, BaseUnit.Team.RED, "Civilian");
+                    case 1 -> newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
                 }
             }
         }
@@ -101,12 +81,8 @@ public class TestBoard extends Board {
                 if ((row % 2 == 0 && column % 2 == 1) || (row % 2 == 1 && column % 2 == 0)) {
                     int value = randomGenerator.nextInt(2);
                     switch (value) {
-                        case 0:
-                            newUnit(row, column, BaseUnit.Team.RED, "Civilian");
-                            break;
-                        case 1:
-                            newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
-                            break;
+                        case 0 -> newUnit(row, column, BaseUnit.Team.RED, "Civilian");
+                        case 1 -> newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
                     }
                 }
             }

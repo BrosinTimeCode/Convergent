@@ -10,9 +10,9 @@ import java.util.HashMap;
 public class Board {
 
     public BoardCell[][] board;
-    private PathFinder pathFinder;
-    private UnitFactory unitFactory;
-    private HashMap<Integer, UnitLocation> globalUnits;
+    private final PathFinder pathFinder;
+    private final UnitFactory unitFactory;
+    private final HashMap<Integer, UnitLocation> globalUnits;
 
     public Board(int rows, int columns) {
         board = new BoardCell[rows][columns];
@@ -24,10 +24,6 @@ public class Board {
         pathFinder = new PathFinder(this.board);
         unitFactory = new UnitFactory();
         globalUnits = new HashMap<>();
-    }
-
-    public Board(String string) {
-        String[] rows = string.split("\n");
     }
 
     /**
