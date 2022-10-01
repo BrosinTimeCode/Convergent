@@ -13,8 +13,10 @@ public class TestBoard extends Board {
     public TestBoard(BoardType boardType, int rows, int columns) {
         super(rows, columns);
         switch (boardType) {
+            case SEEDEDRANDOM:
+                randomBoard(15);
             case RANDOM:
-                randomBoard();
+                randomBoard(0);
                 break;
             case MONOVSMONO:
                 newUnit(0, 0, BaseUnit.Team.RED, "Civilian");
@@ -35,8 +37,11 @@ public class TestBoard extends Board {
     /**
      * Creates a board that has random BLUE and RED units on each BoardCell.
      */
-    private void randomBoard() {
+    private void randomBoard(int seed) {
         Random randomGenerator = new Random();
+        if(seed != 0) {
+            randomGenerator = new Random(seed);
+        }
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(5);
@@ -115,5 +120,6 @@ public class TestBoard extends Board {
         LONESURVIVOR,
         ONEVSEVERYONE,
         ONEVSCHECKERBOARD,
+        SEEDEDRANDOM,
     }
 }

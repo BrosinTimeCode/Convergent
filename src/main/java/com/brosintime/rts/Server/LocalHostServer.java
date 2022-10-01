@@ -1,5 +1,9 @@
 package com.brosintime.rts.Server;
 
+import com.brosintime.rts.Model.Board;
+import com.brosintime.rts.Model.TestBoard;
+import com.brosintime.rts.Model.TestBoard.BoardType;
+import com.brosintime.rts.Server.NetworkMessages.NETWORK_MESSAGE_TYPE;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,9 +16,11 @@ public class LocalHostServer extends Thread {
     Socket socket;
     DataInputStream inputStream;
     DataOutputStream outputStream;
+    Board board = new Board();
 
     private void setup() throws IOException {
         serverSocket = new ServerSocket(1234);
+        board = new TestBoard(BoardType.SEEDEDRANDOM, 15, 15);
     }
 
     @Override
@@ -28,10 +34,18 @@ public class LocalHostServer extends Thread {
                 byte[] message = new byte[1000];
                 inputStream.read(message);
                 String stringMessage = new String(message).trim();
-                System.out.println(stringMessage);
+                System.out.println(board);
+                parseMessage(stringMessage);
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        }
+    }
+
+    private void parseMessage(String message) {
+        NETWORK_MESSAGE_TYPE messageType = NETWORK_MESSAGE_TYPE.fromValue(Integer.parseInt(message.split(":")[0]));
+        switch (messageType) {
+
         }
     }
 
