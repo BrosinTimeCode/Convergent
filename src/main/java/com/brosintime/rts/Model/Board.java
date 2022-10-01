@@ -1,6 +1,6 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Units.BaseUnit;
+import com.brosintime.rts.Units.Unit;
 import java.util.HashMap;
 
 /**
@@ -45,7 +45,7 @@ public class Board {
                 if (column.unit == null) {
                     builder.append("0");
                 } else {
-                    builder.append(column.unit.getName());
+                    builder.append(column.unit.character());
                 }
                 builder.append(" ");
             }
@@ -65,7 +65,7 @@ public class Board {
      */
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd) {
         return pathFinder.pathFinder(rowStart, columnStart, rowEnd, columnEnd,
-            board[rowStart][columnStart].unit.getTeam(), new HashMap<>());
+            board[rowStart][columnStart].unit.team(), new HashMap<>());
     }
 
     /**
@@ -75,8 +75,8 @@ public class Board {
      * @param row    An integer representing destination row.
      * @param unit   The BaseUnit to be moved.
      */
-    public void moveUnit(BaseUnit unit, int row, int column) {
-        UnitLocation location = globalUnits.get(unit.getId());
+    public void moveUnit(Unit unit, int row, int column) {
+        UnitLocation location = globalUnits.get(unit.id());
         Path path = pathFinder(location.row, location.column, row, column);
         if (path == null) {
             return;
@@ -89,13 +89,13 @@ public class Board {
                     break;
                 }
             }
-            UnitLocation previousLocation = globalUnits.get(unit.getId());
+            UnitLocation previousLocation = globalUnits.get(unit.id());
             board[node.row()][node.column()].addUnit(unit);
             // If current unit populated last location remove it
-            if (board[previousLocation.row][previousLocation.column].containsUnit(unit.getId())) {
-                board[previousLocation.row][previousLocation.column].removeUnit(unit.getId());
+            if (board[previousLocation.row][previousLocation.column].containsUnit(unit.id())) {
+                board[previousLocation.row][previousLocation.column].removeUnit(unit.id());
             }
-            globalUnits.get(unit.getId()).setLocation(node.row(), node.column());
+            globalUnits.get(unit.id()).setLocation(node.row(), node.column());
         }
     }
 
@@ -105,7 +105,7 @@ public class Board {
      * @param id   An integer representing the id of the unit BaseUnit unit is moving to.
      * @param unit The BaseUnit to be moved.
      */
-    public void moveToUnit(BaseUnit unit, int id) {
+    public void moveToUnit(Unit unit, int id) {
         UnitLocation location = globalUnits.get(id);
         moveUnit(unit, location.row, location.column);
     }
@@ -119,11 +119,11 @@ public class Board {
      * @param team           A BaseUnit.Team that new unit will be on.
      * @param unitType       The type of unit to be created.
      */
-    public void newUnit(int locationRow, int locationColumn, BaseUnit.Team team,
+    public void newUnit(int locationRow, int locationColumn, Unit.Team team,
         String unitType) {
-        BaseUnit unit = unitFactory.createUnit(unitType, team);
+        Unit unit = unitFactory.createUnit(unitType, team);
         board[locationRow][locationColumn].addUnit(unit);
-        globalUnits.put(unit.getId(), new UnitLocation(locationRow, locationColumn, unit));
+        globalUnits.put(unit.id(), new UnitLocation(locationRow, locationColumn, unit));
     }
 
     /**
@@ -144,7 +144,7 @@ public class Board {
      * @param column An integer representing the column on the board of the unit.
      * @return BaseUnit at the row and column on the board.
      */
-    public BaseUnit getUnit(int row, int column) {
+    public Unit getUnit(int row, int column) {
         return board[row][column].unit;
     }
 
@@ -154,18 +154,18 @@ public class Board {
      * @param id An integer representing the id of the unit.
      * @return BaseUnit identified by id.
      */
-    public BaseUnit getUnit(int id) {
+    public Unit getUnit(int id) {
         if (globalUnits.get(id) == null) {
             return null;
         }
         return globalUnits.get(id).getUnit();
     }
 
-    public int getBoardHeight() {
+    public int height() {
         return board.length;
     }
 
-    public int getBoardWidth() {
+    public int width() {
         return board[0].length;
     }
 

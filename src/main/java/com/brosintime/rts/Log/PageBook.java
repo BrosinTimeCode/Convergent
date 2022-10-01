@@ -187,6 +187,7 @@ public class PageBook {
 
     /**
      * Retrieves a list of all pages in this book.
+     *
      * @return all {@link Page}s
      */
     public List<Page> getAll() {
@@ -195,6 +196,7 @@ public class PageBook {
 
     /**
      * Determines if a specific line occurs anywhere inside this book.
+     *
      * @param item to look for
      * @return true if line occurs, false if not
      */

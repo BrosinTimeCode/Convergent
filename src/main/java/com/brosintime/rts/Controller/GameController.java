@@ -14,18 +14,16 @@ import com.brosintime.rts.Log.UserLogItem.Type;
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
-import com.brosintime.rts.Units.BaseUnit;
+import com.brosintime.rts.Units.Unit;
 import com.brosintime.rts.View.CommandLineInterface;
 import com.brosintime.rts.View.GameViewInterface;
 import com.googlecode.lanterna.TextColor;
-
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
 
 /**
  * The GameController class follows the controller design in the MVC design pattern. This class
@@ -33,13 +31,23 @@ import java.util.Timer;
  */
 public class GameController {
 
+    private final double UPDATES_PER_SECOND = 30;
+    private final double FRAMES_PER_SECOND = 60;
+    private final Map<String, Integer> debugInfo;
+    private boolean isRunning = false;
+    private boolean debugScreenIsOn = false;
+    private boolean toggleDebugScreen = false;
+    private final List<Character> userInput = new ArrayList<>();
     GameViewInterface viewInterface;
     Board board;
-    private static BaseUnit player1SelectedUnit;
-    private final HashMap<BaseUnit, BaseUnit> entitiesUnderAttack;
+    private static Unit player1SelectedUnit;
+    private final HashMap<Unit, Unit> entitiesUnderAttack;
     private final UserInputHistory inputHistory;
 
     public GameController(int viewType, BoardType boardType, int width, int height) {
+        this.debugInfo = new HashMap<>();
+        this.debugInfo.put("tps", 0);
+        this.debugInfo.put("fps", 0);
         int rows = height;
         int columns = width;
         // Command line arguments give size of board. No arguments results in height and width of board being random from 0 to 30
@@ -56,7 +64,6 @@ public class GameController {
         switch (viewType) {
             default -> {
                 viewInterface = new CommandLineInterface(board);
-                viewInterface.initialize();
             }
         }
         entitiesUnderAttack = new HashMap<>();
@@ -67,19 +74,79 @@ public class GameController {
         CommandList.registerCommand(Select.instance());
 
         inputHistory = new UserInputHistory();
-        viewInterface.displayHelp();
+
+        this.viewInterface.displayHelp();
+        run();
     }
 
-    /**
-     * Initializes the RefreshMapTask and DamageEntityTask to run every one second.
-     */
-    public void initialize() {
-        Timer timer = new Timer();
-        long oneSecond = 1000;
-        RefreshMapTask task = new RefreshMapTask(viewInterface, board);
-        timer.schedule(task, 0, oneSecond);
-        DamageEntityTask damageTask = new DamageEntityTask(this);
-        timer.schedule(damageTask, 0, oneSecond);
+    public void run() {
+        this.isRunning = true;
+        long initialTime = System.nanoTime();
+        final double updateTime = 1000000000 / this.UPDATES_PER_SECOND;
+        final double renderTime = 1000000000 / this.FRAMES_PER_SECOND;
+        double updateDelta = 0;
+        double renderDelta = 0;
+        long timer = System.currentTimeMillis();
+
+        while (this.isRunning) {
+            long currentTime = System.nanoTime();
+            updateDelta += (currentTime - initialTime) / updateTime;
+            renderDelta += (currentTime - initialTime) / renderTime;
+            initialTime = currentTime;
+
+            if (updateDelta >= 1) {
+                getUserInput();
+                update();
+                this.debugInfo.put("tps", this.debugInfo.get("tps") + 1);
+                updateDelta--;
+            }
+
+            if (renderDelta >= 1) {
+                render();
+                this.debugInfo.put("fps", this.debugInfo.get("fps") + 1);
+                renderDelta--;
+            }
+
+            if (System.currentTimeMillis() - timer > 1000) {
+                if (this.debugScreenIsOn) {
+                    this.viewInterface.renderDebugScreen(this.debugInfo);
+                }
+                this.debugInfo.put("fps", 0);
+                this.debugInfo.put("tps", 0);
+                timer += 1000;
+            }
+        }
+    }
+
+    private void update() {
+
+        getEntitiesUnderAttack().forEach((k, v) -> {
+            boolean deadUnit = v.damageEntity(k);
+            if (deadUnit) {
+                killUnit(k, v);
+            }
+        });
+
+    }
+
+    private void render() {
+
+        if (this.toggleDebugScreen) {
+            this.toggleDebugScreen = false;
+            this.debugScreenIsOn = !this.debugScreenIsOn;
+            this.viewInterface.clear();
+        }
+
+        this.viewInterface.displayBoard();
+        this.viewInterface.displayConsoleLog();
+        this.viewInterface.clearInput();
+        this.viewInterface.displayInput(charListToString(this.userInput));
+        this.viewInterface.flush();
+
+    }
+
+    public boolean isRunning() {
+        return this.isRunning;
     }
 
     /**
@@ -90,47 +157,47 @@ public class GameController {
      * down arrow keys.
      */
     public void getUserInput() {
-        List<Character> input = new ArrayList<>();
-        viewInterface.clearInput();
-        boolean inputClosed = false;
-        do {
-            viewInterface.displayInput(charListToString(input));
-            KeyStroke keyStroke = viewInterface.getUserKeyStroke();
-            switch (keyStroke.getKeyType()) {
-                case Escape -> {
-                    input.clear();
-                    viewInterface.clearInput();
-                    inputClosed = true;
-                }
-                case Character -> {
-                    if (input.size() < 80) {
-                        input.add(keyStroke.getCharacter());
-                    }
-                }
-                case Enter -> {
-                    this.inputHistory.add(charListToString(input));
-                    handleUserInput(charListToString(input));
-                    input.clear();
-                    inputClosed = true;
-                }
-                case Backspace -> {
-                    if (input.size() >= 1) {
-                        input.remove(input.size() - 1);
-                    }
-                    viewInterface.clearInput();
-                }
-                case ArrowDown -> {
-                    input.clear();
-                    viewInterface.clearInput();
-                    input.addAll(stringToCharList(this.inputHistory.next()));
-                }
-                case ArrowUp -> {
-                    input.clear();
-                    viewInterface.clearInput();
-                    input.addAll(stringToCharList(this.inputHistory.previous()));
+        this.viewInterface.clearInput();
+        this.viewInterface.displayInput(charListToString(this.userInput));
+        KeyStroke keyStroke = this.viewInterface.getUserKeyStroke();
+        if (keyStroke == null) {
+            return;
+        }
+        switch (keyStroke.getKeyType()) {
+            case Escape -> {
+                this.userInput.clear();
+                this.viewInterface.clearInput();
+            }
+            case Character -> {
+                if (this.userInput.size() < 80) {
+                    this.userInput.add(keyStroke.getCharacter());
                 }
             }
-        } while (!inputClosed);
+            case Enter -> {
+                this.inputHistory.add(charListToString(this.userInput));
+                handleUserInput(charListToString(this.userInput));
+                this.userInput.clear();
+            }
+            case Backspace -> {
+                if (this.userInput.size() >= 1) {
+                    this.userInput.remove(this.userInput.size() - 1);
+                }
+                this.viewInterface.clearInput();
+            }
+            case ArrowDown -> {
+                this.userInput.clear();
+                this.viewInterface.clearInput();
+                this.userInput.addAll(stringToCharList(this.inputHistory.next()));
+            }
+            case ArrowUp -> {
+                this.userInput.clear();
+                this.viewInterface.clearInput();
+                this.userInput.addAll(stringToCharList(this.inputHistory.previous()));
+            }
+            case F3 -> {
+                this.toggleDebugScreen = true;
+            }
+        }
     }
 
     /**
@@ -231,8 +298,7 @@ public class GameController {
                     viewInterface.displayConsoleLog();
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
-                }
-                else if (arguments.size() == 3) {
+                } else if (arguments.size() == 3) {
                     if (!checkBounds(Integer.parseInt(arguments.get(2)),
                         Integer.parseInt(arguments.get(1)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
@@ -321,24 +387,23 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(attackCommand.getArguments());
                 if (arguments.size() == 1) {
-                        if(board.getUnit(Integer.parseInt(arguments.get(0))) == null) {
-                            UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                                "Target ID is not a valid unit.", Type.INFO));
-                            viewInterface.displayConsoleLog();
-                            return false;
-                        }
-                        if(player1SelectedUnit == null) {
-                            UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                                "No attacker selected.", Type.INFO));
-                            viewInterface.displayConsoleLog();
-                            return false;
-                        }
+                    if (board.getUnit(Integer.parseInt(arguments.get(0))) == null) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "Target ID is not a valid unit.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
+                    if (player1SelectedUnit == null) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
+                            "No attacker selected.", Type.INFO));
+                        viewInterface.displayConsoleLog();
+                        return false;
+                    }
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                         "Executing attack command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     return attackUnitID(Integer.parseInt(arguments.get(0)));
-                }
-                else if (arguments.size() == 2){
+                } else if (arguments.size() == 2) {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
                         Integer.parseInt(arguments.get(0)))) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
@@ -359,7 +424,7 @@ public class GameController {
                         viewInterface.displayConsoleLog();
                         return false;
                     }
-                    if(board.getUnit(Integer.parseInt(arguments.get(0))) == null) {
+                    if (board.getUnit(Integer.parseInt(arguments.get(0))) == null) {
                         UserLog.add(new UserLogItem(TextColor.ANSI.RED,
                             "Selected unit ID is not a valid unit.", Type.INFO));
                         viewInterface.displayConsoleLog();
@@ -369,7 +434,8 @@ public class GameController {
                         "Executing attack command...", Type.INFO));
                     viewInterface.displayConsoleLog();
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
-                    return attackUnit(Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2)));
+                    return attackUnit(Integer.parseInt(arguments.get(1)),
+                        Integer.parseInt(arguments.get(2)));
                 }
             }
             case TOOMANY -> { // too many arguments given
@@ -409,6 +475,7 @@ public class GameController {
 
     /**
      * Attacks a unit with a specific id with currently selected unit.
+     *
      * @param id An integer representing the id identifying a unit on the board.
      * @return A boolean showing if the unit successfully attacked the unit.
      */
@@ -416,11 +483,9 @@ public class GameController {
         // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
-        }
-        else if(board.getUnit(id) == null) {
+        } else if (board.getUnit(id) == null) {
             return false;
-        }
-        else {
+        } else {
             entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(id));
             return true;
         }
@@ -432,8 +497,8 @@ public class GameController {
      * @param attacker BaseUnit that is attacking deadUnit.
      * @param deadUnit BaseUnit to be killed.
      */
-    public void killUnit(BaseUnit attacker, BaseUnit deadUnit) {
-        board.killUnit(deadUnit.getId());
+    public void killUnit(Unit attacker, Unit deadUnit) {
+        board.killUnit(deadUnit.id());
         entitiesUnderAttack.remove(attacker);
     }
 
@@ -565,6 +630,7 @@ public class GameController {
     private boolean selectUnit(int column, int row) {
         if (checkBounds(row, column)) {
             player1SelectedUnit = board.getUnit(row, column);
+            player1SelectedUnit.select();
             return true;
         }
         return false;
@@ -578,15 +644,14 @@ public class GameController {
      * @return Returns true if the row and column are in bounds.
      */
     private boolean checkBounds(int row, int column) {
-        return !(row > board.getBoardHeight() - 1 || row < 0 || column > board.getBoardWidth() - 1
-            || column < 0);
+        return !(row > board.height() - 1 || row < 0 || column > board.width() - 1 || column < 0);
     }
 
-    public HashMap<BaseUnit, BaseUnit> getEntitiesUnderAttack() {
+    public HashMap<Unit, Unit> getEntitiesUnderAttack() {
         return entitiesUnderAttack;
     }
 
-    public static boolean isPlayer1SelectedUnit(BaseUnit unit) {
+    public static boolean isPlayer1SelectedUnit(Unit unit) {
         return player1SelectedUnit == unit;
     }
 }

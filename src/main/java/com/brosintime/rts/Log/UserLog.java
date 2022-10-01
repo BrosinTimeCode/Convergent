@@ -16,8 +16,9 @@ public interface UserLog {
 
     /**
      * Adds a {@link UserLogItem} at the provided index.
+     *
      * @param index in list
-     * @param log to add
+     * @param log   to add
      */
     static void add(int index, UserLogItem log) {
         LOGS.add(index, log);
@@ -25,6 +26,7 @@ public interface UserLog {
 
     /**
      * Adds a {@link UserLogItem} as the last item in {@link #LOGS}.
+     *
      * @param log to add
      */
     static void add(UserLogItem log) {
@@ -33,6 +35,7 @@ public interface UserLog {
 
     /**
      * Adds all lines of a {@link Page} to the end of the list.
+     *
      * @param page with lines of {@link UserLogItem}
      */
     static void add(Page page) {

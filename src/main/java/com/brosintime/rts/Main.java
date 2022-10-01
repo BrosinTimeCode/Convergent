@@ -19,9 +19,6 @@ public class Main {
         GameController controller = new GameController(-1, BoardType.RANDOM, width, height);
         Client client = new Client();
         client.start();
-        controller.initialize();
-        while (true) {
-            controller.getUserInput();
-        }
+        controller.run();
     }
 }
