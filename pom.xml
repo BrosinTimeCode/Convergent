@@ -7,6 +7,9 @@
   <groupId>groupId</groupId>
   <artifactId>RTS</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <name>RTS</name>
+  <url>https://github.com/BrosinTimeCode/RTS</url>
+
   <build>
     <plugins>
       <plugin>
@@ -18,12 +21,31 @@
           <target>16</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>1.2.0-M1</version>
+          </dependency>
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
+
   <properties>
-    <maven.compiler.source>18</maven.compiler.source>
-    <maven.compiler.target>18</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.googlecode.lanterna</groupId>
@@ -31,5 +53,17 @@
       <version>3.1.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
+
 </project>
