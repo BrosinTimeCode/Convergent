@@ -16,8 +16,6 @@ public class PeerToPeerHost extends Client {
     Socket socket;
     Board board;
 
-    GameController controller;
-
     private void setup() throws IOException {
         serverSocket = new ServerSocket(1234);
         board = new TestBoard(BoardType.SEEDEDRANDOM, 15, 15);
