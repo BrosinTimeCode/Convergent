@@ -462,7 +462,6 @@ public class GameController {
      * @return A boolean showing if the unit successfully attacked the square on the board.
      */
     private boolean attackUnit(int column, int row) {
-        // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
         }
@@ -480,7 +479,6 @@ public class GameController {
      * @return A boolean showing if the unit successfully attacked the unit.
      */
     private boolean attackUnitID(int id) {
-        // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
         } else if (board.getUnit(id) == null) {
