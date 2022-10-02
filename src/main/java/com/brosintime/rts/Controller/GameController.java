@@ -513,6 +513,18 @@ public class GameController {
     private boolean executeSelect(Select selectCommand) {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
+                if(player1SelectedUnit == null) {
+                    Command command = CommandList.fromAlias(selectCommand.defaultAlias());
+                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.name() + " - " + command.description() + " Usages:", Type.INFO));
+                    List<String> usages = new ArrayList<>(command.usages());
+                    for (String usage : usages) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                            command.defaultAlias() + " " + usage, Type.INFO));
+                    }
+                    viewInterface.displayConsoleLog();
+                    return true;
+                }
                 player1SelectedUnit = null;
                 UserLog.add(
                     new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
