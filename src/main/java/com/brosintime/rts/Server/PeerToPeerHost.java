@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ClientServer extends Client {
+public class PeerToPeerHost extends Client {
 
     ServerSocket serverSocket;
     Socket socket;
