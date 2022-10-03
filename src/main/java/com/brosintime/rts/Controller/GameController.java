@@ -101,6 +101,10 @@ public class GameController {
         this.focusManager.focus(this.boardFrame);
     }
 
+    /**
+     * Runs through the main game loop. On each iteration, player keys are processed, the model is
+     * updated, and the game view is rendered.
+     */
     public void run() {
         this.isRunning = true;
         long initialTime = System.nanoTime();
@@ -140,6 +144,10 @@ public class GameController {
         }
     }
 
+    /**
+     * Updates the model based on processes in progress, like units firing on each other or units
+     * being trained.
+     */
     private void update() {
 
         getEntitiesUnderAttack().forEach((k, v) -> {
@@ -151,6 +159,9 @@ public class GameController {
 
     }
 
+    /**
+     * Renders the game view frame and flushes it to the screen.
+     */
     private void render() {
 
         if (this.toggleDebugScreen) {

@@ -7,6 +7,11 @@ import com.brosintime.rts.Model.Player;
 import com.brosintime.rts.View.GameView;
 import com.googlecode.lanterna.input.KeyStroke;
 
+/**
+ * Represents a terminal implementation of the board frame. This class is responsible for moving the
+ * player’s cursor and executing commands by a single key press based on which cell in the board the
+ * cursor is currently.
+ */
 public class TerminalBoardFrame extends BoardFrame {
 
     GameController controller;

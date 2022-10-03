@@ -29,6 +29,12 @@ public class Board {
         globalUnits = new HashMap<>();
     }
 
+    /**
+     * Adds a player cursor to (0, 0) on the board. If the player’s cursor already exists, this
+     * method does nothing.
+     *
+     * @param player the player to own the new cursor
+     */
     public void addPlayer(Player player) {
         BoardCursor cursor = BoardCursor.fromPlayer(player);
         if (!this.cursors.containsKey(player)) {
@@ -39,10 +45,25 @@ public class Board {
         }
     }
 
+    /**
+     * Retrieves the cursor by ownership by the provided player.
+     *
+     * @param player the player who owns the cursor
+     * @return the cursor
+     */
     public BoardCursor getCursor(Player player) {
         return this.cursors.get(player);
     }
 
+    /**
+     * Moves a player’s cursor to a new location. This method is bounds-safe; the provided
+     * coordinates that extend past the bounds of the board are constricted to an actual cell
+     * location closest to the requested point.
+     *
+     * @param player the player who owns the cursor
+     * @param column the column to move to
+     * @param row    the row to move to
+     */
     public void moveCursor(Player player, int column, int row) {
         if (!this.cursors.containsKey(player)) {
             return;

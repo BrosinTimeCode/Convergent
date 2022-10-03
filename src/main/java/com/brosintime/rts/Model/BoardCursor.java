@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Represents a cursor on a board object, specifically able to be added to board cells. This class
+ * is instance-controlled and is limited one-to-one to players.
+ */
 public class BoardCursor implements PlayerCursor, Cell {
 
     private final Player player;
@@ -24,6 +28,13 @@ public class BoardCursor implements PlayerCursor, Cell {
         this.column = 0;
     }
 
+    /**
+     * Creates a cursor to be owned by the provided player. If the cursor already exists, the
+     * existing instance is returned instead.
+     *
+     * @param player the player that owns the new/retrieved cursor
+     * @return the cursor
+     */
     public static BoardCursor fromPlayer(Player player) {
         if (cursors.containsKey(player)) {
             return cursors.get(player);
@@ -39,18 +50,40 @@ public class BoardCursor implements PlayerCursor, Cell {
         return this.player;
     }
 
+    /**
+     * Retrieves the row in the board that this cursor exists in.
+     *
+     * @return the row
+     */
     public int row() {
         return this.row;
     }
 
+    /**
+     * Sets a new row number for the cursor. This should only be called when the cursor is moved
+     * from one board cell to another.
+     *
+     * @param row the new row it should exist in
+     */
     public void setRow(int row) {
         this.row = row;
     }
 
+    /**
+     * Retrieves the column in the board that this cursor exists in.
+     *
+     * @return the column
+     */
     public int column() {
         return this.column;
     }
 
+    /**
+     * Sets a new column number for the cursor. This should only be called when the cursor is moved
+     * from one board cell to another.
+     *
+     * @param column
+     */
     public void setColumn(int column) {
         this.column = column;
     }
@@ -87,10 +120,18 @@ public class BoardCursor implements PlayerCursor, Cell {
         return ANSI.DEFAULT;
     }
 
+    /**
+     * Marks this cursor as “highlighted” and changes its cell background color to a highly visible
+     * color.
+     */
     public void highlight() {
         this.highlighted = true;
     }
 
+    /**
+     * Marks this cursor as not “highlighted” and therefore changes its cell background color to a
+     * dull color.
+     */
     public void unhighlight() {
         this.highlighted = false;
     }

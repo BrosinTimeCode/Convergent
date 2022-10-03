@@ -6,6 +6,10 @@ import com.brosintime.rts.View.TerminalCell;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
 
+/**
+ * Represents a default unit. Classes that extend this class are immediately instantiable as a
+ * usable unit and values can be changed to diverge from the default implementation.
+ */
 public abstract class BaseUnit implements Unit {
 
     protected int id;

@@ -10,7 +10,6 @@ import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.Units.Civilian;
 import com.googlecode.lanterna.TextColor.ANSI;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

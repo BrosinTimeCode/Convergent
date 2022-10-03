@@ -10,6 +10,11 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a terminal implementation of the chat frame. This class is responsible for handling
+ * interaction between the player and the chat frame by processing key presses, sending chat
+ * messages, and executing typed commands.
+ */
 public class TerminalChatFrame extends ChatFrame {
 
     private final GameView client;

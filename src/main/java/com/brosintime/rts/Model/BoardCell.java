@@ -63,14 +63,30 @@ public class BoardCell {
         return units.containsKey(id);
     }
 
+    /**
+     * Adds a cursor to this cell if it doesn’t already exist. If it exists, nothing happens.
+     *
+     * @param cursor the cursor to add
+     */
     public void addCursor(BoardCursor cursor) {
         this.cursors.add(cursor);
     }
 
+    /**
+     * Removes a cursor from this cell if it exists.
+     *
+     * @param cursor the cursor to remove
+     */
     public void removeCursor(BoardCursor cursor) {
         this.cursors.remove(cursor);
     }
 
+    /**
+     * Determines if this cell contains a cursor owned by the provided player.
+     *
+     * @param player the player that owns the cursor
+     * @return {@code true} if this cell contains the cursor, {@code false} if not
+     */
     public boolean containsCursor(Player player) {
         return this.cursors.contains(BoardCursor.fromPlayer(player));
     }
