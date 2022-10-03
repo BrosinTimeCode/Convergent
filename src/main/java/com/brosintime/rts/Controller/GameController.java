@@ -486,7 +486,6 @@ public class GameController {
      * @return A boolean showing if the unit successfully attacked the square on the board.
      */
     private boolean attackUnit(int column, int row) {
-        // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
         }
@@ -504,7 +503,6 @@ public class GameController {
      * @return A boolean showing if the unit successfully attacked the unit.
      */
     private boolean attackUnitID(int id) {
-        // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
         } else if (board.getUnit(id) == null) {
@@ -537,6 +535,18 @@ public class GameController {
     private boolean executeSelect(Select selectCommand) {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
+                if(player1SelectedUnit == null) {
+                    Command command = CommandList.fromAlias(selectCommand.defaultAlias());
+                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                        command.name() + " - " + command.description() + " Usages:", Type.INFO));
+                    List<String> usages = new ArrayList<>(command.usages());
+                    for (String usage : usages) {
+                        UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
+                            command.defaultAlias() + " " + usage, Type.INFO));
+                    }
+                    viewInterface.displayConsoleLog();
+                    return true;
+                }
                 player1SelectedUnit = null;
                 UserLog.add(
                     new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
@@ -546,7 +556,7 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(selectCommand.getArguments());
                 if (arguments.size() == 1) {
-                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    selectUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
@@ -572,6 +582,41 @@ public class GameController {
                 viewInterface.displayConsoleLog();
                 return false;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Selects visible unit at row and column on board. If row or column out of bounds select will
+     * fail.
+     *
+     * @param column An integer representing the column for a unit to be selected.
+     * @param row    An integer representing the row for a unit to be selected.
+     * @return A boolean showing if unit was successfully selected.
+     */
+    private boolean selectUnit(int column, int row) {
+        if (checkBounds(row, column)) {
+            Unit selection = board.getUnit(row, column);
+            if(selection != null) {
+                player1SelectedUnit = selection;
+                player1SelectedUnit.select();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Selects unit on board based on ID. If no such unit select will fail.
+     * @param ID An integer representing the id of the unit to select.
+     * @return A boolean show if unit was successfully selected.
+     */
+    private boolean selectUnit(int ID) {
+        Unit selection = board.getUnit(ID);
+        if(selection != null) {
+            player1SelectedUnit = selection;
+            player1SelectedUnit.select();
+            return true;
         }
         return false;
     }
@@ -639,23 +684,6 @@ public class GameController {
                 viewInterface.displayConsoleLog();
                 return false;
             }
-        }
-        return false;
-    }
-
-    /**
-     * Selects visible unit at row and column on board. If row or column out of bounds select will
-     * fail.
-     *
-     * @param column An integer representing the column for a unit to be selected.
-     * @param row    An integer representing the row for a unit to be selected.
-     * @return A boolean showing if unit was successfully selected.
-     */
-    private boolean selectUnit(int column, int row) {
-        if (checkBounds(row, column)) {
-            player1SelectedUnit = board.getUnit(row, column);
-            player1SelectedUnit.select();
-            return true;
         }
         return false;
     }
