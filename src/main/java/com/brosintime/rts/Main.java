@@ -2,6 +2,8 @@ package com.brosintime.rts;
 
 import com.brosintime.rts.Controller.GameController;
 import com.brosintime.rts.Model.TestBoard.BoardType;
+import com.brosintime.rts.Server.PeerToPeerClient;
+import com.brosintime.rts.Server.PeerToPeerHost;
 import com.brosintime.rts.Server.Client;
 
 public class Main {
@@ -16,9 +18,16 @@ public class Main {
             width = 0;
             height = 0;
         }
-        GameController controller = new GameController(-1, BoardType.RANDOM, width, height);
-        Client client = new Client();
-        client.start();
+        Client client = null;
+        if (args.length >= 3 && args[2].equals("server")) {
+            client = new PeerToPeerHost();
+            client.start();
+        } else if (args.length >= 3 && args[2].equals("client")) {
+            client = new PeerToPeerClient();
+            client.start();
+        }
+        GameController controller = new GameController(client, -1, BoardType.SEEDEDRANDOM, width,
+            height);
         controller.run();
     }
 }

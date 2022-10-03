@@ -44,13 +44,10 @@ public class PathFinderUnitTests {
         assertEquals(new Node(6, 5), pathFinder.nextClosestNode(5, 5, 10, 5));
         // Direct left
         assertEquals(new Node(5, 4), pathFinder.nextClosestNode(5, 5, 5, 0));
-
-        // TODO: add non straight lines between two point test cases
     }
 
     @Test
     void testNextNodeWithEnemy() {
-        // TODO: add test cases for not going into enemy units
         /* 0---0
            -X-X-
            --0--

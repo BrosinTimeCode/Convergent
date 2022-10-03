@@ -23,6 +23,9 @@ import com.brosintime.rts.Model.Player;
 import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
+import com.brosintime.rts.Server.Client;
+import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
+import com.brosintime.rts.Server.NetworkMessages.NetworkMessage;
 import com.brosintime.rts.Units.Unit;
 import com.brosintime.rts.View.GameView;
 import com.brosintime.rts.View.TerminalClient;
@@ -58,8 +61,9 @@ public class GameController {
     private final FocusManager focusManager;
     private final ChatFrame chatFrame;
     private final BoardFrame boardFrame;
+    private final Client client;
 
-    public GameController(int viewType, BoardType boardType, int width, int height) {
+    public GameController(Client client, int viewType, BoardType boardType, int width, int height) {
         this.debugInfo = new HashMap<>();
         this.debugInfo.put("tps", 0);
         this.debugInfo.put("fps", 0);
@@ -90,6 +94,8 @@ public class GameController {
             }
         }
         this.entitiesUnderAttack = new HashMap<>();
+        this.client = client;
+        client.setController(this);
 
         CommandList.registerCommand(Attack.instance());
         CommandList.registerCommand(Help.instance());
@@ -285,6 +291,8 @@ public class GameController {
                         new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
                             Type.INFO));
                     viewInterface.displayConsoleLog();
+                    sendMessage(new MoveMessage(player1SelectedUnit.id(),
+                        Integer.parseInt(arguments.get(0)), -1, -1));
                     return moveToUnit(Integer.parseInt(arguments.get(0)));
                 } else if (arguments.size() == 2) {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
@@ -297,6 +305,8 @@ public class GameController {
                     UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
                         "Executing move command...", Type.INFO));
                     viewInterface.displayConsoleLog();
+                    sendMessage(new MoveMessage(player1SelectedUnit.id(), -1,
+                        Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1))));
                     return moveUnit(Integer.parseInt(arguments.get(0)),
                         Integer.parseInt(arguments.get(1)));
                 } else if (arguments.size() == 3) {
@@ -308,6 +318,8 @@ public class GameController {
                         return false;
                     }
                     player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    sendMessage(new MoveMessage(Integer.parseInt(arguments.get(0)), -1,
+                        Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2))));
                     return moveUnit(Integer.parseInt(arguments.get(1)),
                         Integer.parseInt(arguments.get(2)));
                 }
@@ -362,6 +374,22 @@ public class GameController {
         entitiesUnderAttack.remove(player1SelectedUnit);
         board.moveToUnit(player1SelectedUnit, id);
         return true;
+    }
+
+    /**
+     * Executes a move from the network.
+     *
+     * @param unitID   an integer representing the ID of the unit to be moved.
+     * @param targetID an integer representing the ID of the unit move to.
+     * @param x        an integer representing the x coordinate to move to.
+     * @param y        an integer representing the y coordinate to move to.
+     */
+    public void receiveMove(int unitID, int targetID, int x, int y) {
+        if (x == -1 && y == -1) {
+            board.moveToUnit(board.getUnit(unitID), targetID);
+        } else {
+            board.moveUnit(board.getUnit(unitID), y, x);
+        }
     }
 
     /**
@@ -481,7 +509,6 @@ public class GameController {
      * @return A boolean showing if the unit successfully attacked the unit.
      */
     private boolean attackUnitID(int id) {
-        // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
         } else if (board.getUnit(id) == null) {
@@ -523,7 +550,7 @@ public class GameController {
             case GOOD -> { // arguments are parsable as positive integers
                 List<String> arguments = new ArrayList<>(selectCommand.getArguments());
                 if (arguments.size() == 1) {
-                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
+                    selectUnit(Integer.parseInt(arguments.get(0)));
                     return true;
                 } else {
                     if (!checkBounds(Integer.parseInt(arguments.get(1)),
@@ -549,6 +576,41 @@ public class GameController {
                 viewInterface.displayConsoleLog();
                 return false;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Selects visible unit at row and column on board. If row or column out of bounds select will
+     * fail.
+     *
+     * @param column An integer representing the column for a unit to be selected.
+     * @param row    An integer representing the row for a unit to be selected.
+     * @return A boolean showing if unit was successfully selected.
+     */
+    private boolean selectUnit(int column, int row) {
+        if (checkBounds(row, column)) {
+            Unit selection = board.getUnit(row, column);
+            if(selection != null) {
+                player1SelectedUnit = selection;
+                player1SelectedUnit.select();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Selects unit on board based on ID. If no such unit select will fail.
+     * @param ID An integer representing the id of the unit to select.
+     * @return A boolean show if unit was successfully selected.
+     */
+    private boolean selectUnit(int ID) {
+        Unit selection = board.getUnit(ID);
+        if(selection != null) {
+            player1SelectedUnit = selection;
+            player1SelectedUnit.select();
+            return true;
         }
         return false;
     }
@@ -666,5 +728,16 @@ public class GameController {
 
     public static boolean isPlayer1SelectedUnit(Unit unit) {
         return player1SelectedUnit == unit;
+    }
+
+    /**
+     * Sends a message to the network. If client is null does nothing.
+     *
+     * @param message Message to send over the network.
+     */
+    private void sendMessage(NetworkMessage message) {
+        if (client != null) {
+            client.sendMessage(message);
+        }
     }
 }
