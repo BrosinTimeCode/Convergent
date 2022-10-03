@@ -1,5 +1,6 @@
 package com.brosintime.rts.Units;
 
+import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.View.Cell;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
@@ -31,8 +32,4 @@ public interface Unit extends Cell, Selectable {
 
     int attack();
 
-    enum Team {
-        BLUE,
-        RED
-    }
 }

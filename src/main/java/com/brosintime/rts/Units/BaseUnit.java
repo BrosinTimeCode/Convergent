@@ -1,5 +1,6 @@
 package com.brosintime.rts.Units;
 
+import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.View.Cell;
 import com.brosintime.rts.View.CommandLineCell;
 import com.googlecode.lanterna.TextColor;

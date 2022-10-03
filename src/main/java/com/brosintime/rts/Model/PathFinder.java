@@ -1,6 +1,6 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Units.BaseUnit;
+import com.brosintime.rts.Model.Player.Team;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,7 +28,7 @@ public class PathFinder {
      * @return A Path from starting node and ending node. If no path found returns null.
      */
     public Path pathFinder(int rowStart, int columnStart, int rowEnd, int columnEnd,
-        BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        Team team, HashMap<Node, Boolean> exploredNodes) {
         Path path = new Path();
         if (!checkBounds(rowStart, columnStart, rowEnd, columnEnd)) {
             return null;
@@ -143,7 +143,7 @@ public class PathFinder {
      * @return A Path from current node and ending node. If no path found returns null.
      */
     public Path nonEnemyPath(int rowCurrent, int columnCurrent, int rowEnd, int columnEnd,
-        BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        Team team, HashMap<Node, Boolean> exploredNodes) {
         exploredNodes.put(new Node(rowCurrent, columnCurrent), true);
         ArrayList<Node> adjacentNodes = getValidAdjacentNodes(rowCurrent, columnCurrent, team,
             exploredNodes);
@@ -209,7 +209,7 @@ public class PathFinder {
      * @param team  Team of unit that is pathing.
      * @return A boolean showing if BoardCell's unit is on the same team as pathing unit.
      */
-    private boolean checkTeam(BoardCell cell1, BaseUnit.Team team) {
+    private boolean checkTeam(BoardCell cell1, Team team) {
         // If there is no cell in the board than it is a square that can be traversed
         if (cell1.unit == null) {
             return true;
@@ -228,7 +228,7 @@ public class PathFinder {
      * @return A List of adjacent Nodes that are valid.
      */
     public ArrayList<Node> getValidAdjacentNodes(int rowCurrent, int columnCurrent,
-        BaseUnit.Team team, HashMap<Node, Boolean> exploredNodes) {
+        Team team, HashMap<Node, Boolean> exploredNodes) {
         ArrayList<Node> nodes = new ArrayList<>();
         ArrayList<Node> validNodes = new ArrayList<>();
         // Diagonal Up-Left
