@@ -1,7 +1,9 @@
 package com.brosintime.rts.Model;
 
+import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.Units.Unit;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Board class follows the model design in the MVC design pattern. This class receives
@@ -10,9 +12,10 @@ import java.util.HashMap;
 public class Board {
 
     public BoardCell[][] board;
-    private PathFinder pathFinder;
-    private UnitFactory unitFactory;
-    private HashMap<Integer, UnitLocation> globalUnits;
+    private final PathFinder pathFinder;
+    private final UnitFactory unitFactory;
+    private final HashMap<Integer, UnitLocation> globalUnits;
+    private final Map<Player, BoardCursor> cursors = new HashMap<>();
 
     public Board(int rows, int columns) {
         board = new BoardCell[rows][columns];
@@ -26,8 +29,34 @@ public class Board {
         globalUnits = new HashMap<>();
     }
 
-    public Board() {
+    public void addPlayer(Player player) {
+        BoardCursor cursor = BoardCursor.fromPlayer(player);
+        if (!this.cursors.containsKey(player)) {
+            cursor.setColumn(0);
+            cursor.setRow(0);
+            this.cursors.put(player, cursor);
+            this.board[0][0].addCursor(cursor);
+        }
+    }
 
+    public BoardCursor getCursor(Player player) {
+        return this.cursors.get(player);
+    }
+
+    public void moveCursor(Player player, int column, int row) {
+        if (!this.cursors.containsKey(player)) {
+            return;
+        }
+        column = Math.max(column, 0);
+        column = Math.min(column, width() - 1);
+        row = Math.max(row, 0);
+        row = Math.min(row, height() - 1);
+
+        BoardCursor cursor = cursors.get(player);
+        this.board[cursor.row()][cursor.column()].removeCursor(cursor);
+        cursor.setRow(row);
+        cursor.setColumn(column);
+        this.board[cursor.row()][cursor.column()].addCursor(cursor);
     }
 
     /**
@@ -119,7 +148,7 @@ public class Board {
      * @param team           A BaseUnit.Team that new unit will be on.
      * @param unitType       The type of unit to be created.
      */
-    public void newUnit(int locationRow, int locationColumn, Unit.Team team,
+    public void newUnit(int locationRow, int locationColumn, Team team,
         String unitType) {
         Unit unit = unitFactory.createUnit(unitType, team);
         board[locationRow][locationColumn].addUnit(unit);

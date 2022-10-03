@@ -2,6 +2,8 @@ package com.brosintime.rts.Model;
 
 import com.brosintime.rts.Units.Unit;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The BoardCell class contains a visible unit along with multiple invisible units.
@@ -10,6 +12,7 @@ public class BoardCell {
 
     public Unit unit;
     private final HashMap<Integer, Unit> units;
+    private final Set<BoardCursor> cursors = new HashSet<>();
 
     public BoardCell(Unit unit) {
         units = new HashMap<>();
@@ -58,5 +61,17 @@ public class BoardCell {
      */
     public boolean containsUnit(int id) {
         return units.containsKey(id);
+    }
+
+    public void addCursor(BoardCursor cursor) {
+        this.cursors.add(cursor);
+    }
+
+    public void removeCursor(BoardCursor cursor) {
+        this.cursors.remove(cursor);
+    }
+
+    public boolean containsCursor(Player player) {
+        return this.cursors.contains(BoardCursor.fromPlayer(player));
     }
 }

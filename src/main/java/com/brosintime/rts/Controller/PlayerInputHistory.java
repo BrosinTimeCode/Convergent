@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The UserInputHistory class is used to store and access a chronological history of Strings from
+ * The PlayerInputHistory class is used to store and access a chronological history of Strings from
  * player input. Strings are maintained in the order they were added, with duplicates moving to the
  * most recent position. Each object instantiated contains its own archive and a Browser, which is a
  * cursor that moves forward ({@link #next()}) and backward ({@link #previous()}) through the
  * archive.
  */
-public class UserInputHistory {
+public class PlayerInputHistory {
 
     private final List<String> history = new ArrayList<>();
     private int browserIndex = 0;
@@ -68,4 +68,33 @@ public class UserInputHistory {
     public void clear() {
         this.history.clear();
     }
+
+    /**
+     * Converts a list of characters to a string.
+     *
+     * @param list the list of characters to convert
+     * @return representation as a string
+     */
+    public static String charListToString(List<Character> list) {
+        if (list.size() == 0) {
+            return "";
+        }
+        return list.toString().substring(1, 3 * list.size() - 1).replaceAll(", ", "");
+    }
+
+    /**
+     * Converts a string to a list of characters.
+     *
+     * @param string the string to convert
+     * @return representation as a list of characters
+     */
+    public static List<Character> stringToCharList(String string) {
+        List<Character> list = new ArrayList<>();
+        for (char c : string.toCharArray()) {
+            list.add(c);
+        }
+        return list;
+    }
+
+
 }

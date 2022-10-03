@@ -1,7 +1,9 @@
 package com.brosintime.rts.View;
 
 import com.brosintime.rts.Model.Board;
+import com.brosintime.rts.Model.BoardCursor;
 import com.brosintime.rts.Model.Node;
+import com.brosintime.rts.Model.Player;
 import com.brosintime.rts.Units.Unit;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -16,17 +18,17 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The CommandLineRenderer class is an object that handles input/output with a terminal window. It
- * has two layers: the bottom layer, which is a render layer that interacts directly with the
- * terminal window and can only be modified by the second layer, which is a screen malleable by
- * methods like {@link #putCell}.
+ * The TerminalRenderer class is an object that handles input/output with a terminal window. It has
+ * two layers: the bottom layer, which is a render layer that interacts directly with the terminal
+ * window and can only be modified by the second layer, which is a screen malleable by methods like
+ * {@link #putCell}.
  * <p>On each call of {@link #flush()}, the screen is optimized, with common cells between the
  * screen and the render layer removed. The screen is then flushed to the render layer, which is
  * then rendered to the terminal window.
  * <p>A string representation of both layers is available from {@link #toString()} and is updated
  * as each layer is updated.
  */
-public class CommandLineRenderer {
+public class TerminalRenderer {
 
     private final int width;
     private final int height;
@@ -35,6 +37,7 @@ public class CommandLineRenderer {
     private Terminal terminal;
     private final StringBuilder[] renderAsString;
     private final StringBuilder[] screenAsString;
+    private final Player player;
 
     /**
      * Constructs a new CommandLineRender object with the provided width and height. If either
@@ -42,12 +45,14 @@ public class CommandLineRenderer {
      *
      * @param width  the width of the terminal in cells
      * @param height the height of the terminal in cells
+     * @param player the player who owns this
      */
-    public CommandLineRenderer(int width, int height) {
+    public TerminalRenderer(int width, int height, Player player) {
         this.width = Math.max(width, 1);
         this.height = Math.max(height, 1);
         this.renderAsString = new StringBuilder[this.height];
         this.screenAsString = new StringBuilder[this.height];
+        this.player = player;
 
         for (int row = 0; row < this.height; row++) {
             this.renderAsString[row] = new StringBuilder(this.width + 2)
@@ -253,10 +258,14 @@ public class CommandLineRenderer {
         for (int column = 0; column < board.width(); column++) {
             for (int row = 0; row < board.height(); row++) {
                 Unit unit = board.getUnit(row, column);
+                boolean hasCursor = board.board[row][column].containsCursor(this.player);
                 if (unit != null) {
-                    putCell(unit.toCell(), column * 2 + x, row + y);
+                    putCell(hasCursor ? new TerminalCell(unit.foregroundColor(),
+                        BoardCursor.fromPlayer(this.player).backgroundColor(),
+                        unit.character()) : unit.toCell(), column * 2 + x, row + y);
                 } else {
-                    putCell(Cell.blank(), column * 2 + x, row + y);
+                    putCell(hasCursor ? BoardCursor.fromPlayer(this.player) : Cell.blank(),
+                        column * 2 + x, row + y);
                 }
             }
         }
@@ -282,7 +291,7 @@ public class CommandLineRenderer {
             if (x + c > this.width - 1) {
                 break;
             }
-            putCell(new CommandLineCell(foregroundColor, backgroundColor, string.charAt(c)), x + c,
+            putCell(new TerminalCell(foregroundColor, backgroundColor, string.charAt(c)), x + c,
                 y);
         }
     }
@@ -405,7 +414,7 @@ public class CommandLineRenderer {
     }
 
     /**
-     * String representation of both the screen and render layers of {@link CommandLineRenderer} for
+     * String representation of both the screen and render layers of {@link TerminalRenderer} for
      * debugging. Only {@link Cell#character()}s are used without any representation for colors.
      * Space ‘ ’ characters represent empty cells.
      *
