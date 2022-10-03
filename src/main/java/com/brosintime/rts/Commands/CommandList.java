@@ -32,12 +32,10 @@ public interface CommandList {
         private static NullCommand instance = new NullCommand();
         private final static byte maxArguments = 1;
         private final static List<String> arguments = new ArrayList<>();
-        private final static List<String> usages = new ArrayList<>();
-        private final static List<String> aliases = new ArrayList<>();
+        private final static List<String> usages = new ArrayList<>(List.of("eat"));
+        private final static List<String> aliases = new ArrayList<>(List.of("flan"));
 
         private NullCommand() {
-            usages.add("eat");
-            aliases.add("flan");
         }
 
         public static Command instance() {
