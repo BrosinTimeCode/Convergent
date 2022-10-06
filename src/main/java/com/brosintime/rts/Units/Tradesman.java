@@ -1,5 +1,7 @@
 package com.brosintime.rts.Units;
 
+import com.brosintime.rts.Model.Player.Team;
+
 public class Tradesman extends FootUnit {
 
     public Tradesman(Team team, int id) {

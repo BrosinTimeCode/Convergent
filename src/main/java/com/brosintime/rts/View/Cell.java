@@ -4,7 +4,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
 
 /**
- * Convertible to a {@link CommandLineCell}. This interface also has a static method of generating a
+ * Convertible to a {@link TerminalCell}. This interface also has a static method of generating a
  * blank cell, {@link #blank()}.
  */
 public interface Cell {
@@ -18,7 +18,7 @@ public interface Cell {
     boolean isBlank();
 
     /**
-     * Retrieves a {@link CommandLineCell} representation of this object.
+     * Retrieves a {@link TerminalCell} representation of this object.
      *
      * @return this object as a cell
      */
@@ -51,8 +51,8 @@ public interface Cell {
      *
      * @return new blank cell
      */
-    static CommandLineCell blank() {
-        return new CommandLineCell(ANSI.DEFAULT, ANSI.DEFAULT, ' ');
+    static TerminalCell blank() {
+        return new TerminalCell(ANSI.DEFAULT, ANSI.DEFAULT, ' ');
     }
 
 

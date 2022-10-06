@@ -1,5 +1,7 @@
 package com.brosintime.rts.Controller;
 
+import static com.brosintime.rts.Controller.PlayerInputHistory.charListToString;
+
 import com.brosintime.rts.Commands.Attack;
 import com.brosintime.rts.Commands.Command;
 import com.brosintime.rts.Commands.CommandList;
@@ -12,21 +14,31 @@ import com.brosintime.rts.Log.UserLog;
 import com.brosintime.rts.Log.UserLogItem;
 import com.brosintime.rts.Log.UserLogItem.Type;
 import com.brosintime.rts.Model.Board;
+import com.brosintime.rts.Model.Frame.BoardFrame;
+import com.brosintime.rts.Model.Frame.ChatFrame;
+import com.brosintime.rts.Model.Frame.FocusManager;
+import com.brosintime.rts.Model.Frame.TerminalBoardFrame;
+import com.brosintime.rts.Model.Frame.TerminalChatFrame;
+import com.brosintime.rts.Model.Player;
+import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
 import com.brosintime.rts.Server.Client;
 import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
 import com.brosintime.rts.Server.NetworkMessages.NetworkMessage;
 import com.brosintime.rts.Units.Unit;
-import com.brosintime.rts.View.CommandLineInterface;
-import com.brosintime.rts.View.GameViewInterface;
+import com.brosintime.rts.View.GameView;
+import com.brosintime.rts.View.TerminalClient;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * The GameController class follows the controller design in the MVC design pattern. This class
@@ -40,18 +52,23 @@ public class GameController {
     private boolean isRunning = false;
     private boolean debugScreenIsOn = false;
     private boolean toggleDebugScreen = false;
-    private final List<Character> userInput = new ArrayList<>();
-    GameViewInterface viewInterface;
-    Board board;
+    private final GameView viewInterface;
+    private final Board board;
+    private final Set<Player> players = new HashSet<>();
     private static Unit player1SelectedUnit;
     private final HashMap<Unit, Unit> entitiesUnderAttack;
-    private final UserInputHistory inputHistory;
+    private final PlayerInputHistory inputHistory;
+    private final FocusManager focusManager;
+    private final ChatFrame chatFrame;
+    private final BoardFrame boardFrame;
     private final Client client;
 
     public GameController(Client client, int viewType, BoardType boardType, int width, int height) {
         this.debugInfo = new HashMap<>();
         this.debugInfo.put("tps", 0);
         this.debugInfo.put("fps", 0);
+        this.focusManager = new FocusManager();
+        Player player = new Player(UUID.randomUUID(), "Player 1", Team.RED);
         int rows = height;
         int columns = width;
         // Command line arguments give size of board. No arguments results in height and width of board being random from 0 to 30
@@ -65,10 +82,18 @@ public class GameController {
         } else {
             board = new Board(rows, columns);
         }
+
+        this.board.addPlayer(player);
+
         switch (viewType) {
-            default -> viewInterface = new CommandLineInterface(board);
+            default -> {
+                this.viewInterface = new TerminalClient(player, this.board);
+                this.chatFrame = new TerminalChatFrame(this.viewInterface, this);
+                this.boardFrame = new TerminalBoardFrame(this, this.viewInterface, this.board,
+                    player);
+            }
         }
-        entitiesUnderAttack = new HashMap<>();
+        this.entitiesUnderAttack = new HashMap<>();
         this.client = client;
         client.setController(this);
 
@@ -77,12 +102,15 @@ public class GameController {
         CommandList.registerCommand(Move.instance());
         CommandList.registerCommand(Select.instance());
 
-        inputHistory = new UserInputHistory();
+        this.inputHistory = new PlayerInputHistory();
 
-        this.viewInterface.displayHelp();
-        run();
+        this.focusManager.focus(this.boardFrame);
     }
 
+    /**
+     * Runs through the main game loop. On each iteration, player keys are processed, the model is
+     * updated, and the game view is rendered.
+     */
     public void run() {
         this.isRunning = true;
         long initialTime = System.nanoTime();
@@ -99,14 +127,14 @@ public class GameController {
             initialTime = currentTime;
 
             if (updateDelta >= 1) {
-                getUserInput();
-                update();
+                this.getPlayerInput();
+                this.update();
                 this.debugInfo.put("tps", this.debugInfo.get("tps") + 1);
                 updateDelta--;
             }
 
             if (renderDelta >= 1) {
-                render();
+                this.render();
                 this.debugInfo.put("fps", this.debugInfo.get("fps") + 1);
                 renderDelta--;
             }
@@ -122,6 +150,10 @@ public class GameController {
         }
     }
 
+    /**
+     * Updates the model based on processes in progress, like units firing on each other or units
+     * being trained.
+     */
     private void update() {
 
         getEntitiesUnderAttack().forEach((k, v) -> {
@@ -133,6 +165,9 @@ public class GameController {
 
     }
 
+    /**
+     * Renders the game view frame and flushes it to the screen.
+     */
     private void render() {
 
         if (this.toggleDebugScreen) {
@@ -144,7 +179,16 @@ public class GameController {
         this.viewInterface.displayBoard();
         this.viewInterface.displayConsoleLog();
         this.viewInterface.clearInput();
-        this.viewInterface.displayInput(charListToString(this.userInput));
+        if (this.focusManager.hasFocusOn(this.chatFrame)) {
+            this.viewInterface.displayInput(
+                this.chatFrame.getInput().size() < 80 ?
+                    charListToString(this.chatFrame.getInput()) + "_" :
+                    charListToString(this.chatFrame.getInput())
+            );
+        } else {
+            this.viewInterface.displayInput("");
+        }
+        this.viewInterface.displayControls();
         this.viewInterface.flush();
 
     }
@@ -154,52 +198,40 @@ public class GameController {
     }
 
     /**
-     * Interfaces with {@link GameViewInterface} by calling
-     * {@link GameViewInterface#getUserKeyStroke()} and processing the keystrokes. If the player
-     * submits a line, {@link #handleUserInput} is called to retrieve a command.
-     * <p>Player submissions are logged via {@link UserInputHistory} and accessible with the up and
-     * down arrow keys.
+     * Interfaces with {@link GameView} by calling {@link GameView#getPlayerKey()} and processing
+     * the keystrokes. If the player submits a line, {@link #handleUserInput} is called to retrieve
+     * a command.
+     * <p>Player submissions are logged via {@link PlayerInputHistory} and accessible with the up
+     * and down arrow keys.
      */
-    public void getUserInput() {
-        this.viewInterface.clearInput();
-        this.viewInterface.displayInput(charListToString(this.userInput));
-        KeyStroke keyStroke = this.viewInterface.getUserKeyStroke();
-        if (keyStroke == null) {
-            return;
+    public void getPlayerInput() {
+
+        KeyStroke keyStroke = this.viewInterface.getPlayerKey();
+        if (keyStroke != null) {
+            this.focusManager.target().executeKey(keyStroke);
         }
-        switch (keyStroke.getKeyType()) {
-            case Escape -> {
-                this.userInput.clear();
-                this.viewInterface.clearInput();
-            }
-            case Character -> {
-                if (this.userInput.size() < 80) {
-                    this.userInput.add(keyStroke.getCharacter());
-                }
-            }
-            case Enter -> {
-                this.inputHistory.add(charListToString(this.userInput));
-                handleUserInput(charListToString(this.userInput));
-                this.userInput.clear();
-            }
-            case Backspace -> {
-                if (this.userInput.size() >= 1) {
-                    this.userInput.remove(this.userInput.size() - 1);
-                }
-                this.viewInterface.clearInput();
-            }
-            case ArrowDown -> {
-                this.userInput.clear();
-                this.viewInterface.clearInput();
-                this.userInput.addAll(stringToCharList(this.inputHistory.next()));
-            }
-            case ArrowUp -> {
-                this.userInput.clear();
-                this.viewInterface.clearInput();
-                this.userInput.addAll(stringToCharList(this.inputHistory.previous()));
-            }
-            case F3 -> this.toggleDebugScreen = true;
-        }
+
+    }
+
+    /**
+     * Focuses the board.
+     */
+    public void focusBoard() {
+        this.focusManager.focus(this.boardFrame);
+    }
+
+    /**
+     * Focuses the chat frame.
+     */
+    public void focusChatFrame() {
+        this.focusManager.focus(chatFrame);
+    }
+
+    /**
+     * Toggles the display of debug statistics.
+     */
+    public void toggleDebugScreen() {
+        this.toggleDebugScreen = true;
     }
 
     /**
@@ -215,33 +247,6 @@ public class GameController {
         } else {
             executeCommand(userCommand);
         }
-    }
-
-    /**
-     * Converts a {@link List} of {@link Character} to a {@link String}.
-     *
-     * @param list of {@link Character}
-     * @return string output
-     */
-    private String charListToString(List<Character> list) {
-        if (list.size() == 0) {
-            return "";
-        }
-        return list.toString().substring(1, 3 * list.size() - 1).replaceAll(", ", "");
-    }
-
-    /**
-     * Converts a {@link String} to a {@link List} of {@link Character}.
-     *
-     * @param string input
-     * @return {@link List} of {@link Character}
-     */
-    private List<Character> stringToCharList(String string) {
-        List<Character> list = new ArrayList<>();
-        for (char c : string.toCharArray()) {
-            list.add(c);
-        }
-        return list;
     }
 
     private boolean executeCommand(Command command) {
@@ -343,7 +348,7 @@ public class GameController {
      * @param row    An integer representing destination row.
      * @return A boolean showing if the unit was successfully moved.
      */
-    private boolean moveUnit(int column, int row) {
+    public boolean moveUnit(int column, int row) {
         if (player1SelectedUnit == null) {
             return false;
         }
@@ -485,7 +490,8 @@ public class GameController {
      * @param row    An integer representing the row of location to be attacked.
      * @return A boolean showing if the unit successfully attacked the square on the board.
      */
-    private boolean attackUnit(int column, int row) {
+    public boolean attackUnit(int column, int row) {
+        // TODO: Fix for more than one player
         if (player1SelectedUnit == null) {
             return false;
         }
@@ -535,19 +541,7 @@ public class GameController {
     private boolean executeSelect(Select selectCommand) {
         switch (selectCommand.validateArguments()) {
             case NOARGS -> { // with no arguments, the currently selected unit is deselected
-                if(player1SelectedUnit == null) {
-                    Command command = CommandList.fromAlias(selectCommand.defaultAlias());
-                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.name() + " - " + command.description() + " Usages:", Type.INFO));
-                    List<String> usages = new ArrayList<>(command.usages());
-                    for (String usage : usages) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                            command.defaultAlias() + " " + usage, Type.INFO));
-                    }
-                    viewInterface.displayConsoleLog();
-                    return true;
-                }
-                player1SelectedUnit = null;
+                this.deselectUnit();
                 UserLog.add(
                     new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
                 viewInterface.displayConsoleLog();
@@ -587,31 +581,14 @@ public class GameController {
     }
 
     /**
-     * Selects visible unit at row and column on board. If row or column out of bounds select will
-     * fail.
-     *
-     * @param column An integer representing the column for a unit to be selected.
-     * @param row    An integer representing the row for a unit to be selected.
-     * @return A boolean showing if unit was successfully selected.
-     */
-    private boolean selectUnit(int column, int row) {
-        if (checkBounds(row, column)) {
-            Unit selection = board.getUnit(row, column);
-            if(selection != null) {
-                player1SelectedUnit = selection;
-                player1SelectedUnit.select();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Selects unit on board based on ID. If no such unit select will fail.
      * @param ID An integer representing the id of the unit to select.
      * @return A boolean show if unit was successfully selected.
      */
     private boolean selectUnit(int ID) {
+        if (player1SelectedUnit != null) {
+            this.deselectUnit();
+        }
         Unit selection = board.getUnit(ID);
         if(selection != null) {
             player1SelectedUnit = selection;
@@ -686,6 +663,35 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    /**
+     * Selects visible unit at row and column on board. If row or column out of bounds select will
+     * fail.
+     *
+     * @param column An integer representing the column for a unit to be selected.
+     * @param row    An integer representing the row for a unit to be selected.
+     * @return A boolean showing if unit was successfully selected.
+     */
+    public boolean selectUnit(int column, int row) {
+        if (player1SelectedUnit != null) {
+            this.deselectUnit();
+        }
+        if (checkBounds(row, column)) {
+            player1SelectedUnit = board.getUnit(row, column);
+            if (player1SelectedUnit != null) {
+                player1SelectedUnit.select();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void deselectUnit() {
+        if (player1SelectedUnit != null) {
+            player1SelectedUnit.deselect();
+        }
+        player1SelectedUnit = null;
     }
 
     /**

@@ -5,19 +5,27 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.Node;
+import com.brosintime.rts.Model.Player;
+import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.Units.Civilian;
-import com.brosintime.rts.Units.Unit.Team;
 import com.googlecode.lanterna.TextColor.ANSI;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class CommandLineRendererTests {
+public class TerminalRendererTests {
+
+    @BeforeEach
+    void initAll() {
+    }
 
     @Test
     @DisplayName("The cell put at a point should equal the cell retrieved afterward from the same point.")
     void withNewCellAInXY_gettingCellBInSameXY_cellAEqualsCellB() {
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 2);
-        Cell cellA = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'E');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 2, player);
+        Cell cellA = new TerminalCell(ANSI.RED, ANSI.BLACK, 'E');
         renderer.putCell(cellA, 0, 0);
         renderer.flush();
         Cell cellB = renderer.getCell(0, 0);
@@ -27,42 +35,48 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Retrieving the renderer width should match the width we created it with.")
     void withNewCommandLineRenderer_gettingWidthEqualsInitialWidth() {
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 2);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 2, player);
         assertEquals(1, renderer.width(), "Current width does not match initial set width");
     }
 
     @Test
     @DisplayName("Retrieving the renderer height should match the height we created it with.")
     void withNewCommandLineRenderer_gettingHeightEqualsInitialHeight() {
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 2);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 2, player);
         assertEquals(2, renderer.height(), "Current height does not match initial set height");
     }
 
     @Test
     @DisplayName("The renderer width should equal one after creating it with negative width.")
     void withNewCommandLineRenderer_settingNegativeWidth_gettingWidthEqualsOne() {
-        CommandLineRenderer renderer = new CommandLineRenderer(-1, 2);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(-1, 2, player);
         assertEquals(1, renderer.width(), "Current width does not equal 1");
     }
 
     @Test
     @DisplayName("The renderer height should equal one after creating it with negative height.")
     void withNewCommandLineRenderer_settingNegativeHeight_gettingHeightEqualsOne() {
-        CommandLineRenderer renderer = new CommandLineRenderer(1, -2);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, -2, player);
         assertEquals(1, renderer.height(), "Current height does not equal 1");
     }
 
     @Test
     @DisplayName("The renderer width should equal one after creating it with zero width.")
     void withNewCommandLineRenderer_settingZeroWidth_gettingWidthEqualsOne() {
-        CommandLineRenderer renderer = new CommandLineRenderer(0, 2);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(0, 2, player);
         assertEquals(1, renderer.width(), "Current width does not equal 1");
     }
 
     @Test
     @DisplayName("The renderer height should equal one after creating it with zero height.")
     void withNewCommandLineRenderer_settingZeroHeight_gettingHeightEqualsOne() {
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 0);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 0, player);
         assertEquals(1, renderer.height(), "Current board height does not equal 1");
     }
 
@@ -74,9 +88,10 @@ public class CommandLineRendererTests {
         ... +     = ... C = B
         ...         ...
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 1);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 1, player);
         Board board = new Board(1, 1);
-        Civilian civilian = new Civilian(Team.RED, 0);
+        Civilian civilian = new Civilian(Player.Team.RED, 0);
         board.board[0][0].addUnit(civilian);
         renderer.putBoard(board, 0, 0);
         renderer.flush();
@@ -92,9 +107,10 @@ public class CommandLineRendererTests {
         ... + 3x3 = ... C = X
         ...     X   ..C
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 2);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 2, player);
         Board board = new Board(2, 2);
-        Civilian civilian = new Civilian(Team.RED, 0);
+        Civilian civilian = new Civilian(Player.Team.RED, 0);
         board.board[1][1].addUnit(civilian);
         renderer.putBoard(board, 0, 0);
         renderer.flush();
@@ -105,8 +121,9 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Putting a cell out of bounds in negative x direction should replace the screen cell at the first column.")
     void withCellAInFirstColumn_puttingCellBInNegativeX_cellInFirstColumnEqualsB() {
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 2);
-        Cell cellB = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'E');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 2, player);
+        Cell cellB = new TerminalCell(ANSI.RED, ANSI.BLACK, 'E');
         renderer.putCell(cellB, -1, 0);
         renderer.flush();
         assertEquals(cellB, renderer.getCell(0, 0), "Cell B not found in first column (0, 0)");
@@ -118,8 +135,9 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Putting a cell out of bounds in positive x direction should replace the screen cell at the last column.")
     void withCellAInLastColumn_puttingCellBInXGreaterThanRendererWidth_cellInLastColumnEqualsB() {
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 2);
-        Cell cellB = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'E');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 2, player);
+        Cell cellB = new TerminalCell(ANSI.RED, ANSI.BLACK, 'E');
         renderer.putCell(cellB, 3, 0);
         renderer.flush();
         assertEquals(cellB, renderer.getCell(1, 0), "cellB not found in last column (1, 0)");
@@ -131,8 +149,9 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Putting a cell out of bounds in negative y direction should replace the screen cell at the first row.")
     void withCellAInFirstRow_puttingCellBInNegativeY_cellInFirstRowEqualsB() {
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 2);
-        Cell cellB = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'E');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 2, player);
+        Cell cellB = new TerminalCell(ANSI.RED, ANSI.BLACK, 'E');
         renderer.putCell(cellB, 0, -1);
         renderer.flush();
         assertEquals(cellB, renderer.getCell(0, 0), "cell B not found in first row (0, 0)");
@@ -144,8 +163,9 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Putting a cell out of bounds in positive y direction should replace the screen cell at the last row.")
     void withCellAInLastRow_puttingCellBInYGreaterThanRendererHeight_cellInLastRowEqualsB() {
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 2);
-        Cell cellB = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'E');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 2, player);
+        Cell cellB = new TerminalCell(ANSI.RED, ANSI.BLACK, 'E');
         renderer.putCell(cellB, 0, 3);
         renderer.flush();
         assertEquals(cellB, renderer.getCell(0, 1), "Cell B not found in last row (0, 1)");
@@ -164,8 +184,9 @@ public class CommandLineRendererTests {
         E   E      OOO      EOOOE
         EEEEE               EEEEE
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(5, 5);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(5, 5, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangleOutline(outline, from, to);
@@ -190,8 +211,9 @@ public class CommandLineRendererTests {
                    OOO       OOO
 
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(5, 5);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(5, 5, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangleOutline(outline, from, to);
@@ -209,8 +231,9 @@ public class CommandLineRendererTests {
          EEE       OOO       OOO
 
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(5, 5);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(5, 5, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangleOutline(outline, from, to);
@@ -235,8 +258,9 @@ public class CommandLineRendererTests {
         EEEEE               EEEEE
         EEEEE               EEEEE
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 1);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 1, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
         Node from = new Node(0, 0);
         Node to = new Node(0, 0);
         renderer.drawRectangleOutline(outline, from, to);
@@ -255,8 +279,9 @@ public class CommandLineRendererTests {
         .....     O   O     .O...
         .....     OOOOO     .O...
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(3, 3);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(3, 3, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangleOutline(outline, from, to);
@@ -276,9 +301,10 @@ public class CommandLineRendererTests {
         .   .      OOO      .OOO.
         .....               .....
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(5, 5);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
-        Cell fill = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'F');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(5, 5, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
+        Cell fill = new TerminalCell(ANSI.RED, ANSI.BLACK, 'F');
         Cell blank = Cell.blank();
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
@@ -304,9 +330,10 @@ public class CommandLineRendererTests {
         E   E     O...O     O...O
         EEEEE     OOOOO     OOOOO
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(5, 5);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
-        Cell fill = new CommandLineCell(ANSI.RED, ANSI.BLACK, '.');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(5, 5, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
+        Cell fill = new TerminalCell(ANSI.RED, ANSI.BLACK, '.');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangle(outline, fill, from, to);
@@ -331,9 +358,10 @@ public class CommandLineRendererTests {
          EEE      O...O     O...O
                   OOOOO     OOOOO
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(5, 5);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
-        Cell fill = new CommandLineCell(ANSI.RED, ANSI.BLACK, '.');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(5, 5, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
+        Cell fill = new TerminalCell(ANSI.RED, ANSI.BLACK, '.');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangle(outline, fill, from, to);
@@ -351,9 +379,10 @@ public class CommandLineRendererTests {
         EEEEE               EEEEE
         EEEEE               EEEEE
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 1);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
-        Cell fill = new CommandLineCell(ANSI.RED, ANSI.BLACK, '.');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 1, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
+        Cell fill = new TerminalCell(ANSI.RED, ANSI.BLACK, '.');
         Node from = new Node(0, 0);
         Node to = new Node(0, 0);
         renderer.drawRectangle(outline, fill, from, to);
@@ -372,9 +401,10 @@ public class CommandLineRendererTests {
         .....               .....
         .....               .....
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 2);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
-        Cell fill = new CommandLineCell(ANSI.RED, ANSI.BLACK, '.');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 2, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
+        Cell fill = new TerminalCell(ANSI.RED, ANSI.BLACK, '.');
         Node from = new Node(0, 0);
         Node to = new Node(2, 2);
         renderer.drawRectangle(outline, fill, from, to);
@@ -396,9 +426,10 @@ public class CommandLineRendererTests {
         .....     O'''O     .O'''
         .....     OOOOO     .O'''
          */
-        CommandLineRenderer renderer = new CommandLineRenderer(3, 3);
-        Cell outline = new CommandLineCell(ANSI.RED, ANSI.BLACK, 'O');
-        Cell fill = new CommandLineCell(ANSI.RED, ANSI.BLACK, '.');
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(3, 3, player);
+        Cell outline = new TerminalCell(ANSI.RED, ANSI.BLACK, 'O');
+        Cell fill = new TerminalCell(ANSI.RED, ANSI.BLACK, '.');
         Node from = new Node(1, 1);
         Node to = new Node(4, 4);
         renderer.drawRectangle(outline, fill, from, to);
@@ -411,7 +442,8 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Drawing a string should put the first character in the starting location on the screen.")
     void withExistingCells_puttingAString_cellInStartingLocationMatchesFirstCharacterInString() {
-        CommandLineRenderer renderer = new CommandLineRenderer(1, 1);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(1, 1, player);
         renderer.putString("H", ANSI.RED, ANSI.BLACK, 0, 0);
         renderer.flush();
         assertEquals('H', renderer.getCell(0, 0).character(),
@@ -421,7 +453,8 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("After putting a string to the screen, retrieving the screen cell from the position the last character in the string is at should match the last board cell.")
     void withStringPut_gettingCellFromStartingLocationPlusStringLength_cellMatchesLastCharacterInString() {
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 1);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 1, player);
         renderer.putString("Hi", ANSI.RED, ANSI.BLACK, 0, 0);
         renderer.flush();
         assertEquals('i', renderer.getCell(1, 0).character(),
@@ -431,7 +464,8 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Drawing a string that extends out-of-bounds of screen should be cropped at the screen edge.")
     void withStringExtendingPastScreenBounds_gettingLastCellInColumn_cellDoesNotMatchLastCharacterInString() {
-        CommandLineRenderer renderer = new CommandLineRenderer(2, 1);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(2, 1, player);
         renderer.putString("Hello", ANSI.RED, ANSI.BLACK, 0, 0);
         renderer.flush();
         assertEquals('e', renderer.getCell(1, 0).character(),
@@ -441,7 +475,8 @@ public class CommandLineRendererTests {
     @Test
     @DisplayName("Drawing a string at out-of-bounds starting position should put the first character within screen bounds.")
     void withStringPutOutOfBounds_gettingCellAtEdgeOfScreen_cellMatchesFirstCharacterInString() {
-        CommandLineRenderer renderer = new CommandLineRenderer(3, 3);
+        Player player = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        TerminalRenderer renderer = new TerminalRenderer(3, 3, player);
         /*
         X..
         ...

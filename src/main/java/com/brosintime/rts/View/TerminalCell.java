@@ -4,14 +4,16 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
 
 /**
- * The CommandLineCell class is the object used
+ * The {@code TerminalCell} class represents a cell used to populate the {@link TerminalRenderer}
+ * screens. Each cell is represented by a single character, its color, and a background (or cell)
+ * color.
  *
- * @param foregroundColor
- * @param backgroundColor
- * @param character
+ * @param foregroundColor the color of the character
+ * @param backgroundColor the color of the background
+ * @param character       the character representation
  */
-public record CommandLineCell(TextColor foregroundColor, TextColor backgroundColor,
-                              char character) implements Cell {
+public record TerminalCell(TextColor foregroundColor, TextColor backgroundColor,
+                           char character) implements Cell {
 
     @Override
     public boolean isBlank() {
@@ -37,7 +39,7 @@ public record CommandLineCell(TextColor foregroundColor, TextColor backgroundCol
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CommandLineCell that = (CommandLineCell) o;
+        TerminalCell that = (TerminalCell) o;
         return character == that.character && foregroundColor.equals(that.foregroundColor)
             && backgroundColor.equals(that.backgroundColor);
     }

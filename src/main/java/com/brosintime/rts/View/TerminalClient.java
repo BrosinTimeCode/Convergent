@@ -5,47 +5,55 @@ import com.brosintime.rts.Log.UserLogItem;
 import com.brosintime.rts.Log.UserLogItem.Type;
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.Node;
+import com.brosintime.rts.Model.Player;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextColor.ANSI;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import java.util.Map;
 
-public class CommandLineInterface implements GameViewInterface {
+public class TerminalClient implements GameView {
 
     private final Board board;
-    private int logHeight;
+    private final int logHeight;
     private final Node boardPosition;
+    private final Node controlsPosition;
     private final Node logPosition;
     private final Node inputPosition;
     private final Node borderFrom;
     private final Node borderTo;
     private final Node debugInfoPosition;
-    private final CommandLineRenderer renderer;
+    private final TerminalRenderer renderer;
+    public final StringBuilder controls;
 
-    public CommandLineInterface(Board board) {
+    public TerminalClient(Player player, Board board) {
 
         this.board = board;
         this.logHeight = 10;
         this.boardPosition = new Node(4, 5);
-        this.logPosition = new Node(board.height() + 6, 2);
+        this.controlsPosition = new Node(board.height() + 6, 2);
+        this.logPosition = new Node(controlsPosition.row() + 3, 2);
         this.inputPosition = new Node(logPosition.row() + logHeight + 1, logPosition.column());
         this.borderFrom = new Node(boardPosition.row() - 1, boardPosition.column() - 1);
         this.borderTo = new Node(borderFrom.row() + board.height() + 2,
             borderFrom.column() + board.width() * 2 + 1);
         this.debugInfoPosition = new Node(inputPosition.row() + 2, 0);
+        this.controls = new StringBuilder();
 
-        this.renderer = new CommandLineRenderer(this.inputPosition.column() + 83,
-            this.debugInfoPosition.row() + 1);
+        this.renderer = new TerminalRenderer(
+            this.inputPosition.column() + 83,
+            this.debugInfoPosition.row() + 1,
+            player
+        );
 
     }
 
+    @Override
     public void displayBoard() {
         this.renderer.putBoard(this.board, this.boardPosition.column(), this.boardPosition.row());
 
         this.renderer.drawRectangleOutline(
-            new CommandLineCell(ANSI.BLACK, ANSI.BLACK_BRIGHT, ' '),
+            new TerminalCell(ANSI.BLACK, ANSI.BLACK_BRIGHT, ' '),
             this.borderFrom, this.borderTo
         );
 
@@ -64,21 +72,13 @@ public class CommandLineInterface implements GameViewInterface {
             for (int digit = 1; digit <= digits; digit++) {
                 char c = (char) (xCoordinate / Math.pow(10, digit - 1) % 10 + '0');
                 this.renderer.putCell(
-                    new CommandLineCell(ANSI.DEFAULT, ANSI.DEFAULT, c),
+                    new TerminalCell(ANSI.DEFAULT, ANSI.DEFAULT, c),
                     boardPosition.column() + xCoordinate * 2,
                     boardPosition.row() - digit - 1
                 );
             }
         }
 
-    }
-
-    @Override
-    public void displayHelp() {
-        UserLogItem log = new UserLogItem(TextColor.ANSI.YELLOW,
-            "Type \"m\" to move a unit or \"h\" for a list of commands.", Type.INFO);
-        UserLog.add(log);
-        displayConsoleLog();
     }
 
     @Override
@@ -90,12 +90,12 @@ public class CommandLineInterface implements GameViewInterface {
     }
 
     @Override
-    public KeyStroke getUserKeyStroke() {
+    public KeyStroke getPlayerKey() {
         try {
             return this.renderer.pollInput();
         } catch (IOException e) {
             e.printStackTrace();
-            return new KeyStroke(KeyType.Unknown);
+            return null;
         }
     }
 
@@ -131,14 +131,9 @@ public class CommandLineInterface implements GameViewInterface {
         this.renderer.blankLine(this.inputPosition.row());
     }
 
-    public void setConsoleLogHeight(int height) {
-        this.logHeight = height;
-    }
-
     @Override
     public int getConsoleLogHeight() {
         return this.logHeight;
-
     }
 
     @Override
@@ -159,5 +154,33 @@ public class CommandLineInterface implements GameViewInterface {
             ANSI.DEFAULT, ANSI.DEFAULT,
             this.debugInfoPosition.column(), this.debugInfoPosition.row()
         );
+    }
+
+    @Override
+    public void displayControls() {
+        String[] controls = this.controls.toString().split("\n");
+        int line = 0;
+        for (String str : controls) {
+            this.renderer.putString(
+                str,
+                ANSI.DEFAULT, ANSI.DEFAULT,
+                this.controlsPosition.column(), this.controlsPosition.row() + line
+            );
+            line++;
+        }
+    }
+
+    @Override
+    public void clearControls() {
+        this.renderer.blankLine(this.controlsPosition.row());
+        this.renderer.blankLine(this.controlsPosition.row() + 1);
+    }
+
+    @Override
+    public void setControlsString(String string) {
+        if (this.controls.length() > 0) {
+            this.controls.delete(0, this.controls.length());
+        }
+        this.controls.append(string);
     }
 }

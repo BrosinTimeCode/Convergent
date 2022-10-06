@@ -1,6 +1,6 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Units.BaseUnit;
+import com.brosintime.rts.Model.Player.Team;
 import java.util.Random;
 
 /**
@@ -16,10 +16,10 @@ public class TestBoard extends Board {
             case SEEDEDRANDOM -> randomBoard(15);
             case RANDOM -> randomBoard(0);
             case MONOVSMONO -> {
-                newUnit(0, 0, BaseUnit.Team.RED, "Civilian");
-                newUnit(rows - 1, columns - 1, BaseUnit.Team.BLUE, "Civilian");
+                newUnit(0, 0, Team.RED, "Civilian");
+                newUnit(rows - 1, columns - 1, Team.BLUE, "Civilian");
             }
-            case LONESURVIVOR -> newUnit(0, 0, BaseUnit.Team.RED, "Civilian");
+            case LONESURVIVOR -> newUnit(0, 0, Team.RED, "Civilian");
             case ONEVSEVERYONE -> oneVSEveryone();
             case ONEVSCHECKERBOARD -> oneVSCheckerboard();
         }
@@ -39,10 +39,10 @@ public class TestBoard extends Board {
             for (int column = 0; column < board[row].length; column++) {
                 int value = randomGenerator.nextInt(5);
                 switch (value) {
-                    case 0 -> newUnit(row, column, BaseUnit.Team.RED, "Civilian");
-                    case 1 -> newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
-                    case 3 -> newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
-                    case 4 -> newUnit(row, column, BaseUnit.Team.BLUE, "Tradesman");
+                    case 0 -> newUnit(row, column, Team.RED, "Civilian");
+                    case 1 -> newUnit(row, column, Team.RED, "Tradesman");
+                    case 3 -> newUnit(row, column, Team.BLUE, "Civilian");
+                    case 4 -> newUnit(row, column, Team.BLUE, "Tradesman");
                     default -> {
                     }
                 }
@@ -58,12 +58,12 @@ public class TestBoard extends Board {
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
                 if (row == 0 && column == 0) {
-                    newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
+                    newUnit(row, column, Team.BLUE, "Civilian");
                 }
                 int value = randomGenerator.nextInt(2);
                 switch (value) {
-                    case 0 -> newUnit(row, column, BaseUnit.Team.RED, "Civilian");
-                    case 1 -> newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
+                    case 0 -> newUnit(row, column, Team.RED, "Civilian");
+                    case 1 -> newUnit(row, column, Team.RED, "Tradesman");
                 }
             }
         }
@@ -78,13 +78,13 @@ public class TestBoard extends Board {
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
                 if (row == 0 && column == 0) {
-                    newUnit(row, column, BaseUnit.Team.BLUE, "Civilian");
+                    newUnit(row, column, Team.BLUE, "Civilian");
                 }
                 if ((row % 2 == 0 && column % 2 == 1) || (row % 2 == 1 && column % 2 == 0)) {
                     int value = randomGenerator.nextInt(2);
                     switch (value) {
-                        case 0 -> newUnit(row, column, BaseUnit.Team.RED, "Civilian");
-                        case 1 -> newUnit(row, column, BaseUnit.Team.RED, "Tradesman");
+                        case 0 -> newUnit(row, column, Team.RED, "Civilian");
+                        case 1 -> newUnit(row, column, Team.RED, "Tradesman");
                     }
                 }
             }
