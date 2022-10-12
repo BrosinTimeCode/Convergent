@@ -211,6 +211,11 @@ public class TerminalRenderer {
             .replace(x, x + 1, Character.toString(cell.character()));
     }
 
+    /**
+     * Draws the provided screen to the screen layer.
+     *
+     * @param screen the screen to draw
+     */
     public void putScreen(Drawable screen) {
         Map<Node, Cell> cells = screen.toCells();
         for (Node node : cells.keySet()) {

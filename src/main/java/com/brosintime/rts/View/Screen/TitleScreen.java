@@ -11,12 +11,23 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The title screen is the first screen the player sees. It is responsible for rendering the title
+ * of the game and launching game selection options.
+ */
 public class TitleScreen extends Screen {
 
     private final Menu menu;
     private final String title;
     private final Node titleOrigin;
 
+    /**
+     * Constructs a new title screen. If the provided controller or client is null, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param controller the game controller to interface with
+     * @param client     the game client to interface with
+     */
     public TitleScreen(GameController controller, GameView client) {
 
         if (controller == null) {
@@ -82,6 +93,10 @@ public class TitleScreen extends Screen {
         }
     }
 
+    /**
+     * Launches a new skirmish selection screen. The player is presented with options for generating
+     * a new game map and a new skirmish game is launched with the player’s selections.
+     */
     private void skirmishScreen() {
 
         Node origin = Node.relativeTo(this.origin, 17, 7);

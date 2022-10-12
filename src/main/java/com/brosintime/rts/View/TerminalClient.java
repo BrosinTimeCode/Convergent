@@ -11,6 +11,10 @@ import com.brosintime.rts.View.Screen.TitleScreen;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 
+/**
+ * A terminal client is a game client wrapper for a terminal window. It is responsible for
+ * interfacing the terminal window to the game controller.
+ */
 public class TerminalClient implements GameView {
 
     private final TerminalRenderer renderer;
@@ -22,6 +26,13 @@ public class TerminalClient implements GameView {
     private final Player player;
     private DebugScreen debugScreen;
 
+    /**
+     * Constructs a new game client wrapper for a terminal window. If the provided controller or
+     * player is null, an {@link IllegalArgumentException} is thrown.
+     *
+     * @param controller the game controller to interface with
+     * @param player     the game client to interface with
+     */
     public TerminalClient(GameController controller, Player player, int width, int height) {
 
         if (controller == null) {

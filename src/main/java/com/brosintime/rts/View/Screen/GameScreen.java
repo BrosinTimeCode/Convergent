@@ -5,10 +5,21 @@ import com.brosintime.rts.Model.Node;
 import com.brosintime.rts.View.GameView;
 import com.googlecode.lanterna.input.KeyStroke;
 
+/**
+ * The game screen is the root-level screen of all screens. This screen should only ever be closed
+ * when the game exits.
+ */
 public class GameScreen extends Screen {
 
     private final Drawable boardScreen;
 
+    /**
+     * Constructs a new game screen. If the provided controller or client is null, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param controller the game controller to interface with
+     * @param client     the game client to interface with
+     */
     public GameScreen(GameController controller, GameView client) {
         if (controller == null) {
             throw new IllegalArgumentException("This screen has no game engine");

@@ -7,6 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A menu is a list of options that can be cycled through by {@link #next()} and
+ * {@link #previous()}. The currently selected option is highlighted and can be retrieved as a
+ * string ID by {@link #getSelectedOption()}.
+ * <p>A menu is readily outfitted to a certain {@link MenuStyle} or instantiated and manually
+ * customized by setter methods.
+ */
 public class Menu extends Screen {
 
     private final Map<Integer, String> options = new HashMap<>();
@@ -34,11 +41,17 @@ public class Menu extends Screen {
 
     }
 
+    /**
+     * The orientation of the menu.
+     */
     public enum MenuOrientation {
         HORIZONTAL,
         VERTICAL
     }
 
+    /**
+     * A template to style the menu.
+     */
     public enum MenuStyle {
         DEFAULT(
             MenuOrientation.HORIZONTAL,
@@ -84,6 +97,16 @@ public class Menu extends Screen {
         }
     }
 
+    /**
+     * Constructs a new Menu with the provided style. If a custom style is desired,
+     * {@link MenuStyle#DEFAULT} should be passed and then setter methods should be used to style
+     * the menu. An {@link IllegalArgumentException} is thrown if the provided game client is null,
+     * and this origin is set to (0, 0) if the provided origin is null.
+     *
+     * @param client the game client to interface with
+     * @param origin the Node to set where to start drawing the menu
+     * @param style  the starting style of the menu
+     */
     public Menu(GameView client, Node origin, MenuStyle style) {
 
         if (client == null) {
@@ -95,6 +118,11 @@ public class Menu extends Screen {
 
     }
 
+    /**
+     * Sets the theme of the menu to the provided style.
+     *
+     * @param style the new style to set
+     */
     public void setStyle(MenuStyle style) {
         if (style == null) {
             return;
@@ -108,6 +136,16 @@ public class Menu extends Screen {
         this.padding = style.padding;
     }
 
+    /**
+     * Sets the colors of the menu to the provided colors. If any arguments are null, the respective
+     * color is not changed.
+     *
+     * @param defaultForegroundColor  the color of the menu text when not selected; can be null
+     * @param defaultBackgroundColor  the color underneath the menu text when not selected; can be
+     *                                null
+     * @param selectedForegroundColor the color of the menu text when selected; can be null
+     * @param selectedBackgroundColor the color underneath the menu text when selected; can be null
+     */
     public void setColors(
         @Nullable ColorCode defaultForegroundColor,
         @Nullable ColorCode defaultBackgroundColor,
@@ -127,42 +165,81 @@ public class Menu extends Screen {
         }
     }
 
+    /**
+     * Sets the padding to the provided padding amount. The padding is the amount of blank rows or
+     * columns separating menu options.
+     *
+     * @param padding the new value for padding
+     */
     public void setPadding(int padding) {
         this.padding = padding;
     }
 
+    /**
+     * Sets the orientation to the provided orientation. The orientation determines if the menu
+     * should be rendered vertically or horizontally.
+     *
+     * @param orientation the new orientation
+     */
     public void setOrientation(MenuOrientation orientation) {
         if (orientation != null) {
             this.orientation = orientation;
         }
     }
 
+    /**
+     * Adds an option to the menu at the end, eligible for selection.
+     *
+     * @param option the new option
+     */
     public void add(String option) {
         if (option != null) {
             this.options.put(this.options.size(), option);
         }
     }
 
+    /**
+     * Selects the next option down the list if there is one.
+     */
     public void next() {
         if (hasNext()) {
             selectedIndex++;
         }
     }
 
+    /**
+     * Determines if there is an option after the currently selected one and returns the result.
+     *
+     * @return {@code true} if there is an option after, {@code false} if the last option is
+     * selected
+     */
     public boolean hasNext() {
         return this.selectedIndex < this.options.size() - 1;
     }
 
+    /**
+     * Selects the previous option up the list if there is one.
+     */
     public void previous() {
         if (hasPrevious()) {
             selectedIndex--;
         }
     }
 
+    /**
+     * Determines if there is an option before the currently selected one and returns the result.
+     *
+     * @return {@code true} if there is an option before, {@code false} if the first option is
+     * selected
+     */
     public boolean hasPrevious() {
         return this.selectedIndex > 0;
     }
 
+    /**
+     * Returns the string ID of the currently selected option.
+     * @return the selected option’s string ID
+     */
     public String getSelectedOption() {
         return this.options.get(this.selectedIndex);
     }

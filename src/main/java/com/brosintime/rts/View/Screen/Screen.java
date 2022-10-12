@@ -10,6 +10,19 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * This class is the default implementation of {@link Drawable} and {@link Focusable}. Classes that
+ * extend this are given capabilities from both interfaces but are only asked to set behavior for
+ * the following methods:
+ * <ul>
+ *     <li>{@link #onKeyPress} - process player keys that are sent to this when focused</li>
+ *     <li>{@link #onFocus()} - behavior when this receives new focus</li>
+ *     <li>{@link #offFocus()} - behavior when this is taken off focus</li>
+ *     <li>{@link #onRender()} - behavior that occurs immediately before rendering</li>
+ * </ul>
+ * <p>Extending classes should also always accurately set {@link #origin}, {@link #width}, and
+ * {@link #height} to allow {@link Drawable}’s static methods to function properly.
+ */
 public abstract class Screen implements Focusable, Drawable {
 
     protected GameController controller;
@@ -23,10 +36,18 @@ public abstract class Screen implements Focusable, Drawable {
     protected boolean visible = true;
     protected boolean justHidden = false;
 
+    /**
+     * Determines if this screen has any children and returns the result.
+     * @return {@code true} if this has children, {@code false} if not
+     */
     public boolean hasChildren() {
         return !this.children.isEmpty();
     }
 
+    /**
+     * Determines if this screen has a parent and returns the result.
+     * @return {@code true} if this has a parent, {@code false} if not
+     */
     public boolean hasParent() {
         return this.parent != null;
     }

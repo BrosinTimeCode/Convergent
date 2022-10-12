@@ -20,6 +20,15 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The chat screen keeps a log of messages sent between the player and other players or the system
+ * and is responsible for rendering them as a cell map. It also keeps a record of player input as
+ * entries the player can cycle through.
+ * <p>This class is also primarily responsible for parsing the player’s commands and sending them
+ * to the game controller.
+ * <p>By default, this screen is hidden when out of focus and unhidden when re-focused and is
+ * intended to be a child of another screen.
+ */
 public class ChatScreen extends Screen {
 
     private final PlayerInputHistory inputHistory;
@@ -28,6 +37,13 @@ public class ChatScreen extends Screen {
     private final int chatHeight;
     private final int chatWidth;
 
+    /**
+     * Constructs a new chat screen. If the provided controller or client is null, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param controller the game controller to interface with
+     * @param client     the game client to interface with
+     */
     public ChatScreen(GameController controller, GameView client, Node origin) {
         if (controller == null) {
             throw new IllegalArgumentException("This screen has no game engine");

@@ -12,77 +12,72 @@ import com.brosintime.rts.View.Screen.Focusable;
 public interface GameView {
 
     /**
-     * Displays the current state of the board.
+     * Sets the screen to the grand-most parent of the provided screen and sets focus to the
+     * provided screen. The screen is set to the ancestor instead to display the entire tree.
+     *
+     * @param screen the screen to display and focus
      */
     void setScreen(Drawable screen);
 
     /**
-     * Displays a notification to the player that the provided command is invalid.
+     * Retrieves the player’s keystrokes off the input queue and sends them to the current screen in
+     * focus.
      */
     void processPlayerKeys();
 
     /**
-     * Retrieves a player’s keystroke off the input queue.
-     *
-     * @return the player’s first key press
-     */
-    KeyStroke getPlayerKey();
-
-    /**
-     * Displays the chat history.
+     * Blanks out the player’s screen.
      */
     void clear();
 
     /**
-     * Displays the player’s current input buffer.
-     *
-     * @param input the input buffer
+     * Renders the current screen tree to the game client.
      */
     void renderScreen();
 
     /**
-     * Clears the player’s current input buffer.
+     * Launches, displays, and sets focus to the title screen.
      */
     void titleScreen();
 
     /**
-     * Retrieves the current height of the chat history box.
-     *
-     * @return the chat box height
+     * Returns the width of the game client in columns.
+     * @return the width of the client
      */
     int width();
 
     /**
-     * Flushes the display render buffer to the player’s screen.
+     * Returns the height of the game client in rows.
+     * @return the height of the client
      */
     int height();
 
     /**
-     * Blanks out the player’s screen.
+     * Returns the player that owns this game client.
+     * @return this client’s player
      */
     Player player();
 
     /**
-     * Displays a screen populated with game system statistics for debugging.
-     *
-     * @param debugInfo the map of statistics
+     * Sets focus to a new target.
+     * @param target the target to focus
      */
     void setFocus(Focusable target);
 
     /**
-     * Displays the valid player controls for the currently focused frame.
+     * Toggles rendering of the debugging info screen.
      */
     void toggleDebugScreen();
 
     /**
-     * Erases the player controls from the screen.
+     * Returns the debugging info screen’s instance.
+     * @return the debug screen
      */
     DebugScreen debugScreen();
 
     /**
-     * Sets the player controls string to the provided string.
-     *
-     * @param string the new controls to ultimately render
+     * Sets this game client’s debugging screen to the provided debug screen.
+     * @param debugScreen the new debug screen to set
      */
     void setDebugScreen(DebugScreen debugScreen);
 }

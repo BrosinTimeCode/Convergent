@@ -8,6 +8,11 @@ import com.brosintime.rts.Model.Player;
 import com.brosintime.rts.View.GameView;
 import com.googlecode.lanterna.input.KeyStroke;
 
+/**
+ * A {@link Screen} wrapper for a {@link Board}. When in focus, this screen interfaces player
+ * key-presses with the board, executing hotkey commands and moving the player’s cursor on the
+ * board.
+ */
 public class BoardScreen extends Screen {
 
     private final Board board;
@@ -16,6 +21,13 @@ public class BoardScreen extends Screen {
     private final Drawable chatScreen;
     private final Node boardOrigin;
 
+    /**
+     * Constructs a new screen wrapper for a board. If the provided controller or client is null, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param controller the game controller to interface with
+     * @param client     the game client to interface with
+     */
     public BoardScreen(GameController controller, GameView client) {
         if (controller == null) {
             throw new IllegalArgumentException("This screen has no game engine");

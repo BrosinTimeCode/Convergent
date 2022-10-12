@@ -31,7 +31,7 @@ import java.util.UUID;
 
 /**
  * The GameController class follows the controller design in the MVC design pattern. This class
- * receives input from a view controlled by a user and manipulates the board model accordingly.
+ * receives input from a view controlled by a player and manipulates the game model accordingly.
  */
 public class GameController {
 
@@ -45,6 +45,10 @@ public class GameController {
     private Board board;
     private boolean running;
 
+    /**
+     * Constructs a new controller instance. A terminal game window is automatically created with a
+     * title screen, but the game does not start until {@link #run()} is called.
+     */
     public GameController() {
 
         Player player1 = new Player(UUID.randomUUID(), "Player1", Team.RED);
@@ -66,8 +70,9 @@ public class GameController {
     }
 
     /**
-     * Runs through the main game loop. On each iteration, player keys are processed, the model is
-     * updated, and the game view is rendered.
+     * Initializes the main game loop. On each cycle, the player’s key-press pool is processed via
+     * {@link GameView#processPlayerKeys()}, then the model is manipulated by {@link #update()},
+     * which is then rendered as a frame to the game screen by {@link GameView#renderScreen()}.
      */
     public void run() {
         this.running = true;
@@ -111,8 +116,8 @@ public class GameController {
     }
 
     /**
-     * Updates the model based on processes in progress, like units firing on each other or units
-     * being trained.
+     * Calls methods that manipulate the game model, like unit movement or damage. This method is
+     * called once on each game loop cycle.
      */
     private void update() {
         entitiesUnderAttack().forEach((k, v) -> {
@@ -124,7 +129,13 @@ public class GameController {
     }
 
     /**
-     * Renders the game view frame and flushes it to the screen.
+     * Moves a player’s selected units to the provided coordinates on the board. If the coordinates
+     * are out-of-bounds or the player currently has no units selected, the appropriate message is
+     * sent to the player instead.
+     *
+     * @param player the player
+     * @param column the destination x coordinate as a positive integer
+     * @param row    the destination y coordinate as a positive integer
      */
     public void moveSelected(Player player, int column, int row) {
         Set<Unit> selected = this.selectedUnits.get(player);
@@ -143,11 +154,12 @@ public class GameController {
     }
 
     /**
-     * Interfaces with {@link GameView} by calling {@link GameView#getPlayerKey()} and processing
-     * the keystrokes. If the player submits a line, {@link #handleUserInput} is called to retrieve
-     * a command.
-     * <p>Player submissions are logged via {@link PlayerInputHistory} and accessible with the up
-     * and down arrow keys.
+     * Moves a player’s selected units to the location of the unit with the provided ID. If the unit
+     * ID is invalid or the player currently has no units selected, the appropriate message is sent
+     * to the player instead.
+     *
+     * @param player the player
+     * @param id     the ID of the destination unit as a positive integer
      */
     public void moveSelected(Player player, int id) {
         Set<Unit> selected = this.selectedUnits.get(player);
@@ -162,7 +174,14 @@ public class GameController {
     }
 
     /**
-     * Focuses the board.
+     * Executes a move from the network. By default, as a destination, only the x and y coordinates
+     * are considered, unless they are both set to -1; only which then the target ID is used
+     * instead.
+     *
+     * @param unitID   the ID of the unit to move as an integer
+     * @param targetID the ID of the destination unit as an integer
+     * @param x        the destination x coordinate as an integer
+     * @param y        the destination y coordinate as an integer
      */
     public void receiveMove(int unitID, int targetID, int x, int y) {
         if (x == -1 && y == -1) {
@@ -173,7 +192,13 @@ public class GameController {
     }
 
     /**
-     * Focuses the chat frame.
+     * Initiates all the player’s selected units to attack a unit located on the board with the
+     * provided coordinates. If the coordinates are out-of-bounds or the player currently has no
+     * units selected, the appropriate message is sent to the player instead.
+     *
+     * @param player the player
+     * @param column the target’s x coordinate as a positive integer
+     * @param row    the target’s y coordinate as a positive integer
      */
     public void attackUnit(Player player, int column, int row) {
         if (this.selectedUnits.get(player).isEmpty()) {
@@ -188,7 +213,12 @@ public class GameController {
     }
 
     /**
-     * Toggles the display of debug statistics.
+     * Initiates all the player’s selected units to attack a unit with the provided ID. If the unit
+     * ID is invalid or the player currently has no units selected, the appropriate message is sent
+     * to the player instead.
+     *
+     * @param player the player
+     * @param id     the ID of the target unit as a positive integer
      */
     public void attackUnit(Player player, int id) {
         if (this.selectedUnits.get(player).isEmpty()) {
@@ -204,16 +234,24 @@ public class GameController {
     }
 
     /**
-     * Processes player input and retrieves a {@link Command} if found. If a command is not found,
-     * an invalid command error is displayed.
+     * Eliminates the provided dead unit and removes the provided attacker from entities currently
+     * under attack.
      *
-     * @param input by player
+     * @param attacker the unit attacking the dying unit
+     * @param deadUnit the dying unit to be eliminated
      */
     public void killUnit(Unit attacker, Unit deadUnit) {
         board.killUnit(deadUnit.id());
         entitiesUnderAttack.remove(attacker);
     }
 
+    /**
+     * Adds a unit with the provided ID to the player’s pool of currently selected units. If the ID
+     * is invalid, the appropriate message is sent to the player instead.
+     *
+     * @param player the player
+     * @param ID     the ID of the unit as a positive integer
+     */
     public void selectUnit(Player player, int ID) {
         Unit selection = board.getUnit(ID);
         if (selection != null) {
@@ -223,11 +261,13 @@ public class GameController {
     }
 
     /**
-     * Executes passed in move command. Depending on the state of the arguments it will return false
-     * if move command did not execute successfully.
+     * Adds a unit located on the provided coordinates to the player’s pool of currently selected
+     * units. If the coordinates are out of bounds, the appropriate message is sent to the player
+     * instead.
      *
-     * @param moveCommand A move command to be executed.
-     * @return A boolean showing if the move command executed successfully.
+     * @param player the player
+     * @param column the x coordinate location of the unit as a positive integer
+     * @param row    the y coordinate location of the unit as a positive integer
      */
     public void selectUnit(Player player, int column, int row) {
         if (this.checkBounds(row, column)) {
@@ -243,12 +283,11 @@ public class GameController {
     }
 
     /**
-     * Moves currently selected unit to row and column in the board. If currently selected unit is
-     * attacking it will no longer be attacking.
+     * Removes a unit with the provided ID from the player’s pool of currently selected units. If
+     * the unit ID is invalid, the appropriate message is sent to the player instead.
      *
-     * @param column An integer representing destination column.
-     * @param row    An integer representing destination row.
-     * @return A boolean showing if the unit was successfully moved.
+     * @param player the player
+     * @param ID     the unit’s ID to be deselected as a positive integer
      */
     public void deselectUnit(Player player, int ID) {
         Unit selection = board.getUnit(ID);
@@ -259,11 +298,13 @@ public class GameController {
     }
 
     /**
-     * Moves currently selected unit to the unit with the passed in id. If currently selected unit
-     * is attacking it will no longer be attacking.
+     * Removes a unit located on the provided coordinates from the player’s pool of currently
+     * selected units. If the coordinates are out-of-bounds, the appropriate message is sent to the
+     * player instead.
      *
-     * @param id An integer representing the id of the unit currently selected unit is moving to.
-     * @return A boolean showing if the unit was successfully moved.
+     * @param player the player
+     * @param column the x coordinate location of the deselected unit as a positive integer
+     * @param row    the y coordinate location of the deselected unit as a positive integer
      */
     public void deselectUnit(Player player, int column, int row) {
         if (this.checkBounds(row, column)) {
@@ -276,12 +317,9 @@ public class GameController {
     }
 
     /**
-     * Executes a move from the network.
+     * Clears the player’s pool of currently selected units.
      *
-     * @param unitID   an integer representing the ID of the unit to be moved.
-     * @param targetID an integer representing the ID of the unit move to.
-     * @param x        an integer representing the x coordinate to move to.
-     * @param y        an integer representing the y coordinate to move to.
+     * @param player the player
      */
     public void deselectAll(Player player) {
         for (Unit unit : this.selectedUnits.get(player)) {
@@ -291,22 +329,22 @@ public class GameController {
     }
 
     /**
-     * Executes passed in attack command. Depending on the state of the arguments it will return
-     * false if move command did not execute successfully.
+     * Checks the boundaries of the board and determines if the provided x and y coordinates are
+     * within bounds.
      *
-     * @param attackCommand An attack command to be executed.
-     * @return A boolean showing if the attack command executed successfully.
+     * @param row    the x coordinate to check as an integer
+     * @param column the y coordinate to check as an integer
+     * @return {@code true} if both coordinates are in-bounds, or {@code false} if at least one is
+     * not
      */
     private boolean checkBounds(int row, int column) {
         return !(row > board.height() - 1 || row < 0 || column > board.width() - 1 || column < 0);
     }
 
     /**
-     * Attacks unit at row and column on board with currently selected unit.
+     * Retrieves the map representing entities currently under attack.
      *
-     * @param column An integer representing the column of location to be attacked.
-     * @param row    An integer representing the row of location to be attacked.
-     * @return A boolean showing if the unit successfully attacked the square on the board.
+     * @return entities under attack as a {@link Map}
      */
     public Map<Unit, Unit> entitiesUnderAttack() {
         return this.entitiesUnderAttack;
@@ -314,10 +352,9 @@ public class GameController {
 
 
     /**
-     * Attacks a unit with a specific id with currently selected unit.
+     * Sends a message to the network. If client is null, nothing happens.
      *
-     * @param id An integer representing the id identifying a unit on the board.
-     * @return A boolean showing if the unit successfully attacked the unit.
+     * @param message the network message to be sent
      */
     private void sendMessage(NetworkMessage message) {
         if (networkClient != null) {
@@ -326,26 +363,25 @@ public class GameController {
     }
 
     /**
-     * Kills deadUnit and removes attacker from entities under attack.
+     * Terminates the game loop after the current cycle finishes.
+     */
     public void exit() {
         this.running = false;
     }
 
+    /**
+     * Retrieves the current game board.
      *
-     * @param attacker BaseUnit that is attacking deadUnit.
-     * @param deadUnit BaseUnit to be killed.
+     * @return the board
      */
     public Board board() {
         return this.board;
     }
 
     /**
-     * Executes passed in select command. Depending on the state of the arguments it will return
-     * false if select command did not execute successfully. If no arguments are passed currently
-     * selected unit is deselected.
+     * Launches a new skirmish game against a CPU with the provided board type.
      *
-     * @param selectCommand An attack command to be executed.
-     * @return A boolean showing if the select command executed successfully.
+     * @param boardType the board type to be generated
      */
     public void newSkirmish(BoardType boardType) {
         if (boardType == null) {
@@ -363,9 +399,12 @@ public class GameController {
     }
 
     /**
-     * Selects unit on board based on ID. If no such unit select will fail.
-     * @param ID An integer representing the id of the unit to select.
-     * @return A boolean show if unit was successfully selected.
+     * Registers a player’s chat log with the game engine. After a chat log is registered, system
+     * messages can be sent to specific or all players. The player is also registered to the game if
+     * it’s not already.
+     *
+     * @param player  the player
+     * @param chatLog the player’s chat log
      */
     public void setChatLog(Player player, ChatLog chatLog) {
         if (player == null) {
@@ -379,14 +418,10 @@ public class GameController {
     }
 
     /**
-     * Executes passed in {@link Help} command. Returns true only if command executes successfully.
-     * <p>If no arguments are provided, the console displays a paginated list of command aliases
-     * registered in {@link CommandList}. If a valid command alias is provided as the sole argument,
-     * help documentation for the appropriate command is displayed. Otherwise, an error is displayed
-     * in the console and this method returns false.
+     * Executes an attack command from a player after it has been parsed by the {@link ChatScreen}.
      *
-     * @param helpCommand instance of {@link Help}
-     * @return true if provided valid arguments, otherwise false
+     * @param player  the commanding player
+     * @param command the attack command
      */
     public void handleAttack(Player player, Attack command) {
         if (player == null) {
@@ -426,12 +461,10 @@ public class GameController {
     }
 
     /**
-     * Selects visible unit at row and column on board. If row or column out of bounds select will
-     * fail.
+     * Executes a select command from a player after it has been parsed by the {@link ChatScreen}.
      *
-     * @param column An integer representing the column for a unit to be selected.
-     * @param row    An integer representing the row for a unit to be selected.
-     * @return A boolean showing if unit was successfully selected.
+     * @param player  the commanding player
+     * @param command the select command
      */
     public void handleSelect(Player player, Select command) {
         if (player == null) {
@@ -450,16 +483,10 @@ public class GameController {
     }
 
     /**
-     * Checks if row and column are within the bounds of the board.
+     * Executes a move command from a player after it has been parsed by the {@link ChatScreen}.
      *
-     * @param row    An integer representing the row to check bounds for.
-     * @param column An integer representing the row to check bounds for.
-     * @return Returns true if the row and column are in bounds.
-     */
-    /**
-     * Sends a message to the network. If client is null does nothing.
-     *
-     * @param message Message to send over the network.
+     * @param player  the commanding player
+     * @param command the move command
      */
     public void handleMove(Player player, Move command) {
         if (player == null) {
