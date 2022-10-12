@@ -1,7 +1,9 @@
 package com.brosintime.rts.View;
 
-import com.googlecode.lanterna.input.KeyStroke;
-import java.util.Map;
+import com.brosintime.rts.Model.Player;
+import com.brosintime.rts.View.Screen.DebugScreen;
+import com.brosintime.rts.View.Screen.Drawable;
+import com.brosintime.rts.View.Screen.Focusable;
 
 /**
  * The GameViewInterface interface follows the view design in the MVC design pattern. This class
@@ -12,12 +14,12 @@ public interface GameView {
     /**
      * Displays the current state of the board.
      */
-    void displayBoard();
+    void setScreen(Drawable screen);
 
     /**
      * Displays a notification to the player that the provided command is invalid.
      */
-    void displayInvalidCommand();
+    void processPlayerKeys();
 
     /**
      * Retrieves a player’s keystroke off the input queue.
@@ -29,58 +31,58 @@ public interface GameView {
     /**
      * Displays the chat history.
      */
-    void displayConsoleLog();
+    void clear();
 
     /**
      * Displays the player’s current input buffer.
      *
      * @param input the input buffer
      */
-    void displayInput(String input);
+    void renderScreen();
 
     /**
      * Clears the player’s current input buffer.
      */
-    void clearInput();
+    void titleScreen();
 
     /**
      * Retrieves the current height of the chat history box.
      *
      * @return the chat box height
      */
-    int getConsoleLogHeight();
+    int width();
 
     /**
      * Flushes the display render buffer to the player’s screen.
      */
-    void flush();
+    int height();
 
     /**
      * Blanks out the player’s screen.
      */
-    void clear();
+    Player player();
 
     /**
      * Displays a screen populated with game system statistics for debugging.
      *
      * @param debugInfo the map of statistics
      */
-    void renderDebugScreen(Map<String, Integer> debugInfo);
+    void setFocus(Focusable target);
 
     /**
      * Displays the valid player controls for the currently focused frame.
      */
-    void displayControls();
+    void toggleDebugScreen();
 
     /**
      * Erases the player controls from the screen.
      */
-    void clearControls();
+    DebugScreen debugScreen();
 
     /**
      * Sets the player controls string to the provided string.
      *
      * @param string the new controls to ultimately render
      */
-    void setControlsString(String string);
+    void setDebugScreen(DebugScreen debugScreen);
 }

@@ -1,9 +1,9 @@
 package com.brosintime.rts.Model;
 
 import com.brosintime.rts.Model.Player.Team;
-import com.brosintime.rts.Units.BaseUnit;
-import com.brosintime.rts.Units.Civilian;
-import com.brosintime.rts.Units.Tradesman;
+import com.brosintime.rts.Model.Units.BaseUnit;
+import com.brosintime.rts.Model.Units.Civilian;
+import com.brosintime.rts.Model.Units.Tradesman;
 
 /**
  * The UnitFactory class follows the factory design pattern and creates units with unique ids.

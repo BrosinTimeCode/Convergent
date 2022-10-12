@@ -1,9 +1,10 @@
 package com.brosintime.rts.Model;
 
 import com.brosintime.rts.Model.Player.Team;
-import com.brosintime.rts.Units.Unit;
+import com.brosintime.rts.Model.Units.Unit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The Board class follows the model design in the MVC design pattern. This class receives
@@ -36,12 +37,24 @@ public class Board {
      * @param player the player to own the new cursor
      */
     public void addPlayer(Player player) {
+        if (player == null) {
+            return;
+        }
         BoardCursor cursor = BoardCursor.fromPlayer(player);
         if (!this.cursors.containsKey(player)) {
             cursor.setColumn(0);
             cursor.setRow(0);
             this.cursors.put(player, cursor);
             this.board[0][0].addCursor(cursor);
+        }
+    }
+
+    public void addPlayers(Set<Player> players) {
+        if (players == null) {
+            return;
+        }
+        for (Player player : players) {
+            this.addPlayer(player);
         }
     }
 

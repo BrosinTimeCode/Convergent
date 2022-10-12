@@ -1,6 +1,5 @@
 package com.brosintime.rts.Server;
 
-import com.brosintime.rts.Controller.GameController;
 import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;

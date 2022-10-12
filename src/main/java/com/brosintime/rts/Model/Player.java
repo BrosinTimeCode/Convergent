@@ -1,5 +1,6 @@
 package com.brosintime.rts.Model;
 
+import com.brosintime.rts.View.Screen.Drawable.ColorCode;
 import java.util.UUID;
 
 /**
@@ -14,5 +15,20 @@ public record Player(UUID id, String name, Team team) {
     public enum Team {
         BLUE,
         RED
+    }
+
+    @Override
+    public String toString() {
+        switch (this.team) {
+            case RED -> {
+                return ColorCode.RED.fgColor() + this.name + ColorCode.RESET.fgColor();
+            }
+            case BLUE -> {
+                return ColorCode.BLUE.fgColor() + this.name + ColorCode.RESET.fgColor();
+            }
+            default -> {
+                return this.name;
+            }
+        }
     }
 }
