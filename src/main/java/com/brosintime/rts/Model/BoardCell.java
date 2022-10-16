@@ -1,6 +1,6 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Units.Unit;
+import com.brosintime.rts.Model.Units.Unit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;

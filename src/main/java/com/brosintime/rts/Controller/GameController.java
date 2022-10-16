@@ -1,147 +1,112 @@
 package com.brosintime.rts.Controller;
 
-import static com.brosintime.rts.Controller.PlayerInputHistory.charListToString;
-
-import com.brosintime.rts.Commands.Attack;
-import com.brosintime.rts.Commands.Command;
-import com.brosintime.rts.Commands.CommandList;
-import com.brosintime.rts.Commands.CommandList.NullCommand;
-import com.brosintime.rts.Commands.Help;
-import com.brosintime.rts.Commands.Move;
-import com.brosintime.rts.Commands.Select;
-import com.brosintime.rts.Log.PageBook;
-import com.brosintime.rts.Log.UserLog;
-import com.brosintime.rts.Log.UserLogItem;
-import com.brosintime.rts.Log.UserLogItem.Type;
 import com.brosintime.rts.Model.Board;
-import com.brosintime.rts.Model.Frame.BoardFrame;
-import com.brosintime.rts.Model.Frame.ChatFrame;
-import com.brosintime.rts.Model.Frame.FocusManager;
-import com.brosintime.rts.Model.Frame.TerminalBoardFrame;
-import com.brosintime.rts.Model.Frame.TerminalChatFrame;
+import com.brosintime.rts.Model.Commands.Attack;
+import com.brosintime.rts.Model.Commands.CommandList;
+import com.brosintime.rts.Model.Commands.Exit;
+import com.brosintime.rts.Model.Commands.Help;
+import com.brosintime.rts.Model.Commands.Move;
+import com.brosintime.rts.Model.Commands.Select;
+import com.brosintime.rts.Model.Log.ChatLog;
 import com.brosintime.rts.Model.Player;
 import com.brosintime.rts.Model.Player.Team;
 import com.brosintime.rts.Model.TestBoard;
 import com.brosintime.rts.Model.TestBoard.BoardType;
+import com.brosintime.rts.Model.Units.Unit;
 import com.brosintime.rts.Server.Client;
 import com.brosintime.rts.Server.NetworkMessages.MoveMessage;
 import com.brosintime.rts.Server.NetworkMessages.NetworkMessage;
-import com.brosintime.rts.Units.Unit;
+import com.brosintime.rts.Server.PeerToPeerHost;
 import com.brosintime.rts.View.GameView;
+import com.brosintime.rts.View.Screen.ChatScreen;
+import com.brosintime.rts.View.Screen.Drawable;
+import com.brosintime.rts.View.Screen.Drawable.ColorCode;
+import com.brosintime.rts.View.Screen.GameScreen;
 import com.brosintime.rts.View.TerminalClient;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.input.KeyStroke;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * The GameController class follows the controller design in the MVC design pattern. This class
- * receives input from a view controlled by a user and manipulates the board model accordingly.
+ * receives input from a view controlled by a player and manipulates the game model accordingly.
  */
 public class GameController {
 
-    private final double UPDATES_PER_SECOND = 30;
-    private final double FRAMES_PER_SECOND = 60;
+    private final GameView client;
     private final Map<String, Integer> debugInfo;
-    private boolean isRunning = false;
-    private boolean debugScreenIsOn = false;
-    private boolean toggleDebugScreen = false;
-    private final GameView viewInterface;
-    private final Board board;
     private final Set<Player> players = new HashSet<>();
-    private static Unit player1SelectedUnit;
-    private final HashMap<Unit, Unit> entitiesUnderAttack;
-    private final PlayerInputHistory inputHistory;
-    private final FocusManager focusManager;
-    private final ChatFrame chatFrame;
-    private final BoardFrame boardFrame;
-    private final Client client;
+    private final Map<Player, ChatLog> chatLogs = new HashMap<>();
+    private final Map<Player, Set<Unit>> selectedUnits = new HashMap<>();
+    private final Map<Unit, Unit> entitiesUnderAttack = new HashMap<>();
+    private final Client networkClient;
+    private Board board;
+    private boolean running;
 
-    public GameController(Client client, int viewType, BoardType boardType, int width, int height) {
+    /**
+     * Constructs a new controller instance. A terminal game window is automatically created with a
+     * title screen, but the game does not start until {@link #run()} is called.
+     */
+    public GameController() {
+
+        Player player1 = new Player(UUID.randomUUID(), "Player1", Team.RED);
+        this.players.add(player1);
+        this.client = new TerminalClient(this, player1, 192, 48);
         this.debugInfo = new HashMap<>();
         this.debugInfo.put("tps", 0);
         this.debugInfo.put("fps", 0);
-        this.focusManager = new FocusManager();
-        Player player = new Player(UUID.randomUUID(), "Player 1", Team.RED);
-        int rows = height;
-        int columns = width;
-        // Command line arguments give size of board. No arguments results in height and width of board being random from 0 to 30
-        if (rows == 0 && columns == 0) {
-            Random randomGenerator = new Random();
-            rows = randomGenerator.nextInt(30) + 1;
-            columns = randomGenerator.nextInt(30) + 1;
-        }
-        if (boardType != BoardType.EMPTY) {
-            board = new TestBoard(boardType, rows, columns);
-        } else {
-            board = new Board(rows, columns);
-        }
-
-        this.board.addPlayer(player);
-
-        switch (viewType) {
-            default -> {
-                this.viewInterface = new TerminalClient(player, this.board);
-                this.chatFrame = new TerminalChatFrame(this.viewInterface, this);
-                this.boardFrame = new TerminalBoardFrame(this, this.viewInterface, this.board,
-                    player);
-            }
-        }
-        this.entitiesUnderAttack = new HashMap<>();
-        this.client = client;
-        client.setController(this);
+        this.networkClient = new PeerToPeerHost();
+        this.networkClient.setController(this);
 
         CommandList.registerCommand(Attack.instance());
         CommandList.registerCommand(Help.instance());
         CommandList.registerCommand(Move.instance());
         CommandList.registerCommand(Select.instance());
+        CommandList.registerCommand(Exit.instance());
 
-        this.inputHistory = new PlayerInputHistory();
-
-        this.focusManager.focus(this.boardFrame);
+        this.client.titleScreen();
     }
 
     /**
-     * Runs through the main game loop. On each iteration, player keys are processed, the model is
-     * updated, and the game view is rendered.
+     * Initializes the main game loop. On each cycle, the player’s key-press pool is processed via
+     * {@link GameView#processPlayerKeys()}, then the model is manipulated by {@link #update()},
+     * which is then rendered as a frame to the game screen by {@link GameView#renderScreen()}.
      */
     public void run() {
-        this.isRunning = true;
+        this.running = true;
         long initialTime = System.nanoTime();
-        final double updateTime = 1000000000 / this.UPDATES_PER_SECOND;
-        final double renderTime = 1000000000 / this.FRAMES_PER_SECOND;
+        double UPDATES_PER_SECOND = 30;
+        final double updateTime = 1000000000 / UPDATES_PER_SECOND;
+        double FRAMES_PER_SECOND = 60;
+        final double renderTime = 1000000000 / FRAMES_PER_SECOND;
         double updateDelta = 0;
         double renderDelta = 0;
         long timer = System.currentTimeMillis();
 
-        while (this.isRunning) {
+        while (this.running) {
             long currentTime = System.nanoTime();
             updateDelta += (currentTime - initialTime) / updateTime;
             renderDelta += (currentTime - initialTime) / renderTime;
             initialTime = currentTime;
 
             if (updateDelta >= 1) {
-                this.getPlayerInput();
+                this.client.processPlayerKeys();
                 this.update();
                 this.debugInfo.put("tps", this.debugInfo.get("tps") + 1);
                 updateDelta--;
             }
 
             if (renderDelta >= 1) {
-                this.render();
+                this.client.renderScreen();
                 this.debugInfo.put("fps", this.debugInfo.get("fps") + 1);
                 renderDelta--;
             }
 
             if (System.currentTimeMillis() - timer > 1000) {
-                if (this.debugScreenIsOn) {
-                    this.viewInterface.renderDebugScreen(this.debugInfo);
+                if (this.client.debugScreen() != null) {
+                    this.client.debugScreen().renderDebugInfo(this.debugInfo);
                 }
                 this.debugInfo.put("fps", 0);
                 this.debugInfo.put("tps", 0);
@@ -151,238 +116,72 @@ public class GameController {
     }
 
     /**
-     * Updates the model based on processes in progress, like units firing on each other or units
-     * being trained.
+     * Calls methods that manipulate the game model, like unit movement or damage. This method is
+     * called once on each game loop cycle.
      */
     private void update() {
-
-        getEntitiesUnderAttack().forEach((k, v) -> {
+        entitiesUnderAttack().forEach((k, v) -> {
             boolean deadUnit = v.damageEntity(k);
             if (deadUnit) {
                 killUnit(k, v);
             }
         });
-
     }
 
     /**
-     * Renders the game view frame and flushes it to the screen.
-     */
-    private void render() {
-
-        if (this.toggleDebugScreen) {
-            this.toggleDebugScreen = false;
-            this.debugScreenIsOn = !this.debugScreenIsOn;
-            this.viewInterface.clear();
-        }
-
-        this.viewInterface.displayBoard();
-        this.viewInterface.displayConsoleLog();
-        this.viewInterface.clearInput();
-        if (this.focusManager.hasFocusOn(this.chatFrame)) {
-            this.viewInterface.displayInput(
-                this.chatFrame.getInput().size() < 80 ?
-                    charListToString(this.chatFrame.getInput()) + "_" :
-                    charListToString(this.chatFrame.getInput())
-            );
-        } else {
-            this.viewInterface.displayInput("");
-        }
-        this.viewInterface.displayControls();
-        this.viewInterface.flush();
-
-    }
-
-    public boolean isRunning() {
-        return this.isRunning;
-    }
-
-    /**
-     * Interfaces with {@link GameView} by calling {@link GameView#getPlayerKey()} and processing
-     * the keystrokes. If the player submits a line, {@link #handleUserInput} is called to retrieve
-     * a command.
-     * <p>Player submissions are logged via {@link PlayerInputHistory} and accessible with the up
-     * and down arrow keys.
-     */
-    public void getPlayerInput() {
-
-        KeyStroke keyStroke = this.viewInterface.getPlayerKey();
-        if (keyStroke != null) {
-            this.focusManager.target().executeKey(keyStroke);
-        }
-
-    }
-
-    /**
-     * Focuses the board.
-     */
-    public void focusBoard() {
-        this.focusManager.focus(this.boardFrame);
-    }
-
-    /**
-     * Focuses the chat frame.
-     */
-    public void focusChatFrame() {
-        this.focusManager.focus(chatFrame);
-    }
-
-    /**
-     * Toggles the display of debug statistics.
-     */
-    public void toggleDebugScreen() {
-        this.toggleDebugScreen = true;
-    }
-
-    /**
-     * Processes player input and retrieves a {@link Command} if found. If a command is not found,
-     * an invalid command error is displayed.
+     * Moves a player’s selected units to the provided coordinates on the board. If the coordinates
+     * are out-of-bounds or the player currently has no units selected, the appropriate message is
+     * sent to the player instead.
      *
-     * @param input by player
+     * @param player the player
+     * @param column the destination x coordinate as a positive integer
+     * @param row    the destination y coordinate as a positive integer
      */
-    public void handleUserInput(String input) {
-        Command userCommand = CommandList.fromInput(input);
-        if (userCommand instanceof NullCommand) {
-            viewInterface.displayInvalidCommand();
-        } else {
-            executeCommand(userCommand);
-        }
-    }
-
-    private boolean executeCommand(Command command) {
-        if (command instanceof Move) {
-            return executeMove((Move) command);
-        } else if (command instanceof Select) {
-            return executeSelect((Select) command);
-        } else if (command instanceof Attack) {
-            return executeAttack((Attack) command);
-        } else if (command instanceof Help) {
-            return executeHelp((Help) command);
-        }
-        return false;
-    }
-
-
-    /**
-     * Executes passed in move command. Depending on the state of the arguments it will return false
-     * if move command did not execute successfully.
-     *
-     * @param moveCommand A move command to be executed.
-     * @return A boolean showing if the move command executed successfully.
-     */
-    private boolean executeMove(Move moveCommand) {
-        switch (moveCommand.validateArguments()) {
-            case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.fromAlias(moveCommand.defaultAlias());
-                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.name() + " - " + command.description() + " Usages:", Type.INFO));
-                List<String> usages = new ArrayList<>(command.usages());
-                for (String usage : usages) {
-                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.defaultAlias() + " " + usage, Type.INFO));
-                }
-                viewInterface.displayConsoleLog();
-                return true;
-            }
-            case GOOD -> { // arguments are parsable as positive integers
-                List<String> arguments = new ArrayList<>(moveCommand.getArguments());
-                if (arguments.size() == 1) {
-                    UserLog.add(
-                        new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Executing move command...",
-                            Type.INFO));
-                    viewInterface.displayConsoleLog();
-                    sendMessage(new MoveMessage(player1SelectedUnit.id(),
-                        Integer.parseInt(arguments.get(0)), -1, -1));
-                    return moveToUnit(Integer.parseInt(arguments.get(0)));
-                } else if (arguments.size() == 2) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(0)))) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Move coordinates are out of bounds.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing move command...", Type.INFO));
-                    viewInterface.displayConsoleLog();
-                    sendMessage(new MoveMessage(player1SelectedUnit.id(), -1,
-                        Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1))));
-                    return moveUnit(Integer.parseInt(arguments.get(0)),
-                        Integer.parseInt(arguments.get(1)));
-                } else if (arguments.size() == 3) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(2)),
-                        Integer.parseInt(arguments.get(1)))) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Move coordinates are out of bounds.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
-                    sendMessage(new MoveMessage(Integer.parseInt(arguments.get(0)), -1,
-                        Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2))));
-                    return moveUnit(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(2)));
-                }
-            }
-            case TOOMANY -> { // too many arguments given
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Too many arguments! Usage: " + moveCommand.basicUsage(), Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
-            case BAD -> { // arguments are not parsable as positive integers
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Bad syntax! Make sure arguments are numbers", Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Moves currently selected unit to row and column in the board. If currently selected unit is
-     * attacking it will no longer be attacking.
-     *
-     * @param column An integer representing destination column.
-     * @param row    An integer representing destination row.
-     * @return A boolean showing if the unit was successfully moved.
-     */
-    public boolean moveUnit(int column, int row) {
-        if (player1SelectedUnit == null) {
-            return false;
+    public void moveSelected(Player player, int column, int row) {
+        Set<Unit> selected = this.selectedUnits.get(player);
+        if (selected.isEmpty()) {
+            this.chatLogs.get(player).error("Nothing is selected");
+            return;
         }
         if (checkBounds(row, column)) {
-            entitiesUnderAttack.remove(player1SelectedUnit);
-            board.moveUnit(player1SelectedUnit, row, column);
-            return true;
+            for (Unit unit : this.selectedUnits.get(player)) {
+                this.entitiesUnderAttack.remove(unit);
+                board.moveUnit(unit, row, column);
+            }
+        } else {
+            this.chatLogs.get(player).error("Target coordinates are out of bounds");
         }
-        return false;
     }
 
     /**
-     * Moves currently selected unit to the unit with the passed in id. If currently selected unit
-     * is attacking it will no longer be attacking.
+     * Moves a player’s selected units to the location of the unit with the provided ID. If the unit
+     * ID is invalid or the player currently has no units selected, the appropriate message is sent
+     * to the player instead.
      *
-     * @param id An integer representing the id of the unit currently selected unit is moving to.
-     * @return A boolean showing if the unit was successfully moved.
+     * @param player the player
+     * @param id     the ID of the destination unit as a positive integer
      */
-    private boolean moveToUnit(int id) {
-        if (player1SelectedUnit == null) {
-            return false;
+    public void moveSelected(Player player, int id) {
+        Set<Unit> selected = this.selectedUnits.get(player);
+        if (selected.isEmpty()) {
+            this.chatLogs.get(player).error("Nothing is selected");
+            return;
         }
-        entitiesUnderAttack.remove(player1SelectedUnit);
-        board.moveToUnit(player1SelectedUnit, id);
-        return true;
+        for (Unit unit : this.selectedUnits.get(player)) {
+            entitiesUnderAttack.remove(unit);
+            board.moveToUnit(unit, id);
+        }
     }
 
     /**
-     * Executes a move from the network.
+     * Executes a move from the network. By default, as a destination, only the x and y coordinates
+     * are considered, unless they are both set to -1; only which then the target ID is used
+     * instead.
      *
-     * @param unitID   an integer representing the ID of the unit to be moved.
-     * @param targetID an integer representing the ID of the unit move to.
-     * @param x        an integer representing the x coordinate to move to.
-     * @param y        an integer representing the y coordinate to move to.
+     * @param unitID   the ID of the unit to move as an integer
+     * @param targetID the ID of the destination unit as an integer
+     * @param x        the destination x coordinate as an integer
+     * @param y        the destination y coordinate as an integer
      */
     public void receiveMove(int unitID, int targetID, int x, int y) {
         if (x == -1 && y == -1) {
@@ -393,137 +192,53 @@ public class GameController {
     }
 
     /**
-     * Executes passed in attack command. Depending on the state of the arguments it will return
-     * false if move command did not execute successfully.
+     * Initiates all the player’s selected units to attack a unit located on the board with the
+     * provided coordinates. If the coordinates are out-of-bounds or the player currently has no
+     * units selected, the appropriate message is sent to the player instead.
      *
-     * @param attackCommand An attack command to be executed.
-     * @return A boolean showing if the attack command executed successfully.
+     * @param player the player
+     * @param column the target’s x coordinate as a positive integer
+     * @param row    the target’s y coordinate as a positive integer
      */
-    private boolean executeAttack(Attack attackCommand) {
-        switch (attackCommand.validateArguments()) {
-            case NOARGS -> { // with no arguments, general info is printed
-                Command command = CommandList.fromAlias(attackCommand.defaultAlias());
-                UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                    command.name() + " - " + command.description() + " Usages:", Type.INFO));
-                List<String> usages = new ArrayList<>(command.usages());
-                for (String usage : usages) {
-                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.defaultAlias() + " " + usage, Type.INFO));
-                }
-                viewInterface.displayConsoleLog();
-                return true;
-            }
-            case GOOD -> { // arguments are parsable as positive integers
-                List<String> arguments = new ArrayList<>(attackCommand.getArguments());
-                if (arguments.size() == 1) {
-                    if (board.getUnit(Integer.parseInt(arguments.get(0))) == null) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Target ID is not a valid unit.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    if (player1SelectedUnit == null) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "No attacker selected.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing attack command...", Type.INFO));
-                    viewInterface.displayConsoleLog();
-                    return attackUnitID(Integer.parseInt(arguments.get(0)));
-                } else if (arguments.size() == 2) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(0)))) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Attacking an area that is out of bounds.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing attack command...", Type.INFO));
-                    viewInterface.displayConsoleLog();
-                    return attackUnit(Integer.parseInt(arguments.get(0)),
-                        Integer.parseInt(arguments.get(1)));
-                } else if (arguments.size() == 3) {
-                    if (!checkBounds(Integer.parseInt(arguments.get(2)),
-                        Integer.parseInt(arguments.get(1)))) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Attacking an area that is out of bounds.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    if (board.getUnit(Integer.parseInt(arguments.get(0))) == null) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Selected unit ID is not a valid unit.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    UserLog.add(new UserLogItem(TextColor.ANSI.CYAN_BRIGHT,
-                        "Executing attack command...", Type.INFO));
-                    viewInterface.displayConsoleLog();
-                    player1SelectedUnit = board.getUnit(Integer.parseInt(arguments.get(0)));
-                    return attackUnit(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(2)));
-                }
-            }
-            case TOOMANY -> { // too many arguments given
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Too many arguments! Usage: " + attackCommand.basicUsage(), Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
-            case BAD -> { // arguments are not parsable as positive integers
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Bad syntax! Make sure arguments are numbers", Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
+    public void attackUnit(Player player, int column, int row) {
+        if (this.selectedUnits.get(player).isEmpty()) {
+            this.chatLogs.get(player).error("Nothing is selected");
+        } else if (checkBounds(row, column)) {
+            this.chatLogs.get(player).error("Unit ID not found");
+            Unit target = board.getUnit(row, column);
+            for (Unit unit : this.selectedUnits.get(player)) {
+                entitiesUnderAttack.put(unit, target);
             }
         }
-        return false;
     }
 
     /**
-     * Attacks unit at row and column on board with currently selected unit.
+     * Initiates all the player’s selected units to attack a unit with the provided ID. If the unit
+     * ID is invalid or the player currently has no units selected, the appropriate message is sent
+     * to the player instead.
      *
-     * @param column An integer representing the column of location to be attacked.
-     * @param row    An integer representing the row of location to be attacked.
-     * @return A boolean showing if the unit successfully attacked the square on the board.
+     * @param player the player
+     * @param id     the ID of the target unit as a positive integer
      */
-    public boolean attackUnit(int column, int row) {
-        // TODO: Fix for more than one player
-        if (player1SelectedUnit == null) {
-            return false;
-        }
-        if (checkBounds(row, column)) {
-            entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(row, column));
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Attacks a unit with a specific id with currently selected unit.
-     *
-     * @param id An integer representing the id identifying a unit on the board.
-     * @return A boolean showing if the unit successfully attacked the unit.
-     */
-    private boolean attackUnitID(int id) {
-        if (player1SelectedUnit == null) {
-            return false;
+    public void attackUnit(Player player, int id) {
+        if (this.selectedUnits.get(player).isEmpty()) {
+            this.chatLogs.get(player).error("Nothing is selected");
         } else if (board.getUnit(id) == null) {
-            return false;
+            this.chatLogs.get(player).error("Unit ID not found");
         } else {
-            entitiesUnderAttack.put(player1SelectedUnit, board.getUnit(id));
-            return true;
+            Unit target = board.getUnit(id);
+            for (Unit unit : this.selectedUnits.get(player)) {
+                entitiesUnderAttack.put(unit, target);
+            }
         }
     }
 
     /**
-     * Kills deadUnit and removes attacker from entities under attack.
+     * Eliminates the provided dead unit and removes the provided attacker from entities currently
+     * under attack.
      *
-     * @param attacker BaseUnit that is attacking deadUnit.
-     * @param deadUnit BaseUnit to be killed.
+     * @param attacker the unit attacking the dying unit
+     * @param deadUnit the dying unit to be eliminated
      */
     public void killUnit(Unit attacker, Unit deadUnit) {
         board.killUnit(deadUnit.id());
@@ -531,196 +246,287 @@ public class GameController {
     }
 
     /**
-     * Executes passed in select command. Depending on the state of the arguments it will return
-     * false if select command did not execute successfully. If no arguments are passed currently
-     * selected unit is deselected.
+     * Adds a unit with the provided ID to the player’s pool of currently selected units. If the ID
+     * is invalid, the appropriate message is sent to the player instead.
      *
-     * @param selectCommand An attack command to be executed.
-     * @return A boolean showing if the select command executed successfully.
+     * @param player the player
+     * @param ID     the ID of the unit as a positive integer
      */
-    private boolean executeSelect(Select selectCommand) {
-        switch (selectCommand.validateArguments()) {
-            case NOARGS -> { // with no arguments, the currently selected unit is deselected
-                this.deselectUnit();
-                UserLog.add(
-                    new UserLogItem(TextColor.ANSI.CYAN_BRIGHT, "Deselected unit", Type.INFO));
-                viewInterface.displayConsoleLog();
-                return true;
-            }
-            case GOOD -> { // arguments are parsable as positive integers
-                List<String> arguments = new ArrayList<>(selectCommand.getArguments());
-                if (arguments.size() == 1) {
-                    selectUnit(Integer.parseInt(arguments.get(0)));
-                    return true;
-                } else {
-                    if (!checkBounds(Integer.parseInt(arguments.get(1)),
-                        Integer.parseInt(arguments.get(0)))) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                            "Selection coordinates are out of bounds.", Type.INFO));
-                        viewInterface.displayConsoleLog();
-                        return false;
-                    }
-                    return selectUnit(Integer.parseInt(arguments.get(0)),
-                        Integer.parseInt(arguments.get(1)));
-                }
-            }
-            case TOOMANY -> { // too many arguments given
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Too many arguments! Usage: " + selectCommand.basicUsage(), Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
-            case BAD -> { // arguments aren't parsable as positive integers
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Bad syntax! Make sure arguments are numbers", Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Selects unit on board based on ID. If no such unit select will fail.
-     * @param ID An integer representing the id of the unit to select.
-     * @return A boolean show if unit was successfully selected.
-     */
-    private boolean selectUnit(int ID) {
-        if (player1SelectedUnit != null) {
-            this.deselectUnit();
-        }
+    public void selectUnit(Player player, int ID) {
         Unit selection = board.getUnit(ID);
-        if(selection != null) {
-            player1SelectedUnit = selection;
-            player1SelectedUnit.select();
-            return true;
+        if (selection != null) {
+            this.selectedUnits.get(player).add(selection);
+            selection.select();
         }
-        return false;
     }
 
     /**
-     * Executes passed in {@link Help} command. Returns true only if command executes successfully.
-     * <p>If no arguments are provided, the console displays a paginated list of command aliases
-     * registered in {@link CommandList}. If a valid command alias is provided as the sole argument,
-     * help documentation for the appropriate command is displayed. Otherwise, an error is displayed
-     * in the console and this method returns false.
+     * Adds a unit located on the provided coordinates to the player’s pool of currently selected
+     * units. If the coordinates are out of bounds, the appropriate message is sent to the player
+     * instead.
      *
-     * @param helpCommand instance of {@link Help}
-     * @return true if provided valid arguments, otherwise false
+     * @param player the player
+     * @param column the x coordinate location of the unit as a positive integer
+     * @param row    the y coordinate location of the unit as a positive integer
      */
-    private boolean executeHelp(Help helpCommand) {
-        switch (helpCommand.validateArguments()) {
-            case NOARGS -> { // with no arguments, a list of commands is printed
-                List<UserLogItem> aliasesList = new ArrayList<>();
-                for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
-                    aliasesList.add(
-                        new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(), Type.INFO));
-                }
-                UserLog.add(
-                    PageBook.paginateAndGetPage("List of commands", helpCommand.defaultAlias(),
-                        viewInterface.getConsoleLogHeight(), aliasesList, 1));
-                viewInterface.displayConsoleLog();
-                return true;
+    public void selectUnit(Player player, int column, int row) {
+        if (this.checkBounds(row, column)) {
+            Unit selection = board.getUnit(row, column);
+            if (selection != null) {
+                this.selectedUnits.get(player).add(selection);
+                selection.select();
             }
-            case GOOD -> { // if user asked for a page number or a command alias that was found
-                if (CommandList.isAnAlias(helpCommand.getArgument(0))) {
-                    Command command = CommandList.fromAlias(helpCommand.getArgument(0));
-                    UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                        command.name() + " - " + command.description() + " Usages:", Type.INFO));
-                    List<String> usages = new ArrayList<>(command.usages());
-                    for (String usage : usages) {
-                        UserLog.add(new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT,
-                            command.defaultAlias() + " " + usage, Type.INFO));
-                    }
-                    viewInterface.displayConsoleLog();
-                    return true;
-                } else {
-                    List<UserLogItem> aliasesList = new ArrayList<>();
-                    for (Map.Entry<String, Command> entry : CommandList.ALIASES.entrySet()) {
-                        aliasesList.add(
-                            new UserLogItem(TextColor.ANSI.YELLOW_BRIGHT, entry.getKey(),
-                                Type.INFO));
-                    }
-                    PageBook.paginateAndGetPage("List of commands", helpCommand.defaultAlias(),
-                        viewInterface.getConsoleLogHeight(), aliasesList,
-                        Integer.parseInt(helpCommand.getArgument(0)));
-                    viewInterface.displayConsoleLog();
-                    return true;
-                }
-            }
-            case TOOMANY -> { // too many arguments given
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Too many arguments! Usage: " + helpCommand.basicUsage(), Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
-            case BAD -> { // if the command alias was not found
-                UserLog.add(new UserLogItem(TextColor.ANSI.RED,
-                    "Command not found! Check spelling or type \"help\" for a list of commands",
-                    Type.INFO));
-                viewInterface.displayConsoleLog();
-                return false;
-            }
+        } else {
+            this.chatLogs.get(player)
+                .info(ColorCode.DARK_RED.fgColor() + "Coordinates are out of bounds");
         }
-        return false;
     }
 
     /**
-     * Selects visible unit at row and column on board. If row or column out of bounds select will
-     * fail.
+     * Removes a unit with the provided ID from the player’s pool of currently selected units. If
+     * the unit ID is invalid, the appropriate message is sent to the player instead.
      *
-     * @param column An integer representing the column for a unit to be selected.
-     * @param row    An integer representing the row for a unit to be selected.
-     * @return A boolean showing if unit was successfully selected.
+     * @param player the player
+     * @param ID     the unit’s ID to be deselected as a positive integer
      */
-    public boolean selectUnit(int column, int row) {
-        if (player1SelectedUnit != null) {
-            this.deselectUnit();
+    public void deselectUnit(Player player, int ID) {
+        Unit selection = board.getUnit(ID);
+        if (selection != null) {
+            this.selectedUnits.get(player).remove(selection);
+            selection.deselect();
         }
-        if (checkBounds(row, column)) {
-            player1SelectedUnit = board.getUnit(row, column);
-            if (player1SelectedUnit != null) {
-                player1SelectedUnit.select();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public void deselectUnit() {
-        if (player1SelectedUnit != null) {
-            player1SelectedUnit.deselect();
-        }
-        player1SelectedUnit = null;
     }
 
     /**
-     * Checks if row and column are within the bounds of the board.
+     * Removes a unit located on the provided coordinates from the player’s pool of currently
+     * selected units. If the coordinates are out-of-bounds, the appropriate message is sent to the
+     * player instead.
      *
-     * @param row    An integer representing the row to check bounds for.
-     * @param column An integer representing the row to check bounds for.
-     * @return Returns true if the row and column are in bounds.
+     * @param player the player
+     * @param column the x coordinate location of the deselected unit as a positive integer
+     * @param row    the y coordinate location of the deselected unit as a positive integer
+     */
+    public void deselectUnit(Player player, int column, int row) {
+        if (this.checkBounds(row, column)) {
+            Unit selection = board.getUnit(row, column);
+            if (selection != null) {
+                this.selectedUnits.get(player).remove(selection);
+                selection.deselect();
+            }
+        }
+    }
+
+    /**
+     * Clears the player’s pool of currently selected units.
+     *
+     * @param player the player
+     */
+    public void deselectAll(Player player) {
+        for (Unit unit : this.selectedUnits.get(player)) {
+            unit.deselect();
+        }
+        this.selectedUnits.get(player).clear();
+    }
+
+    /**
+     * Checks the boundaries of the board and determines if the provided x and y coordinates are
+     * within bounds.
+     *
+     * @param row    the x coordinate to check as an integer
+     * @param column the y coordinate to check as an integer
+     * @return {@code true} if both coordinates are in-bounds, or {@code false} if at least one is
+     * not
      */
     private boolean checkBounds(int row, int column) {
         return !(row > board.height() - 1 || row < 0 || column > board.width() - 1 || column < 0);
     }
 
-    public HashMap<Unit, Unit> getEntitiesUnderAttack() {
-        return entitiesUnderAttack;
+    /**
+     * Retrieves the map representing entities currently under attack.
+     *
+     * @return entities under attack as a {@link Map}
+     */
+    public Map<Unit, Unit> entitiesUnderAttack() {
+        return this.entitiesUnderAttack;
     }
 
-    public static boolean isPlayer1SelectedUnit(Unit unit) {
-        return player1SelectedUnit == unit;
+
+    /**
+     * Sends a message to the network. If client is null, nothing happens.
+     *
+     * @param message the network message to be sent
+     */
+    private void sendMessage(NetworkMessage message) {
+        if (networkClient != null) {
+            networkClient.sendMessage(message);
+        }
     }
 
     /**
-     * Sends a message to the network. If client is null does nothing.
-     *
-     * @param message Message to send over the network.
+     * Terminates the game loop after the current cycle finishes.
      */
-    private void sendMessage(NetworkMessage message) {
-        if (client != null) {
-            client.sendMessage(message);
+    public void exit() {
+        this.running = false;
+    }
+
+    /**
+     * Retrieves the current game board.
+     *
+     * @return the board
+     */
+    public Board board() {
+        return this.board;
+    }
+
+    /**
+     * Launches a new skirmish game against a CPU with the provided board type.
+     *
+     * @param boardType the board type to be generated
+     */
+    public void newSkirmish(BoardType boardType) {
+        if (boardType == null) {
+            throw new IllegalArgumentException("Skirmish cannot start with null board type");
+        }
+        this.board = new TestBoard(boardType, 10, 10);
+        Player cpu = new Player(UUID.randomUUID(), "CPU", Team.BLUE);
+        this.players.add(cpu);
+        for (Player player : this.players) {
+            this.selectedUnits.put(player, new HashSet<>());
+        }
+        this.board.addPlayers(this.players);
+        Drawable gameScreen = new GameScreen(this, this.client);
+        this.client.setScreen(gameScreen);
+    }
+
+    /**
+     * Registers a player’s chat log with the game engine. After a chat log is registered, system
+     * messages can be sent to specific or all players. The player is also registered to the game if
+     * it’s not already.
+     *
+     * @param player  the player
+     * @param chatLog the player’s chat log
+     */
+    public void setChatLog(Player player, ChatLog chatLog) {
+        if (player == null) {
+            throw new IllegalArgumentException("Cannot register a chat log for a null player");
+        }
+        if (chatLog == null) {
+            throw new IllegalArgumentException("Cannot register a null chat log");
+        }
+        this.players.add(player);
+        this.chatLogs.put(player, chatLog);
+    }
+
+    /**
+     * Executes an attack command from a player after it has been parsed by the {@link ChatScreen}.
+     *
+     * @param player  the commanding player
+     * @param command the attack command
+     */
+    public void handleAttack(Player player, Attack command) {
+        if (player == null) {
+            throw new IllegalArgumentException(
+                "Cannot handle attack command because the player is null");
+        }
+        if (command == null) {
+            throw new IllegalArgumentException("Cannot handle attack command that doesn’t exist");
+        }
+        ChatLog chatLog = this.chatLogs.get(player);
+        switch (command.arguments().size()) {
+            case 1 -> {
+                if (this.board.getUnit(Integer.parseInt(command.argument(0))) == null) {
+                    chatLog.error("Target ID is not a valid unit");
+                    return;
+                }
+                if (this.selectedUnits.get(player).size() == 0) {
+                    chatLog.error("Nothing is selected");
+                    return;
+                }
+                chatLog.info(ColorCode.CYAN.fgColor() + "Executing attack command...");
+                this.attackUnit(player, Integer.parseInt(command.argument(0)));
+            }
+            case 2 -> {
+                chatLog.info(ColorCode.CYAN.fgColor() + "Executing attack command...");
+                this.attackUnit(player, Integer.parseInt(command.argument(0)),
+                    Integer.parseInt(command.argument(1)));
+            }
+            case 3 -> {
+                chatLog.info(ColorCode.CYAN.fgColor() + "Executing attack command...");
+                this.deselectAll(player);
+                this.selectUnit(player, Integer.parseInt(command.argument(0)));
+                this.attackUnit(player, Integer.parseInt(command.argument(1)), Integer.parseInt(
+                    command.argument(2)));
+            }
+        }
+    }
+
+    /**
+     * Executes a select command from a player after it has been parsed by the {@link ChatScreen}.
+     *
+     * @param player  the commanding player
+     * @param command the select command
+     */
+    public void handleSelect(Player player, Select command) {
+        if (player == null) {
+            throw new IllegalArgumentException(
+                "Cannot handle select command because the player is null");
+        }
+        if (command == null) {
+            throw new IllegalArgumentException("Cannot handle select command that doesn’t exist");
+        }
+        if (command.arguments().size() == 1) {
+            this.selectUnit(player, Integer.parseInt(command.argument(0)));
+        } else {
+            this.selectUnit(player, Integer.parseInt(command.argument(0)),
+                Integer.parseInt(command.argument(1)));
+        }
+    }
+
+    /**
+     * Executes a move command from a player after it has been parsed by the {@link ChatScreen}.
+     *
+     * @param player  the commanding player
+     * @param command the move command
+     */
+    public void handleMove(Player player, Move command) {
+        if (player == null) {
+            throw new IllegalArgumentException(
+                "Cannot handle move command because the player is null");
+        }
+        if (command == null) {
+            throw new IllegalArgumentException("Cannot handle move command that doesn’t exist");
+        }
+        ChatLog chatLog = this.chatLogs.get(player);
+        switch (command.arguments().size()) {
+            case 1 -> {
+                chatLog.info(ColorCode.CYAN.fgColor() + "Executing move command...");
+                for (Unit unit : this.selectedUnits.get(player)) {
+                    this.sendMessage(
+                        new MoveMessage(unit.id(), Integer.parseInt(command.argument(0)), -1, -1));
+                    this.moveSelected(player, Integer.parseInt(command.argument(0)));
+                }
+            }
+            case 2 -> {
+                chatLog.info(ColorCode.CYAN.fgColor() + "Executing move command...");
+                for (Unit unit : this.selectedUnits.get(player)) {
+                    this.sendMessage(
+                        new MoveMessage(unit.id(), -1, Integer.parseInt(command.argument(0)),
+                            Integer.parseInt(command.argument(1))));
+                    this.moveSelected(player, Integer.parseInt(command.argument(0)),
+                        Integer.parseInt(
+                            command.argument(1)));
+                }
+            }
+            case 3 -> {
+                chatLog.info(ColorCode.CYAN.fgColor() + "Executing move command...");
+                this.deselectAll(player);
+                this.selectUnit(player, Integer.parseInt(command.argument(0)));
+                this.sendMessage(
+                    new MoveMessage(Integer.parseInt(command.argument(0)), -1, Integer.parseInt(
+                        command.argument(1)), Integer.parseInt(command.argument(2))));
+                this.moveSelected(player, Integer.parseInt(command.argument(1)), Integer.parseInt(
+                    command.argument(2)));
+            }
         }
     }
 }

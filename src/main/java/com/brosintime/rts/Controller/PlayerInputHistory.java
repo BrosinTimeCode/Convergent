@@ -75,7 +75,7 @@ public class PlayerInputHistory {
      * @param list the list of characters to convert
      * @return representation as a string
      */
-    public static String charListToString(List<Character> list) {
+    public static String asString(List<Character> list) {
         if (list.size() == 0) {
             return "";
         }
@@ -88,7 +88,7 @@ public class PlayerInputHistory {
      * @param string the string to convert
      * @return representation as a list of characters
      */
-    public static List<Character> stringToCharList(String string) {
+    public static List<Character> asCharList(String string) {
         List<Character> list = new ArrayList<>();
         for (char c : string.toCharArray()) {
             list.add(c);

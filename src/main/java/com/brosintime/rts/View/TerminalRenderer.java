@@ -4,7 +4,8 @@ import com.brosintime.rts.Model.Board;
 import com.brosintime.rts.Model.BoardCursor;
 import com.brosintime.rts.Model.Node;
 import com.brosintime.rts.Model.Player;
-import com.brosintime.rts.Units.Unit;
+import com.brosintime.rts.Model.Units.Unit;
+import com.brosintime.rts.View.Screen.Drawable;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TerminalRenderer {
 
+    TerminalClient client;
     private final int width;
     private final int height;
     private final Map<Node, Cell> render = new HashMap<>();
@@ -45,14 +47,20 @@ public class TerminalRenderer {
      *
      * @param width  the width of the terminal in cells
      * @param height the height of the terminal in cells
-     * @param player the player who owns this
      */
-    public TerminalRenderer(int width, int height, Player player) {
+    public TerminalRenderer(TerminalClient client, int width, int height) {
+        if (client == null) {
+            throw new IllegalArgumentException("This terminal rendering engine has no game client");
+        }
+        this.client = client;
         this.width = Math.max(width, 1);
         this.height = Math.max(height, 1);
         this.renderAsString = new StringBuilder[this.height];
         this.screenAsString = new StringBuilder[this.height];
-        this.player = player;
+        this.player = this.client.player();
+        if (this.player == null) {
+            throw new NullPointerException("The game client doesn’t have a player");
+        }
 
         for (int row = 0; row < this.height; row++) {
             this.renderAsString[row] = new StringBuilder(this.width + 2)
@@ -63,7 +71,7 @@ public class TerminalRenderer {
                 .append("\n");
         }
 
-        fillRenderWithBlank();
+        blankScreens();
 
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
@@ -157,8 +165,7 @@ public class TerminalRenderer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.screen.clear();
-        fillRenderWithBlank();
+        this.blankScreens();
     }
 
     /**
@@ -174,13 +181,14 @@ public class TerminalRenderer {
         }
     }
 
-    private void fillRenderWithBlank() {
+    private void blankScreens() {
         Cell blank = Cell.blank();
         for (int y = 0; y < this.height; y++) {
             for (int x = 0; x < this.width; x++) {
-                this.render.put(new Node(y, x), blank);
+                this.putCell(blank, x, y);
             }
         }
+        this.flush();
     }
 
     /**
@@ -201,6 +209,21 @@ public class TerminalRenderer {
         this.screen.put(new Node(y, x), cell);
         this.screenAsString[y]
             .replace(x, x + 1, Character.toString(cell.character()));
+    }
+
+    /**
+     * Draws the provided screen to the screen layer.
+     *
+     * @param screen the screen to draw
+     */
+    public void putScreen(Drawable screen) {
+        Map<Node, Cell> cells = screen.toCells();
+        for (Node node : cells.keySet()) {
+            if (node.column() >= 0 && node.column() < this.width && node.row() >= 0
+                && node.row() < this.height) {
+                this.putCell(cells.get(node), node.column(), node.row());
+            }
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Units.Unit;
+import com.brosintime.rts.Model.Units.Unit;
 
 /**
  * The UnitLocation class contains the location of a BaseUnit.

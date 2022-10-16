@@ -1,6 +1,5 @@
 package com.brosintime.rts.Model;
 
-import com.brosintime.rts.Model.Frame.PlayerCursor;
 import com.brosintime.rts.View.Cell;
 import com.brosintime.rts.View.TerminalCell;
 import com.googlecode.lanterna.TextColor;
@@ -105,7 +104,7 @@ public class BoardCursor implements PlayerCursor, Cell {
 
     @Override
     public TextColor backgroundColor() {
-        if (highlighted) {
+        if (this.highlighted) {
             switch (this.player.team()) {
                 case RED -> {
                     return ANSI.RED;
