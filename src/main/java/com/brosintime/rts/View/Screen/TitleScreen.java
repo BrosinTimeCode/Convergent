@@ -87,6 +87,7 @@ public class TitleScreen extends Screen {
                 switch (this.menu.getSelectedOption()) {
                     case "SKIRMISH" -> this.skirmishScreen();
                     case "EXIT GAME" -> this.controller.exit();
+                    case "MULTIPLAYER" -> this.multiplayerScreen();
                 }
             }
             case Escape -> this.controller.exit();
@@ -104,6 +105,13 @@ public class TitleScreen extends Screen {
         skirmish.setParent(this);
         this.client.setScreen(skirmish);
 
+    }
+
+    private void multiplayerScreen() {
+        Node origin = Node.relativeTo(this.origin, 17, 7);
+        Drawable multiplayer = new MultiplayerOptions(this.controller, this.client, origin);
+        multiplayer.setParent(this);
+        this.client.setScreen(multiplayer);
     }
 
     @Override
@@ -211,6 +219,49 @@ public class TitleScreen extends Screen {
 
         @Override
         public void onRender() {
+
+        }
+    }
+    private static class MultiplayerOptions extends Screen {
+
+        private final Menu menu;
+        public MultiplayerOptions(GameController controller, GameView client, Node origin) {
+            if (controller == null) {
+                throw new IllegalArgumentException("This screen has no game engine");
+            }
+            if (client == null) {
+                throw new IllegalArgumentException("This screen has no game client");
+            }
+            this.controller = controller;
+            this.client = client;
+            this.origin = origin != null ? origin : new Node(0, 0);
+            this.width = 82;
+            this.height = 25;
+            Node menuLocation = Node.relativeTo(this.origin, 2, 2);
+            this.menu = new Menu(this.client, menuLocation, MenuStyle.TITLE_SCREEN);
+            this.menu.setParent(this);
+        }
+
+        @Override
+        public void onRender() {
+
+        }
+
+        @Override
+        public void onFocus() {
+
+        }
+
+        @Override
+        public void offFocus() {
+
+        }
+
+        @Override
+        public void onKeyPress(KeyStroke key) {
+            switch (key.getKeyType()) {
+                case Escape -> this.close();
+            }
 
         }
     }
